@@ -1,6 +1,6 @@
 Unity 6000.6.0f1 on macOS
 28 scene checks passed; complete five-wave campaign won, 68 enemies destroyed.
-No C# compilation errors/warnings or shader errors. Final render inspected.
+No C# compilation errors/warnings or shader errors. Sharper 4x-MSAA/SMAA render inspected; all checks repeated in an isolated copy.
 
 DEFENSE PASS: Title screen starts with no active combat
 DEFENSE PASS: Custom non-basic mesh assets are baked into the project

@@ -162,7 +162,7 @@ public static class DefenseValidation
         Camera camera=game.View;Canvas canvas=game.HUD.GetComponent<Canvas>();
         RenderTexture previous=camera.targetTexture,oldActive=RenderTexture.active;
         RenderMode mode=canvas.renderMode;Camera oldCamera=canvas.worldCamera;float oldDistance=canvas.planeDistance;
-        RenderTexture target=new RenderTexture(1600,1000,24,RenderTextureFormat.ARGB32);Texture2D image=new Texture2D(1600,1000,TextureFormat.RGB24,false);
+        RenderTexture target=new RenderTexture(1600,1000,24,RenderTextureFormat.ARGB32);target.antiAliasing=4;Texture2D image=new Texture2D(1600,1000,TextureFormat.RGB24,false);
         try
         {
             camera.targetTexture=target;canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;

@@ -15,7 +15,7 @@ public class DefenseHUD : MonoBehaviour
     public void Initialize(DefenseGame owner)
     {
         game=owner;font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        Canvas canvas=gameObject.AddComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;
+        Canvas canvas=gameObject.AddComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.pixelPerfect=true;
         CanvasScaler scale=gameObject.AddComponent<CanvasScaler>();scale.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;scale.referenceResolution=new Vector2(1440,900);scale.matchWidthOrHeight=.5f;
         gameObject.AddComponent<GraphicRaycaster>();
         Panel("Top rail",transform,0,.90f,1,1,surface);
@@ -79,7 +79,7 @@ public class DefenseHUD : MonoBehaviour
     {
         GameObject item=new GameObject(name,typeof(RectTransform),typeof(Text));item.transform.SetParent(parent,false);Rect(item,x0,y0,x1,y1);
         Text text=item.GetComponent<Text>();text.font=font;text.text=value;text.fontSize=size;text.color=new Color(.86f,.94f,1f);text.alignment=alignment;
-        text.raycastTarget=false;text.resizeTextForBestFit=true;text.resizeTextMinSize=10;text.resizeTextMaxSize=size;return text;
+        text.raycastTarget=false;text.resizeTextForBestFit=true;text.resizeTextMinSize=12;text.resizeTextMaxSize=size;return text;
     }
     private Button MakeButton(string name,Transform parent,float x0,float y0,float x1,float y1,string caption,UnityEngine.Events.UnityAction action)
     {

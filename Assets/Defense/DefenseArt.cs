@@ -157,7 +157,7 @@ public static class DefenseArt
         for(float distance=1;distance<game.Route.Length;distance+=2.1f)
         {
             Vector3 point=game.Route.Position(distance)+Vector3.up*.065f;
-            GameObject dash=Box(root,"Route dash",point,new Vector3(.07f,.02f,.65f),ColorMaterial("Route markers",new Color(.35f,.65f,.65f)));
+            GameObject dash=Box(root,"Route dash",point,new Vector3(.11f,.02f,.65f),ColorMaterial("Route markers",new Color(.35f,.65f,.65f)));
             dash.transform.rotation=Quaternion.LookRotation(game.Route.Tangent(distance));
         }
         for(int i=0;i<game.Pads.Length;i++)
@@ -165,8 +165,8 @@ public static class DefenseArt
             Vector3 position=game.Pads[i];
             Shape(root,"Build pad "+(i+1),"HexPlatform",position,new Vector3(1.2f,.25f,1.2f),ColorMaterial("Pad glow",new Color(.08f,.75f,.9f)));
             Shape(root,"Pad inset","HexPlatform",position+Vector3.up*.08f,new Vector3(1.05f,.25f,1.05f),ground);
-            Box(root,"Pad plus",position+Vector3.up*.16f,new Vector3(.6f,.02f,.07f),ColorMaterial("Pad symbols",Cyan));
-            Box(root,"Pad plus",position+Vector3.up*.17f,new Vector3(.07f,.02f,.6f),ColorMaterial("Pad symbols",Cyan));
+            Box(root,"Pad plus",position+Vector3.up*.16f,new Vector3(.6f,.02f,.11f),ColorMaterial("Pad symbols",Cyan));
+            Box(root,"Pad plus",position+Vector3.up*.17f,new Vector3(.11f,.02f,.6f),ColorMaterial("Pad symbols",Cyan));
         }
         Vector3 end=game.Route.Position(game.Route.Length), start=game.Route.Position(0);
         Shape(root,"Relay platform","HexPlatform",end+Vector3.up*.1f,new Vector3(1.8f,.8f,1.8f),ColorMaterial("Relay metal",new Color(.14f,.25f,.38f)));
@@ -184,7 +184,7 @@ public static class DefenseArt
             float z=(i%2==0 ? 1 : -1)*(10.8f+(float)random.NextDouble());
             Shape(root,"Border crystal","Spire",new Vector3(x,0,z),new Vector3(.3f,.5f+(float)random.NextDouble(),.3f),ColorMaterial("Scenery crystal",new Color(.16f,.28f,.5f)));
         }
-        for(int x=-20;x<=20;x+=4) Box(root,"Terrain circuit",new Vector3(x,-.035f,0),new Vector3(.025f,.02f,25),ColorMaterial("Grid",new Color(.085f,.14f,.22f)));
+        for(int x=-20;x<=20;x+=4) Box(root,"Terrain circuit",new Vector3(x,-.035f,0),new Vector3(.045f,.02f,25),ColorMaterial("Grid",new Color(.085f,.14f,.22f)));
         GameObject volumeObject=new GameObject("Neon glow volume");volumeObject.transform.SetParent(root,false);
         Volume volume=volumeObject.AddComponent<Volume>();volume.isGlobal=true;
         volume.profile=ScriptableObject.CreateInstance<VolumeProfile>();
@@ -195,7 +195,7 @@ public static class DefenseArt
     {
         GameObject root=new GameObject(name,typeof(LineRenderer));root.transform.SetParent(parent,false);
         LineRenderer line=root.GetComponent<LineRenderer>();line.useWorldSpace=true;line.sharedMaterial=ColorMaterial(name,color);
-        line.widthMultiplier=.06f;line.positionCount=97;
+        line.widthMultiplier=.11f;line.positionCount=97;
         return line;
     }
     public static void SetRing(LineRenderer ring,Vector3 center,float radius)

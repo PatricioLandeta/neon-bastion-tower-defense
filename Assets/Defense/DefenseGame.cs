@@ -46,7 +46,11 @@ public class DefenseGame : MonoBehaviour
         View=cameraObject.GetComponent<Camera>();View.transform.position=new Vector3(27,38,-35);
         View.transform.LookAt(new Vector3(0,0,-.5f));View.orthographic=true;View.nearClipPlane=.1f;View.farClipPlane=180;
         View.clearFlags=CameraClearFlags.SolidColor;View.backgroundColor=new Color(.012f,.018f,.045f);View.allowHDR=true;
-        View.GetUniversalAdditionalCameraData().renderPostProcessing=true;
+        View.allowMSAA=true;View.allowDynamicResolution=false;
+        UniversalAdditionalCameraData cameraData=View.GetUniversalAdditionalCameraData();
+        cameraData.renderPostProcessing=true;
+        cameraData.antialiasing=AntialiasingMode.SubpixelMorphologicalAntiAliasing;
+        cameraData.antialiasingQuality=AntialiasingQuality.High;
         FitCamera();
         battlefield=new GameObject("Battlefield").transform;
         DefenseArt.World(this,battlefield);

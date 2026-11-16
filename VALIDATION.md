@@ -1,12 +1,15 @@
 # Validation
 
-The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **54 checks**, including a complete ten-wave win with all **338** enemies destroyed.
+The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **65 checks**, including a complete ten-wave win with all **338** enemies destroyed.
 
 The campaign strategy begins with the normal $110, places towers on legal pads, buys additional towers and upgrades only when rewards make them affordable, and places exactly one tower per wave and obeys the ten-tower cap. It does not add credits, change enemy HP or speed, skip enemies, or apply test damage during the campaign. It accelerates the campaign with Unity time scaling; projectiles and enemies still use the normal fixed physics timestep. The focused tests run separately and intentionally create isolated test situations.
 
 ## What is checked
 
 - Title state and a clean initial build phase.
+- Actual tutorial button callbacks: opening, Back/Next, explicit placement text, money/upgrade explanations, finishing without spending cash or a build allowance, and reopening through Help.
+- Tutorial pause during combat, preserving cash and wave state on return, preserving an existing manual pause, and restoring the prior 2x speed.
+- Persistent selection-and-placement text after the tutorial closes.
 - Custom mesh assets present on disk and a curved, predetermined route.
 - Mathematical interception of a moving target at the configured launch speed, and rejection of an unreachable target.
 - Valid pad placement, rejection of road placement, occupied-pad protection, and the one-per-wave limit during both setup and combat.

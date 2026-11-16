@@ -203,9 +203,20 @@ public class DefenseGame : MonoBehaviour
     {
         if(View==null) return;
         FitCamera();Keyboard keys=Keyboard.current;
+        if(HUD.TutorialOpen)
+        {
+            if(keys!=null)
+            {
+                if(keys.escapeKey.wasPressedThisFrame) HUD.CloseTutorial();
+                else if(keys.enterKey.wasPressedThisFrame || keys.spaceKey.wasPressedThisFrame) HUD.NextTutorialPage();
+                else if(keys.leftArrowKey.wasPressedThisFrame) HUD.PreviousTutorialPage();
+            }
+            return;
+        }
+        if(keys!=null && keys.hKey.wasPressedThisFrame) { HUD.OpenTutorial(false);return; }
         if(keys!=null)
         {
-            if((State==DefenseState.Title || State==DefenseState.Lost || State==DefenseState.Won) && keys.enterKey.wasPressedThisFrame) StartGame();
+            if((State==DefenseState.Title || State==DefenseState.Lost || State==DefenseState.Won) && keys.enterKey.wasPressedThisFrame) HUD.OpenTutorial(true);
             else if(CanBuild)
             {
                 if(keys.pKey.wasPressedThisFrame) TogglePause();

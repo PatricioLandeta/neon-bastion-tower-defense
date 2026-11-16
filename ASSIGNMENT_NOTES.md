@@ -15,7 +15,7 @@
 | Requirement | Where it is implemented |
 | --- | --- |
 | Two tower types with different fire rates, projectile speeds and heights | Pulse and Siege properties in `DefenseTower`; all three required stats differ. Both use real gravity-affected projectiles. |
-| Clear placement instructions | Title screen plus persistent command deck: choose 1/2 or a tower button, then click a glowing cyan hex pad. HUD displays costs and the placement limit. |
+| Clear placement instructions | Four-step quick-start tutorial plus a persistent command deck: choose 1/2 or a tower button, then LEFT-CLICK a CYAN HEXAGON. The tutorial explains placement, cash rewards, and upgrade prices/benefits with a worked money example. H or ? HELP reopens it; the HUD always retains the selection-and-placement instructions. |
 | Limited tower placement | One new placement per wave (shared by setup and combat), ten-tower cap, $110 starting cash, placement prices, and occupied-pad checks in `DefenseGame.TryPlaceAt`. Selling never restores a used wave allowance. |
 | Paths are not straight | The route turns repeatedly and has sampled quadratic curves at its corners. `DefenseRoute.Position` uses cumulative distance to preserve movement speed around bends. |
 
@@ -74,3 +74,7 @@ The original demo bounced random buggies around an arena and fired at clicked po
 `DefenseGame.WavePlan` specifies ten waves, growing from 12 to 56 enemies. Six enemy kinds are mixed deterministically so repeated attempts are comparable. Motorcycles arrive in wave 4; 160-base-HP trucks arrive in wave 5 and become more frequent in later waves. Wave 5 is now the midpoint, and victory requires clearing wave 10. The same one-placement allowance applies throughout, with ten distinct pads available.
 
 Vehicle graphics are authored by `DefenseArt.Vehicle`. A baked 20-sided wheel mesh, rider geometry, truck cab and cargo assembly, and different lighting distinguish the two new vehicles. `DefenseVehicleWheels` animates the wheels at a rate derived from speed and radius and respects pause. Both vehicles use explicit BoxCollider dimensions to fit their bodies, while retaining kinematic path-following and real projectile collisions.
+
+## Quick tutorial
+
+`DefenseHUD` owns four tutorial pages, Back/Next/Skip controls and a permanent Help button. The title screen start action opens the guide, and completing or skipping it starts a clean build phase. `DefenseGame.Update` routes tutorial keys before ordinary game controls, preventing Space from both advancing a page and launching a wave. Help pauses combat and remembers whether it introduced the pause, preserving an already-paused game and the player's speed choice on exit. The persistent placement line remains visible after the tutorial closes.

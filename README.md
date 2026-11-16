@@ -11,7 +11,7 @@ A complete tower-defense game built from the Tower-Projectiles starter assignmen
 1. In Unity Hub, choose **Add → Add project from disk** and select this folder.
 2. Open it with **Unity 6000.6.0f1**, the editor already installed on this Mac.
 3. Double-click **Assets/Scenes/NeonBastion.unity** in the Project panel.
-4. Press **Play**, then click **ENTER SECTOR** or press Enter.
+4. Press **Play**, then click **ENTER SECTOR** or press Enter. Follow the four-step quick tutorial, or choose **SKIP & PLAY**.
 
 The downloaded starter used Unity 6000.3.23f1. This separate copy was opened with 6000.6.0f1. The original starter is preserved in Downloads. `SampleScene.unity` and its scripts are retained for reference; use `NeonBastion.unity` for the assignment.
 
@@ -27,6 +27,8 @@ The board, camera and interface appear when Play starts. Custom drone hulls, tur
 | Launch next wave | Button or **Space** |
 | Upgrade selected tower | Button or **U** |
 | Sell selected tower | Button or **X** |
+| Reopen quick tutorial | **? HELP** button or **H** |
+| Tutorial navigation | **Next / Back**, Enter / Space, or Left Arrow; Escape skips/closes |
 | Pause / resume | Button or **P** |
 | Toggle 1× / 2× speed | Speed button |
 | Start / replay | Button or **Enter** |
@@ -34,6 +36,14 @@ The board, camera and interface appear when Play starts. Custom drone hulls, tur
 Towers choose targets, predict movement, and fire automatically. You can build and upgrade during a wave. Build only on marked pads, with **ONE new tower per wave and ten towers maximum**. Setup and combat share that allowance; selling does not restore it, and unused allowances do not accumulate. You start with **$110**. Money comes from monster kills, with no wave-clear bonus.
 
 Begin with one Pulse tower on the left interior pad. The first kill gives you enough money for its level-2 upgrade. Save for a Siege tower near the center in wave 2. Each later wave unlocks one more placement, which can be used during setup or combat. Cover several road sections with each tower and balance purchases against upgrades.
+
+## Quick tutorial and placement overlay
+
+The guide explains four steps: choose a Pulse or Siege tower, left-click a cyan hex pad, earn cash from defeated enemies, then select a tower and purchase upgrades. It lists the tower prices and enemy payouts and gives a concrete example: a $75 Pulse leaves $35; one $10 Scout kill funds the $45 level-2 upgrade. It also explains the one-new-tower-per-wave rule and the extra damage, firing speed, range and 0.8-unit height increase from upgrades.
+
+The guide opens from the title screen and can be reopened with **H** or **? HELP**. Opening it during play pauses the battle. Closing it restores the prior pause state and 1x/2x speed without resetting cash, towers or waves. A persistent textual overlay says **1 / 2 CHOOSE TOWER · LEFT-CLICK A CYAN PAD TO BUILD**, so placement instructions remain available after the guide closes.
+
+![Quick tutorial: upgrades and money example](TUTORIAL_PREVIEW.png)
 
 ## Towers
 

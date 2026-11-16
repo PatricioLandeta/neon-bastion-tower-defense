@@ -10,6 +10,20 @@ public class DefenseHUD : MonoBehaviour
     private GameObject menu;
     private Image pulseImage,siegeImage;
     private Button pulseButton,siegeButton;
+    private GameObject tutorial;
+    private Text tutorialProgress,tutorialHeading,tutorialBody,tutorialNextLabel,tutorialSkipLabel;
+    private Button tutorialBack;
+    private int tutorialPage;
+    private bool tutorialStartsGame,tutorialPausedByUs;
+    public bool TutorialOpen => tutorial!=null && tutorial.activeSelf;
+    public int TutorialPage => tutorialPage;
+    private static readonly string[] TutorialTitles={"CHOOSE YOUR TOWER","PLACE ON A CYAN PAD","KILLS EARN MONEY","UPGRADE YOUR DEFENSE"};
+    private static readonly string[] TutorialBodies={
+        "You start with $110.\n\nPULSE — $75: rapid fire, useful against Scouts and motorcycles.\nSIEGE — $110: heavier shots for armored enemies and trucks.\n\nClick a tower card at the bottom, or press 1 for Pulse / 2 for Siege.\nYou choose where to build; towers aim and fire automatically.",
+        "Move the pointer over a glowing CYAN HEXAGON on the board.\nLEFT-CLICK the pad to place your selected tower.\n\nYou may place ONE new tower per wave. Setup and combat share it.\nRoads, unmarked ground and occupied pads cannot take a new tower.\n\nPress SPACE or LAUNCH WAVE when your defense is ready.\nClearing the wave unlocks one placement for the next wave.",
+        "Every defeated enemy immediately adds cash to MONEY at the top.\nWatch for the gold +$ reward above the enemy.\n\nScout $10  /  Runner $15  /  Motorcycle $20\nArmored $25  /  Siege $100  /  Truck $120\n\nSave cash to buy your next wave's tower or improve an existing one.\nUnspent money carries over. There is no free wave-clear bonus.",
+        "LEFT-CLICK a placed tower to select it and see its range and stats.\nClick UPGRADE or press U when you can afford it.\n\nLevel 2 costs $45. Level 3 costs $90.\nEach upgrade adds damage, firing speed, range and 0.8 units of height.\n\nExample: a $75 Pulse leaves $35. One Scout kill adds $10 —\nyou now have the $45 needed for your first upgrade!"
+    };
     private readonly Color accent=new Color(.35f,.9f,1f);
     private readonly Color surface=new Color(.025f,.045f,.09f,.98f);
 
@@ -22,6 +36,7 @@ public class DefenseHUD : MonoBehaviour
         Panel("Top rail",transform,0,.90f,1,1,surface);
         Text brand=Label("Brand",transform,.025f,.935f,.36f,.985f,"NEON BASTION",27,TextAnchor.MiddleLeft);brand.fontStyle=FontStyle.Bold;
         Label("Tagline",transform,.025f,.905f,.4f,.94f,"T A C T I C A L   R E L A Y   D E F E N S E",11,TextAnchor.MiddleLeft).color=accent;
+        MakeButton("How to play",transform,.26f,.937f,.345f,.983f,"? HELP",()=>OpenTutorial(false));
         stats=Label("Mission stats",transform,.36f,.915f,.78f,.99f,"",21);
         pauseText=MakeButton("Pause",transform,.81f,.923f,.89f,.98f,"P  PAUSE",()=>game.TogglePause()).GetComponentInChildren<Text>();
         speedText=MakeButton("Speed",transform,.90f,.923f,.98f,.98f,"1× SPEED",()=>game.ToggleSpeed()).GetComponentInChildren<Text>();
@@ -42,10 +57,63 @@ public class DefenseHUD : MonoBehaviour
         title=Label("Title",menu.transform,.19f,.61f,.81f,.75f,"",57);title.fontStyle=FontStyle.Bold;
         subtitle=Label("Subtitle",menu.transform,.2f,.55f,.8f,.61f,"",20);subtitle.color=accent;
         description=Label("Instructions",menu.transform,.22f,.30f,.78f,.54f,"",20);
-        MakeButton("Start or retry",menu.transform,.34f,.205f,.66f,.285f,"ENTER SECTOR",()=>game.StartGame());
+        MakeButton("Start or retry",menu.transform,.34f,.205f,.66f,.285f,"ENTER SECTOR",()=>OpenTutorial(true));
+        BuildTutorial();
         Refresh();
     }
-    public void Message(string value) { tip.text="ONE NEW TOWER PER WAVE  ·  CLICK A TOWER + U TO UPGRADE  ·  SPACE NEXT WAVE\n"+value; }
+    public void Message(string value) { tip.text="1 / 2 CHOOSE TOWER  ·  LEFT-CLICK A CYAN PAD TO BUILD  ·  1 NEW TOWER / WAVE  ·  H HELP\n"+value; }
+    private void BuildTutorial()
+    {
+        tutorial=Panel("Quick tutorial",transform,0,0,1,1,new Color(.005f,.012f,.035f,.94f)).gameObject;
+        Panel("Tutorial card",tutorial.transform,.16f,.12f,.84f,.89f,surface);
+        Panel("Tutorial accent",tutorial.transform,.16f,.884f,.84f,.89f,accent);
+        tutorialProgress=Label("Tutorial progress",tutorial.transform,.20f,.79f,.80f,.85f,"",17);tutorialProgress.color=accent;
+        tutorialHeading=Label("Tutorial heading",tutorial.transform,.18f,.66f,.82f,.79f,"",43);tutorialHeading.fontStyle=FontStyle.Bold;
+        tutorialBody=Label("Tutorial instructions",tutorial.transform,.22f,.32f,.78f,.66f,"",22,TextAnchor.MiddleLeft);
+        Label("Tutorial shortcuts",tutorial.transform,.2f,.27f,.8f,.31f,"ENTER / SPACE: NEXT     ESC: SKIP OR CLOSE     H: REOPEN GUIDE",13).color=accent;
+        tutorialBack=MakeButton("Tutorial back",tutorial.transform,.20f,.17f,.34f,.25f,"BACK",PreviousTutorialPage);
+        tutorialSkipLabel=MakeButton("Tutorial skip",tutorial.transform,.36f,.17f,.58f,.25f,"SKIP & PLAY",CloseTutorial).GetComponentInChildren<Text>();
+        tutorialNextLabel=MakeButton("Tutorial next",tutorial.transform,.60f,.17f,.80f,.25f,"NEXT",NextTutorialPage).GetComponentInChildren<Text>();
+        tutorial.SetActive(false);
+    }
+    public void OpenTutorial(bool startNewGame)
+    {
+        if(TutorialOpen) return;
+        tutorialStartsGame=startNewGame;tutorialPage=0;
+        tutorialPausedByUs=game.CanBuild && !game.Paused;
+        if(tutorialPausedByUs) game.TogglePause();
+        tutorial.transform.SetAsLastSibling();tutorial.SetActive(true);RefreshTutorial();
+    }
+    public void NextTutorialPage()
+    {
+        if(!TutorialOpen) return;
+        if(tutorialPage==TutorialTitles.Length-1) { CloseTutorial();return; }
+        tutorialPage++;RefreshTutorial();
+    }
+    public void PreviousTutorialPage()
+    {
+        if(!TutorialOpen) return;
+        tutorialPage=Mathf.Max(0,tutorialPage-1);RefreshTutorial();
+    }
+    private void RefreshTutorial()
+    {
+        tutorialProgress.text="QUICK START  /  STEP "+(tutorialPage+1)+" OF "+TutorialTitles.Length;
+        tutorialHeading.text=TutorialTitles[tutorialPage];tutorialBody.text=TutorialBodies[tutorialPage];
+        tutorialBack.interactable=tutorialPage>0;
+        tutorialSkipLabel.text=tutorialStartsGame ? "SKIP & PLAY" : "CLOSE GUIDE";
+        tutorialNextLabel.text=tutorialPage==TutorialTitles.Length-1 ? (tutorialStartsGame ? "START DEFENDING" : "BACK TO GAME") : "NEXT  >";
+    }
+    public void CloseTutorial()
+    {
+        if(!TutorialOpen) return;
+        bool start=tutorialStartsGame;
+        tutorial.SetActive(false);
+        if(tutorialPausedByUs && game.Paused) game.TogglePause();
+        tutorialPausedByUs=false;
+        if(start) game.StartGame();
+        else if(game.CanBuild) Message(game.Paused ? "Still paused. Press P to resume when ready." : "Choose 1 / 2, click a cyan pad, then press SPACE. Click a tower and U to upgrade.");
+    }
+
     public void ShowReward(int amount,Vector3 worldPosition)
     {
         Vector3 screen=game.View.WorldToScreenPoint(worldPosition+Vector3.up*1.4f);

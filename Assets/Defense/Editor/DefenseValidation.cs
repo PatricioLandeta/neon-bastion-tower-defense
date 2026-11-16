@@ -68,6 +68,34 @@ public static class DefenseValidation
                     Vector3 hit=new Vector3(0,3,0)+launch*time+.5f*Physics.gravity*time*time;
                     Check(solved && Vector3.Distance(hit,new Vector3(10,.7f,4)+new Vector3(0,0,3)*time)<.002f && Mathf.Abs(launch.magnitude-17)<.01f,"Predictive ballistic solution intersects a moving target at the launch speed");
                     Check(!InterceptSolver.TrySolve(Vector3.zero,new Vector3(100,0,0),new Vector3(30,0,0),5,Physics.gravity,out _,out _),"Unreachable targets return no launch solution");
+                    game.HUD.transform.Find("Menu shade/Start or retry").GetComponent<Button>().onClick.Invoke();
+                    Check(game.HUD.TutorialOpen && game.State==DefenseState.Title && game.HUD.TutorialPage==0,
+                        "Start button opens the quick tutorial before any gameplay begins");
+                    Transform guide=game.HUD.transform.Find("Quick tutorial");
+                    Button next=guide.Find("Tutorial next").GetComponent<Button>();
+                    Button back=guide.Find("Tutorial back").GetComponent<Button>();
+                    Text guideText=guide.Find("Tutorial instructions").GetComponent<Text>();
+                    next.onClick.Invoke();
+                    Check(game.HUD.TutorialPage==1 && guideText.text.Contains("LEFT-CLICK") && guideText.text.Contains("CYAN HEXAGON"),
+                        "Tutorial explicitly explains selecting and left-clicking a cyan pad to place a tower");
+                    back.onClick.Invoke();Check(game.HUD.TutorialPage==0,"Tutorial Back returns to the previous explanation");
+                    next.onClick.Invoke();next.onClick.Invoke();
+                    Check(game.HUD.TutorialPage==2 && guideText.text.Contains("$10") && guideText.text.Contains("MONEY"),
+                        "Tutorial explains kill rewards and the money display");
+                    next.onClick.Invoke();
+                    Check(game.HUD.TutorialPage==3 && guideText.text.Contains("$45") && guideText.text.Contains("$90") && guideText.text.Contains("0.8"),
+                        "Tutorial explains upgrade prices and stronger, taller towers");
+                    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureTo("TUTORIAL_PREVIEW.png");
+                    next.onClick.Invoke();
+                    Check(!game.HUD.TutorialOpen && game.State==DefenseState.Building && game.Credits==110 && game.PlacementsRemaining==1,
+                        "Completing the tutorial starts a clean game without spending cash or the build allowance");
+                    Text instructions=game.HUD.transform.Find("Placement instructions").GetComponent<Text>();
+                    Check(instructions.text.Contains("1 / 2 CHOOSE") && instructions.text.Contains("LEFT-CLICK A CYAN PAD"),
+                        "Persistent gameplay overlay continues to explain tower selection and placement");
+                    game.HUD.transform.Find("How to play").GetComponent<Button>().onClick.Invoke();
+                    guide.Find("Tutorial skip").GetComponent<Button>().onClick.Invoke();
+                    Check(!game.HUD.TutorialOpen && game.State==DefenseState.Building && !game.Paused,
+                        "Help button reopens the guide and Close returns to the same game");
                     game.StartGame();
                     Check(game.Credits==110 && game.PlacementsRemaining==1 && game.Towers.Count==0,"New game starts with $110 and one wave-1 placement");
                     Check(!game.TryPlaceAt(new Vector3(-13,0,0)) && game.Credits==110 && game.PlacementsRemaining==1,"Invalid placement spends neither money nor allowance");
@@ -146,11 +174,20 @@ public static class DefenseValidation
                     int count=testTower.ShotsFired-shotsAtStart;
                     Check(count>=4 && count<=6,"Tower continuously fires at its configured cadence");
                     Check(testEnemy.Health<testEnemy.MaxHealth,"Predictive tower shots hit a moving enemy");
-                    testEnemy=game.SpawnEnemy(EnemyKind.Runner);testEnemy.SetDistance(16);game.TogglePause();pausedPosition=testEnemy.Body.position;
-                    Check(Time.timeScale==0 && !game.IsCombat,"Pause stops combat time");due=now+.25;stage++;break;
+                    testEnemy=game.SpawnEnemy(EnemyKind.Runner);testEnemy.SetDistance(16);game.HUD.OpenTutorial(false);pausedPosition=testEnemy.Body.position;
+                    Check(Time.timeScale==0 && !game.IsCombat,"Opening the tutorial during combat pauses simulation");due=now+.25;stage++;break;
                 case 4:
                     Check(Vector3.Distance(testEnemy.Body.position,pausedPosition)<.001f,"Enemies remain still while paused");
-                    game.TogglePause();game.ToggleSpeed();Check(Time.timeScale==2,"Speed control still enables 2x");game.ToggleSpeed();
+                    int moneyBefore=game.Credits;int waveBefore=game.Wave;
+                    game.HUD.CloseTutorial();
+                    Check(!game.Paused && Time.timeScale==1 && game.Credits==moneyBefore && game.Wave==waveBefore,
+                        "Closing combat help resumes without resetting money or the wave");
+                    game.TogglePause();game.HUD.OpenTutorial(false);game.HUD.CloseTutorial();
+                    Check(game.Paused && Time.timeScale==0,"Closing help preserves an already-paused game");
+                    game.TogglePause();game.ToggleSpeed();Check(Time.timeScale==2,"Speed control still enables 2x");
+                    game.HUD.OpenTutorial(false);game.HUD.CloseTutorial();
+                    Check(!game.Paused && game.Fast && Time.timeScale==2,"Closing help restores the player's prior 2x speed");
+                    game.ToggleSpeed();
                     testEnemy.SetDistance(game.Route.Length-.01f);simulatedDue=Time.time+.1f;due=now+.1;stage++;break;
                 case 5:
                     Check(game.State==DefenseState.Lost,"Any enemy completing the path immediately ends the game");
@@ -232,7 +269,7 @@ public static class DefenseValidation
     }
     [MenuItem("Tools/Neon Bastion/Capture preview during play")]
     public static void Capture() { CaptureTo("NEON_BASTION_PREVIEW.png"); }
-    private static void CaptureTo(string filename)
+    internal static void CaptureTo(string filename)
     {
         if(game==null) game=UnityEngine.Object.FindAnyObjectByType<DefenseGame>();
         if(game==null || game.View==null) return;

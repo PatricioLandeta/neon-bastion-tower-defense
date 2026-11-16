@@ -1,14 +1,21 @@
-Unity 6000.6.0f1 on macOS — expanded vehicle campaign
-54 checks passed. All ten waves cleared, 338 kills, exactly one new tower per wave.
-$110 starting cash; $7115 total earned from kills; no injected campaign money.
-Motorcycles and trucks: models, base stats, hitboxes and payouts checked.
-No C# compilation errors/warnings or shader errors. Main render and vehicle close-up inspected.
+Unity 6000.6.0f1 on macOS — quick tutorial version
+65 checks passed, including tutorial buttons, placement instructions, money and upgrade explanations, and pause/speed restoration.
+Full ten-wave campaign won: 338 enemies, one new tower per wave, kill-funded purchases.
+No C# compilation errors/warnings or shader errors. Tutorial and game previews inspected.
 
 DEFENSE PASS: Title starts with combat stopped
 DEFENSE PASS: Custom non-basic mesh assets are available
 DEFENSE PASS: Enemy route contains predetermined bends
 DEFENSE PASS: Predictive ballistic solution intersects a moving target at the launch speed
 DEFENSE PASS: Unreachable targets return no launch solution
+DEFENSE PASS: Start button opens the quick tutorial before any gameplay begins
+DEFENSE PASS: Tutorial explicitly explains selecting and left-clicking a cyan pad to place a tower
+DEFENSE PASS: Tutorial Back returns to the previous explanation
+DEFENSE PASS: Tutorial explains kill rewards and the money display
+DEFENSE PASS: Tutorial explains upgrade prices and stronger, taller towers
+DEFENSE PASS: Completing the tutorial starts a clean game without spending cash or the build allowance
+DEFENSE PASS: Persistent gameplay overlay continues to explain tower selection and placement
+DEFENSE PASS: Help button reopens the guide and Close returns to the same game
 DEFENSE PASS: New game starts with $110 and one wave-1 placement
 DEFENSE PASS: Invalid placement spends neither money nor allowance
 DEFENSE PASS: Player can buy a Pulse tower on a pad
@@ -48,9 +55,12 @@ DEFENSE PASS: Enemy body stays synchronized with curved-route progress
 DEFENSE PASS: Reported target velocity matches physical speed
 DEFENSE PASS: Tower continuously fires at its configured cadence
 DEFENSE PASS: Predictive tower shots hit a moving enemy
-DEFENSE PASS: Pause stops combat time
+DEFENSE PASS: Opening the tutorial during combat pauses simulation
 DEFENSE PASS: Enemies remain still while paused
+DEFENSE PASS: Closing combat help resumes without resetting money or the wave
+DEFENSE PASS: Closing help preserves an already-paused game
 DEFENSE PASS: Speed control still enables 2x
+DEFENSE PASS: Closing help restores the player's prior 2x speed
 DEFENSE PASS: Any enemy completing the path immediately ends the game
 DEFENSE PASS: Restart resets money, towers, rewards, waves and build allowance
 DEFENSE PASS: Wave five is now the midpoint and unlocks a sixth wave instead of victory
@@ -59,4 +69,4 @@ DEFENSE PASS: Winning strategy places exactly one tower per wave
 DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases and upgrades
 DEFENSE PASS: Victory waits for every active and scheduled enemy
 
-DEFENSE VALIDATION COMPLETE: 54 checks passed
+DEFENSE VALIDATION COMPLETE: 65 checks passed

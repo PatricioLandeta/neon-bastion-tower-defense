@@ -1,0 +1,34 @@
+Unity 6000.6.0f1 on macOS
+28 scene checks passed; complete five-wave campaign won, 68 enemies destroyed.
+No C# compilation errors/warnings or shader errors. Final render inspected.
+
+DEFENSE PASS: Title screen starts with no active combat
+DEFENSE PASS: Custom non-basic mesh assets are baked into the project
+DEFENSE PASS: Predetermined path has bends and smoothly sampled corners
+DEFENSE PASS: Predictive ballistic solution intersects a moving target at the configured speed
+DEFENSE PASS: Unreachable targets do not produce invalid launch vectors
+DEFENSE PASS: New game begins with 320 credits and player-placed towers only
+DEFENSE PASS: Road and unmarked ground reject tower placement without spending credits
+DEFENSE PASS: Player can place a Pulse tower on a marked pad
+DEFENSE PASS: Occupied pads cannot receive duplicate towers
+DEFENSE PASS: Player can select and place a second tower type
+DEFENSE PASS: Tower types differ in fire rate, projectile speed and height
+DEFENSE PASS: Upgrade spends credits and increases tower level
+DEFENSE PASS: Selling refunds 70 percent of investment and frees the pad
+DEFENSE PASS: Enemy types have distinct speed and HP statistics
+DEFENSE PASS: Six-tower limit is enforced even with enough credits for more
+DEFENSE PASS: Projectiles use dynamic 3D Rigidbody gravity and colliders
+DEFENSE PASS: A real physics projectile collision damages and destroys an enemy
+DEFENSE PASS: Enemy Rigidbody position matches its progress along the curved path
+DEFENSE PASS: Enemy current velocity stays consistent with its configured speed
+DEFENSE PASS: Tower continuously fires at its configured cadence
+DEFENSE PASS: Predictive tower shots hit an actually moving enemy
+DEFENSE PASS: Pause stops combat and simulation time
+DEFENSE PASS: Enemies remain still while paused
+DEFENSE PASS: Fast mode runs at 2x
+DEFENSE PASS: An enemy completing its path immediately ends the game
+DEFENSE PASS: Restart resets towers, credits, enemies and wave progress
+DEFENSE PASS: A full five-wave campaign is winnable using placement, upgrades and earned credits
+DEFENSE PASS: Victory waits for every spawned and scheduled enemy to be destroyed
+
+DEFENSE VALIDATION COMPLETE: 28 checks passed

@@ -1,0 +1,14 @@
+/Library/
+/Temp/
+/Logs/
+/UserSettings/
+/obj/
+/Build/
+/Builds/
+/.vscode/
+.DS_Store
+*.csproj
+*.sln
+*.slnx
+*.pidb
+*.userprefs

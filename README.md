@@ -1,0 +1,76 @@
+# Neon Bastion — 3D Physics Tower Defense
+
+A complete tower-defense game built from the Tower-Projectiles starter assignment. Protect the cyan relay at the end of a winding route. **One escaped enemy ends the game.** Defeat all five waves to win.
+
+![Neon Bastion in play](NEON_BASTION_PREVIEW.png)
+
+## Open in Unity
+
+1. In Unity Hub, choose **Add → Add project from disk** and select this folder.
+2. Open it with **Unity 6000.6.0f1**, the editor already installed on this Mac.
+3. Double-click **Assets/Scenes/NeonBastion.unity** in the Project panel.
+4. Press **Play**, then click **ENTER SECTOR** or press Enter.
+
+The downloaded starter used Unity 6000.3.23f1. This separate copy was opened with 6000.6.0f1. The original starter is preserved in Downloads. `SampleScene.unity` and its scripts are retained for reference; use `NeonBastion.unity` for the assignment.
+
+The board, camera and interface appear when Play starts. Custom drone hulls, turret platforms, crystals and curved-road meshes are saved in `Assets/Defense/Resources/DefenseMeshes`.
+
+## Controls
+
+| Action | Control |
+| --- | --- |
+| Choose Pulse / Siege tower | Buttons or **1 / 2** |
+| Place a tower | Left-click a free cyan hexagonal pad |
+| Inspect tower and show range | Left-click its occupied pad |
+| Launch next wave | Button or **Space** |
+| Upgrade selected tower | Button or **U** |
+| Sell selected tower | Button or **X** |
+| Pause / resume | Button or **P** |
+| Toggle 1× / 2× speed | Speed button |
+| Start / replay | Button or **Enter** |
+
+Towers choose targets, predict movement, and fire automatically. You can build and upgrade during a wave. Build only on marked pads, with **six towers maximum**. Tower placement also costs credits. Destroy enemies and finish waves to earn more.
+
+A useful opening is a Pulse tower on the left interior pad, a Siege tower near the center, and a Pulse tower on the right interior pad. Cover several sections of the winding road with each tower. Upgrade before buying towers that cover little of the route.
+
+## Towers
+
+| Stat at level 1 | Pulse | Siege |
+| --- | --- | --- |
+| Placement cost | 75 | 110 |
+| Shots per second | 2.4 | 0.75 |
+| Projectile speed | 17 units/s | 23 units/s |
+| Turret height | 1.4 units | 2.8 units |
+| Damage per hit | 1.15 | 4.5 |
+| Range | 10.5 units | 14 units |
+
+Towers can reach level 3. Each level increases damage, fire rate and range. Upgrades cost 45 and 90 credits. Selling returns 70% of the tower's total investment.
+
+## Enemies
+
+| Type | Speed | Base HP | Role |
+| --- | --- | --- | --- |
+| Scout | 2.6 units/s | 4 | Standard drone |
+| Runner | 3.9 units/s | 3 | Fast, lightly armored |
+| Armored | 1.65 units/s | 12 | Slow, durable crawler |
+| Siege | 1.25 units/s | 48 | Final-wave heavy |
+
+HP increases by 12% of base per wave after wave 1. Five waves contain 8, 11, 13, 16 and 20 enemies, for 68 enemies total.
+
+## Assignment coverage
+
+See [ASSIGNMENT_NOTES.md](ASSIGNMENT_NOTES.md) for the requirement-to-code map and the predictive aiming explanation. All C, B and A features are implemented. Upgrades, selling, a five-wave campaign, range indicators, health bars, impact effects, pause, speed control, menus and replay are additional polish; the instructor determines whether these earn A+ credit.
+
+## Checks and preview
+
+Use **Tools → Neon Bastion → Validate assignment and campaign** while outside Play mode to run the actual-scene checks. The validator opens the game scene, exercises its physics and controls through their shared game methods, plays an automated campaign, and exits Play mode. It does not save test placements into the scene. See `VALIDATION.md` for results and limits.
+
+The scene and custom mesh assets can be rebuilt with **Tools → Neon Bastion → Rebuild authored assets and scene**. This intentionally replaces the generated game scene; it is not required for normal play.
+
+## GitHub submission
+
+Upload the entire project folder using GitHub Desktop, including `Assets` with all `.meta` files, `Packages`, and `ProjectSettings`. The `.gitignore` excludes Unity's generated Library, Temp, Logs and local settings. Git LFS is not required. Add this folder as a new local repository, make an initial commit, then publish it to your GitHub account. Submit the repository link; if private, invite the instructor as a collaborator.
+
+## Asset attribution
+
+The new game models, environment meshes and shader are created in code for this project; no outside art packs were downloaded. Unity's built-in shapes supplement the custom meshes. Starter files and package dependencies remain from the provided Tower-Projectiles project. Read the code and adapt the explanations to your course's attribution requirements before presenting it.

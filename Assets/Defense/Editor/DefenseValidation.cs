@@ -10,7 +10,7 @@ public static class DefenseValidation
 {
     private const string Key="NeonBastionValidation";
     private static int stage,checks,shotsAtStart;
-    private static bool failed,captured;
+    private static bool failed,captured,midpointChecked;
     private static double due,deadline;
     private static DefenseGame game;
     private static DefenseEnemy testEnemy;
@@ -26,7 +26,7 @@ public static class DefenseValidation
     [MenuItem("Tools/Neon Bastion/Validate assignment and campaign")]
     public static void Run()
     {
-        SessionState.SetBool(Key,true);failed=false;stage=0;checks=0;captured=false;
+        SessionState.SetBool(Key,true);failed=false;stage=0;checks=0;captured=false;midpointChecked=false;
         EditorSceneManager.OpenScene(DefenseSceneBuilder.ScenePath);
         EditorApplication.EnterPlaymode();
     }
@@ -35,7 +35,7 @@ public static class DefenseValidation
         if(!SessionState.GetBool(Key,false)) return;
         if(mode==PlayModeStateChange.EnteredPlayMode)
         {
-            stage=0;checks=0;due=EditorApplication.timeSinceStartup+1;deadline=due+240;
+            stage=0;checks=0;due=EditorApplication.timeSinceStartup+1;deadline=due+300;
             EditorApplication.update-=Tick;EditorApplication.update+=Tick;
         }
         if(mode==PlayModeStateChange.EnteredEditMode)
@@ -99,17 +99,17 @@ public static class DefenseValidation
                     if(game.State!=DefenseState.Building) { due=now+.05;return; }
                     Time.timeScale=1;game.enabled=false;
                     Check(game.Wave==1 && game.PlacementWave==2 && game.PlacementsRemaining==1,"Clearing a wave unlocks exactly one placement for the next wave");
-                    Check(game.Credits==220,"All eight scheduled kills pay correctly and there is no free wave-clear money");
+                    Check(game.Credits==260,"All twelve scheduled kills pay correctly and there is no free wave-clear money");
                     game.Choose(TowerKind.Siege);Check(game.TryPlaceAt(game.Pads[3]),"Next wave permits buying one additional tower");
                     DefenseTower siege=game.SelectedTower;
                     Check(testTower.FireRate!=siege.FireRate && testTower.ProjectileSpeed!=siege.ProjectileSpeed && testTower.Height!=siege.Height,"Tower types still differ in fire rate, projectile speed and height");
                     game.SellSelected();
-                    Check(game.Credits==187 && game.Towers.Count==1 && game.PlacementsRemaining==0,"Selling refunds 70 percent but does not restore the wave allowance");
-                    Check(!game.TryPlaceAt(game.Pads[3]) && game.Credits==187,"Sell-and-rebuild cannot bypass the one-per-wave rule");
+                    Check(game.Credits==227 && game.Towers.Count==1 && game.PlacementsRemaining==0,"Selling refunds 70 percent but does not restore the wave allowance");
+                    Check(!game.TryPlaceAt(game.Pads[3]) && game.Credits==227,"Sell-and-rebuild cannot bypass the one-per-wave rule");
                     game.SelectTower(testTower);game.SellSelected();Check(game.Towers.Count==1,"Cannot strand the player by selling their only tower after using the allowance");
                     game.UpgradeSelected();float maxHeight=testTower.Height;
-                    Check(testTower.Level==3 && game.Credits==97 && maxHeight>2.9f,"A second upgrade spends $90 and makes the tower taller again");
-                    game.UpgradeSelected();Check(testTower.Level==3 && game.Credits==97,"Maximum level cannot consume money or grow indefinitely");
+                    Check(testTower.Level==3 && game.Credits==137 && maxHeight>2.9f,"A second upgrade spends $90 and makes the tower taller again");
+                    game.UpgradeSelected();Check(testTower.Level==3 && game.Credits==137,"Maximum level cannot consume money or grow indefinitely");
                     game.LaunchWave();Check(game.PlacementsRemaining==0 && game.Wave==2,"Wave-2 launch preserves its already-used setup allowance");
                     game.StartGame();game.LaunchWave();
                     testEnemy=game.SpawnEnemy(EnemyKind.Scout);testEnemy.SetDistance(9);testEnemy.enabled=false;
@@ -120,6 +120,23 @@ public static class DefenseValidation
                     simulatedDue=Time.time+.8f;due=now+.1;stage++;break;
                 case 2:
                     Check(game.Kills==1 && game.Credits==120,"An actual projectile collision kills an enemy and pays its money reward");
+                    DefenseEnemy motorcycle=game.SpawnEnemy(EnemyKind.Motorcycle),truck=game.SpawnEnemy(EnemyKind.Truck);
+                    Check(motorcycle.Speed>3.9f && motorcycle.MaxHealth==6 && truck.MaxHealth==160 && truck.Speed<1.25f,
+                        "Motorcycles are fast and trucks have 160 base HP at a slower speed");
+                    Check(truck.GetComponent<BoxCollider>().size.z>motorcycle.GetComponent<BoxCollider>().size.z &&
+                        truck.transform.Find("Truck chassis")!=null && motorcycle.transform.Find("Motorcycle arrow fairing")!=null &&
+                        Resources.Load<Mesh>("DefenseMeshes/Wheel")!=null,
+                        "Vehicles have distinct models, fitted box hitboxes and authored wheel meshes");
+                    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureVehicles(motorcycle,truck);
+                    motorcycle.TakeDamage(10000);Check(game.Credits==140,"Motorcycle kill pays $20");
+                    truck.TakeDamage(10000);Check(game.Credits==260,"High-HP truck kill pays $120");
+                    truck.TakeDamage(10000);Check(game.Credits==260,"Truck payout cannot be claimed twice");
+                    int total=0,scouts=0;bool hasBike=false,hasTruck=false;
+                    for(int wave=1;wave<=DefenseGame.TotalWaves;wave++)
+                        foreach(EnemyKind kind in DefenseGame.WavePlan(wave))
+                        { total++;if(kind==EnemyKind.Scout) scouts++;if(kind==EnemyKind.Motorcycle) hasBike=true;if(kind==EnemyKind.Truck) hasTruck=true; }
+                    Check(DefenseGame.TotalWaves==10 && total==338 && scouts>150 && hasBike && hasTruck,
+                        "Ten escalating waves contain 338 enemies with larger Scout groups and both new vehicle types");
                     game.StartGame();game.Choose(TowerKind.Pulse);game.TryPlaceAt(game.Pads[1]);testTower=game.Towers[0];
                     game.LaunchWave();testEnemy=game.SpawnEnemy(EnemyKind.Armored);testEnemy.SetDistance(7);
                     shotsAtStart=testTower.ShotsFired;simulatedDue=Time.time+2.1f;due=now+.1;stage++;break;
@@ -144,8 +161,9 @@ public static class DefenseValidation
                     if(game.State==DefenseState.Lost) throw new Exception("Hard campaign lost in wave "+game.Wave+", money="+game.Credits+", kills="+game.Kills+", towers="+game.Towers.Count);
                     if(game.State==DefenseState.Won)
                     {
-                        Check(game.Wave==5 && game.Kills==68,"Harder campaign is winnable: all five waves and 68 enemies defeated");
-                        Check(game.Towers.Count==5,"Winning strategy places exactly one tower per wave");
+                        int expected=0;for(int wave=1;wave<=DefenseGame.TotalWaves;wave++) expected+=DefenseGame.WavePlan(wave).Count;
+                        Check(game.Wave==10 && game.Kills==expected,"Expanded campaign is winnable: all ten waves and 338 enemies defeated");
+                        Check(game.Towers.Count==10,"Winning strategy places exactly one tower per wave");
                         int spent=0;foreach(DefenseTower tower in game.Towers) spent+=tower.Investment;
                         Check(game.Credits==DefenseGame.StartingCredits+game.KillEarnings-spent,"Campaign money exactly equals starting cash plus kill rewards minus purchases and upgrades");
                         Check(game.Enemies.Count==0 && game.SpawnRemaining==0,"Victory waits for every active and scheduled enemy");
@@ -154,9 +172,11 @@ public static class DefenseValidation
                         EditorApplication.ExitPlaymode();stage++;return;
                     }
                     if(game.TowersPlacedThisWave>1) throw new Exception("Campaign exceeded the one-tower allowance");
+                    if(!midpointChecked && game.State==DefenseState.Building && game.Wave==5)
+                    { Check(game.PlacementsRemaining==1,"Wave five is now the midpoint and unlocks a sixth wave instead of victory");midpointChecked=true; }
                     BuildCampaignDefense();
                     if(game.State==DefenseState.Building) game.LaunchWave();
-                    if(!captured && game.Wave>=3 && game.Enemies.Count>=3 && Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0)
+                    if(!captured && game.Wave>=5 && game.Enemies.Exists(e=>e.Kind==EnemyKind.Truck) && Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0)
                     { Capture();captured=true; }
                     due=now+.05;break;
             }
@@ -166,7 +186,9 @@ public static class DefenseValidation
     }
     private static void BuildCampaignDefense()
     {
-        int[] pads={1,3,5,7,0};TowerKind[] kinds={TowerKind.Pulse,TowerKind.Siege,TowerKind.Pulse,TowerKind.Siege,TowerKind.Pulse};
+        int[] pads={1,3,5,7,0,6,2,8,4,9};
+        TowerKind[] kinds={TowerKind.Pulse,TowerKind.Siege,TowerKind.Pulse,TowerKind.Siege,TowerKind.Pulse,
+            TowerKind.Siege,TowerKind.Siege,TowerKind.Pulse,TowerKind.Pulse,TowerKind.Siege};
         if(game.PlacementsRemaining>0)
         {
             int index=game.PlacementWave-1;
@@ -174,7 +196,7 @@ public static class DefenseValidation
             game.Choose(kinds[index]);game.TryPlaceAt(game.Pads[pads[index]]);
         }
         // Save for the next upgrade on the highest-priority non-maxed tower.
-        foreach(int pad in new[]{3,7,1,5,0})
+        foreach(int pad in new[]{3,7,1,5,0,6,2,8,4,9})
         {
             DefenseTower tower=game.Towers.Find(t=>t.PadIndex==pad);
             if(tower==null || tower.Level>=3) continue;
@@ -182,8 +204,35 @@ public static class DefenseValidation
             return;
         }
     }
+    private static void CaptureVehicles(DefenseEnemy motorcycle,DefenseEnemy truck)
+    {
+        Camera view=game.View;
+        Vector3 cameraPosition=view.transform.position;Quaternion cameraRotation=view.transform.rotation;
+        float size=view.orthographicSize;
+        Vector3 motorcyclePosition=motorcycle.Body.position,truckPosition=truck.Body.position;
+        try
+        {
+            motorcycle.enabled=truck.enabled=false;
+            motorcycle.Body.position=motorcycle.transform.position=new Vector3(-15,.7f,-3);
+            truck.Body.position=truck.transform.position=new Vector3(-11,.7f,-3);
+            Vector3 focus=new Vector3(-13,.7f,-3);
+            view.transform.position=focus+new Vector3(8,10,12);view.transform.LookAt(focus);view.orthographicSize=5.3f;
+            motorcycle.transform.Find("Health billboard").rotation=view.transform.rotation;
+            truck.transform.Find("Health billboard").rotation=view.transform.rotation;
+            game.HUD.gameObject.SetActive(false);
+            CaptureTo("VEHICLES_PREVIEW.png");
+        }
+        finally
+        {
+            game.HUD.gameObject.SetActive(true);view.transform.SetPositionAndRotation(cameraPosition,cameraRotation);view.orthographicSize=size;
+            motorcycle.Body.position=motorcycle.transform.position=motorcyclePosition;
+            truck.Body.position=truck.transform.position=truckPosition;
+            motorcycle.enabled=truck.enabled=true;
+        }
+    }
     [MenuItem("Tools/Neon Bastion/Capture preview during play")]
-    public static void Capture()
+    public static void Capture() { CaptureTo("NEON_BASTION_PREVIEW.png"); }
+    private static void CaptureTo(string filename)
     {
         if(game==null) game=UnityEngine.Object.FindAnyObjectByType<DefenseGame>();
         if(game==null || game.View==null) return;
@@ -196,7 +245,7 @@ public static class DefenseValidation
             camera.targetTexture=target;canvas.renderMode=RenderMode.ScreenSpaceCamera;canvas.worldCamera=camera;canvas.planeDistance=1;
             Canvas.ForceUpdateCanvases();camera.Render();RenderTexture.active=target;
             image.ReadPixels(new Rect(0,0,1600,1000),0,0);image.Apply();
-            string path=Path.Combine(Application.dataPath,"../NEON_BASTION_PREVIEW.png");File.WriteAllBytes(path,image.EncodeToPNG());Debug.Log("DEFENSE PREVIEW: "+path);
+            string path=Path.Combine(Application.dataPath,"../"+filename);File.WriteAllBytes(path,image.EncodeToPNG());Debug.Log("DEFENSE PREVIEW: "+path);
         }
         finally
         {

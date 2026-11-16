@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum EnemyKind { Scout, Runner, Armored, Siege }
+public enum EnemyKind { Scout, Runner, Armored, Siege, Motorcycle, Truck }
 
 public class DefenseEnemy : MonoBehaviour
 {
@@ -13,7 +13,7 @@ public class DefenseEnemy : MonoBehaviour
     public Vector3 CurrentVelocity { get; private set; }
     public Rigidbody Body { get; private set; }
     public bool IsAlive => !finished && Health>0;
-    public int Reward => Kind==EnemyKind.Siege ? 100 : Kind==EnemyKind.Armored ? 25 : Kind==EnemyKind.Runner ? 15 : 10;
+    public int Reward { get; private set; }
     private bool finished;
     private Transform bar;
     private Transform barRoot;
@@ -21,11 +21,29 @@ public class DefenseEnemy : MonoBehaviour
     public void Initialize(DefenseGame game,EnemyKind kind,int wave)
     {
         Game=game;Kind=kind;
-        Speed=kind==EnemyKind.Runner ? 3.9f : kind==EnemyKind.Armored ? 1.65f : kind==EnemyKind.Siege ? 1.25f : 2.6f;
-        float hp=kind==EnemyKind.Runner ? 3f : kind==EnemyKind.Armored ? 12f : kind==EnemyKind.Siege ? 48f : 4f;
+        float hp;
+        switch(kind)
+        {
+            case EnemyKind.Runner: Speed=3.9f;hp=3;Reward=15;break;
+            case EnemyKind.Armored: Speed=1.65f;hp=12;Reward=25;break;
+            case EnemyKind.Siege: Speed=1.25f;hp=48;Reward=100;break;
+            case EnemyKind.Motorcycle: Speed=5.2f;hp=6;Reward=20;break;
+            case EnemyKind.Truck: Speed=1.05f;hp=160;Reward=120;break;
+            default: Speed=2.6f;hp=4;Reward=10;break;
+        }
         MaxHealth=hp*(1f+.12f*(wave-1)); Health=MaxHealth;
-        Body=gameObject.AddComponent<Rigidbody>(); Body.isKinematic=true; Body.useGravity=false;
-        SphereCollider collider=gameObject.AddComponent<SphereCollider>(); collider.radius=kind==EnemyKind.Siege ? .85f : .62f;collider.center=Vector3.zero;
+        Body=gameObject.AddComponent<Rigidbody>();Body.isKinematic=true;Body.useGravity=false;
+        if(kind==EnemyKind.Truck || kind==EnemyKind.Motorcycle)
+        {
+            BoxCollider hitbox=gameObject.AddComponent<BoxCollider>();
+            hitbox.center=kind==EnemyKind.Truck ? new Vector3(0,.28f,0) : new Vector3(0,.4f,0);
+            hitbox.size=kind==EnemyKind.Truck ? new Vector3(1.9f,1.65f,3.9f) : new Vector3(.75f,1.65f,1.95f);
+        }
+        else
+        {
+            SphereCollider hitbox=gameObject.AddComponent<SphereCollider>();
+            hitbox.radius=kind==EnemyKind.Siege ? .85f : .62f;hitbox.center=Vector3.zero;
+        }
         gameObject.layer=9;
         DefenseArt.Enemy(transform,kind,out barRoot,out bar);
         SetDistance(0);

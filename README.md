@@ -1,8 +1,10 @@
 # Neon Bastion — 3D Physics Tower Defense
 
-A complete tower-defense game built from the Tower-Projectiles starter assignment. Protect the cyan relay at the end of a winding route. **One escaped enemy ends the game.** Defeat all five waves to win.
+A complete tower-defense game built from the Tower-Projectiles starter assignment. Protect the cyan relay at the end of a winding route. **One escaped enemy ends the game.** Defeat all ten waves to win.
 
 ![Neon Bastion in play](NEON_BASTION_PREVIEW.png)
+
+![New armored truck and motorcycle](VEHICLES_PREVIEW.png)
 
 ## Open in Unity
 
@@ -29,7 +31,7 @@ The board, camera and interface appear when Play starts. Custom drone hulls, tur
 | Toggle 1× / 2× speed | Speed button |
 | Start / replay | Button or **Enter** |
 
-Towers choose targets, predict movement, and fire automatically. You can build and upgrade during a wave. Build only on marked pads, with **ONE new tower per wave and five towers maximum**. Setup and combat share that allowance; selling does not restore it, and unused allowances do not accumulate. You start with **$110**. Money comes from monster kills, with no wave-clear bonus.
+Towers choose targets, predict movement, and fire automatically. You can build and upgrade during a wave. Build only on marked pads, with **ONE new tower per wave and ten towers maximum**. Setup and combat share that allowance; selling does not restore it, and unused allowances do not accumulate. You start with **$110**. Money comes from monster kills, with no wave-clear bonus.
 
 Begin with one Pulse tower on the left interior pad. The first kill gives you enough money for its level-2 upgrade. Save for a Siege tower near the center in wave 2. Each later wave unlocks one more placement, which can be used during setup or combat. Cover several road sections with each tower and balance purchases against upgrades.
 
@@ -53,15 +55,17 @@ Towers can reach level 3. Each level increases damage, fire rate, range, and act
 | Scout | 2.6 units/s | 4 | $10 | Standard drone |
 | Runner | 3.9 units/s | 3 | $15 | Fast, lightly armored |
 | Armored | 1.65 units/s | 12 | $25 | Slow, durable crawler |
-| Siege | 1.25 units/s | 48 | $100 | Final-wave heavy |
+| Siege | 1.25 units/s | 48 | $100 | Wave-5 elite |
+| Motorcycle | 5.2 units/s | 6 | $20 | Fast two-wheeled vehicle, introduced in wave 4 |
+| Truck | 1.05 units/s | 160 | $120 | Huge armored cargo truck, introduced in wave 5 |
 
 Every destroyed monster pays immediately, with a gold `+$` popup and an updated money balance.
 
-HP increases by 12% of base per wave after wave 1. Five waves contain 8, 11, 13, 16 and 20 enemies, for 68 enemies total.
+HP increases by 12% of base per wave after wave 1. Ten waves contain 12, 18, 24, 28, 32, 36, 40, 44, 48 and 56 enemies, for **338 enemies total**, including **188 Scouts**. See [WAVE_GUIDE.md](WAVE_GUIDE.md) for the full breakdown. Truck HP reaches 236.8 on its first appearance and 332.8 in wave 10. Motorcycles have spinning wheels and a rider; trucks have six wheels, an armored cab, cargo body, lights and fitted hitboxes.
 
 ## Assignment coverage
 
-See [ASSIGNMENT_NOTES.md](ASSIGNMENT_NOTES.md) for the requirement-to-code map and the predictive aiming explanation. All C, B and A features are implemented. Upgrades, selling, a five-wave campaign, range indicators, health bars, impact effects, pause, speed control, menus and replay are additional polish; the instructor determines whether these earn A+ credit.
+See [ASSIGNMENT_NOTES.md](ASSIGNMENT_NOTES.md) for the requirement-to-code map and the predictive aiming explanation. All C, B and A features are implemented. Upgrades, selling, a ten-wave campaign, range indicators, health bars, impact effects, pause, speed control, menus and replay are additional polish; the instructor determines whether these earn A+ credit.
 
 ## Checks and preview
 

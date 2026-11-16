@@ -1,8 +1,8 @@
 # Validation
 
-The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **47 checks**, including a complete five-wave win with all **68** enemies destroyed.
+The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **54 checks**, including a complete ten-wave win with all **338** enemies destroyed.
 
-The campaign strategy begins with the normal $110, places towers on legal pads, buys additional towers and upgrades only when rewards make them affordable, and places exactly one tower per wave and obeys the five-tower cap. It does not add credits, change enemy HP or speed, skip enemies, or apply test damage during the campaign. It accelerates the campaign with Unity time scaling; projectiles and enemies still use the normal fixed physics timestep. The focused tests run separately and intentionally create isolated test situations.
+The campaign strategy begins with the normal $110, places towers on legal pads, buys additional towers and upgrades only when rewards make them affordable, and places exactly one tower per wave and obeys the ten-tower cap. It does not add credits, change enemy HP or speed, skip enemies, or apply test damage during the campaign. It accelerates the campaign with Unity time scaling; projectiles and enemies still use the normal fixed physics timestep. The focused tests run separately and intentionally create isolated test situations.
 
 ## What is checked
 
@@ -12,7 +12,10 @@ The campaign strategy begins with the normal $110, places towers on legal pads, 
 - Valid pad placement, rejection of road placement, occupied-pad protection, and the one-per-wave limit during both setup and combat.
 - Both tower types and all three required stat differences.
 - Upgrade prices, damage/rate/range growth, actual turret and muzzle height growth, maximum level, insufficient-funds protection, selling refunds, and blocked sell-and-rebuild loopholes.
-- Distinct enemy speed and HP values.
+- Distinct speed and HP values for all six enemy types, including fast motorcycles and 160-base-HP trucks.
+- Different vehicle models, fitted box colliders, authored wheel mesh availability, $20/$120 payouts, and prevention of repeat truck payouts.
+- Ten planned waves containing 338 enemies and more than 150 Scouts, with both new types present.
+- Wave 5 unlocking wave 6 instead of ending the campaign.
 - Dynamic Rigidbody projectiles with gravity and colliders.
 - Damage and destruction from an actual projectile collision, with a correct cash payout.
 - Exact payouts for every enemy type, prevention of double payment, and a complete accounting of campaign money.
@@ -23,7 +26,7 @@ The campaign strategy begins with the normal $110, places towers on legal pads, 
 - Restart restoring economy, towers, waves, kill earnings and the single build allowance.
 - A legal full-campaign win, with victory delayed until every scheduled and active enemy is gone.
 
-The rendered preview was also inspected for board framing, readable controls, tower models, enemy health bars and range display. The preview depicts the validator's legal campaign in progress.
+The rendered preview was also inspected for board framing, readable controls, tower models, enemy health bars and range display. The main preview depicts the validator's legal campaign in progress. A separate close-up poses the motorcycle and truck to inspect their graphics; that posing is outside the legal campaign run.
 
 ## Run the checks
 

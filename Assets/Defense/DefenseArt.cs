@@ -9,7 +9,7 @@ public static class DefenseArt
     public static readonly Color Pink=new Color(2f,.15f,.65f);
     private static readonly Dictionary<string,Material> materials=new Dictionary<string,Material>();
     private static readonly Dictionary<string,Mesh> meshes=new Dictionary<string,Mesh>();
-    public static readonly string[] MeshNames={"OctagonalHull","ArrowHull","HeavyHull","Spire","HexPlatform","Road","RoadEdge"};
+    public static readonly string[] MeshNames={"OctagonalHull","ArrowHull","HeavyHull","Spire","HexPlatform","Road","RoadEdge","Wheel"};
 
     public static Material ColorMaterial(string name,Color color)
     {
@@ -29,6 +29,19 @@ public static class DefenseArt
     {
         if(name=="Road" || name=="RoadEdge") return RoadMesh(new DefenseRoute(),name=="Road" ? 1.7f : 2.15f);
         if(name=="ArrowHull") return Extrude(name,new Vector2[]{new Vector2(0,1),new Vector2(.65f,-.65f),new Vector2(0,-.3f),new Vector2(-.65f,-.65f)},.55f);
+        if(name=="Wheel")
+        {
+            List<Vector3> v=new List<Vector3>();List<int> t=new List<int>();
+            for(int i=0;i<20;i++)
+            {
+                float a=i*Mathf.PI*2/20,b=(i+1)*Mathf.PI*2/20;
+                Vector3 p=new Vector3(-.5f,Mathf.Cos(a),Mathf.Sin(a)),q=new Vector3(-.5f,Mathf.Cos(b),Mathf.Sin(b));
+                Vector3 r=q+Vector3.right,u=p+Vector3.right;
+                Triangle(v,t,new Vector3(-.5f,0,0),p,q);Triangle(v,t,new Vector3(.5f,0,0),r,u);
+                Triangle(v,t,p,u,r);Triangle(v,t,p,r,q);
+            }
+            return Finish(name,v,t);
+        }
         if(name=="Spire")
         {
             List<Vector3> vertices=new List<Vector3>();List<int> triangles=new List<int>();
@@ -130,6 +143,12 @@ public static class DefenseArt
 
     public static void Enemy(Transform root,EnemyKind kind,out Transform barRoot,out Transform bar)
     {
+        if(kind==EnemyKind.Truck || kind==EnemyKind.Motorcycle)
+        {
+            Vehicle(root,kind);
+            HealthBar(root,kind==EnemyKind.Truck ? 2.3f : 1.65f,out barRoot,out bar);
+            return;
+        }
         bool heavy=kind==EnemyKind.Armored || kind==EnemyKind.Siege;
         float size=kind==EnemyKind.Siege ? 1.4f : 1f;
         Color paint=kind==EnemyKind.Runner ? new Color(1.4f,.3f,.45f) : heavy ? new Color(.7f,.25f,1.3f) : new Color(.22f,.65f,.75f);
@@ -142,11 +161,64 @@ public static class DefenseArt
             Box(root,"Engine",new Vector3(side*.4f*size,0,-.7f*size),new Vector3(.15f,.15f,.12f),rim);
         }
         if(heavy) Shape(root,"Armor crown","Spire",new Vector3(0,.15f,0),new Vector3(.35f,.45f,.35f),rim);
-        barRoot=new GameObject("Health billboard").transform;barRoot.SetParent(root,false);barRoot.localPosition=Vector3.up*(size+.4f);
+        HealthBar(root,size+.4f,out barRoot,out bar);
+    }
+
+    private static void HealthBar(Transform root,float height,out Transform barRoot,out Transform bar)
+    {
+        barRoot=new GameObject("Health billboard").transform;barRoot.SetParent(root,false);barRoot.localPosition=Vector3.up*height;
         Box(barRoot,"HP background",Vector3.zero,new Vector3(1.1f,.1f,.05f),ColorMaterial("Health background",new Color(.035f,.05f,.1f)));
         Transform anchor=new GameObject("HP left anchor").transform;anchor.SetParent(barRoot,false);anchor.localPosition=new Vector3(-.52f,0,-.04f);
         bar=new GameObject("HP fill scale").transform;bar.SetParent(anchor,false);
         Box(bar,"HP",new Vector3(.52f,0,0),new Vector3(1.04f,.065f,.04f),ColorMaterial("Health",Cyan));
+    }
+
+    private static void Vehicle(Transform root,EnemyKind kind)
+    {
+        Material rubber=ColorMaterial("Rubber",new Color(.018f,.025f,.045f));
+        Material steel=ColorMaterial("Vehicle frame",new Color(.12f,.2f,.3f));
+        List<Transform> wheels=new List<Transform>();
+        if(kind==EnemyKind.Truck)
+        {
+            Material orange=ColorMaterial("Truck armor",new Color(.8f,.3f,.08f));
+            Material amber=ColorMaterial("Truck running lights",new Color(2f,.8f,.12f));
+            Box(root,"Truck chassis",new Vector3(0,-.12f,0),new Vector3(1.5f,.25f,3.7f),steel);
+            Shape(root,"Armored truck cab","HeavyHull",new Vector3(0,.28f,1.05f),new Vector3(.8f,1.3f,.8f),orange);
+            Shape(root,"Heavy cargo body","HeavyHull",new Vector3(0,.32f,-.65f),new Vector3(.8f,1.45f,1.25f),orange);
+            Box(root,"Truck windshield",new Vector3(0,.52f,1.57f),new Vector3(1.1f,.34f,.09f),ColorMaterial("Vehicle glass",Cyan));
+            Box(root,"Truck grille",new Vector3(0,.05f,1.82f),new Vector3(1.15f,.24f,.08f),rubber);
+            Box(root,"Truck ram bumper",new Vector3(0,-.16f,1.9f),new Vector3(1.6f,.2f,.17f),steel);
+            for(int side=-1;side<=1;side+=2)
+            {
+                Box(root,"Truck headlight",new Vector3(side*.55f,.13f,1.83f),new Vector3(.22f,.15f,.09f),amber);
+                Box(root,"Cargo luminous rail",new Vector3(side*.71f,.7f,-.65f),new Vector3(.06f,.08f,1.8f),amber);
+                foreach(float z in new[]{1.18f,-.65f,-1.35f})
+                    wheels.Add(VehicleWheel(root,new Vector3(side*.88f,-.36f,z),.34f,.22f,rubber,amber));
+            }
+            for(int i=0;i<3;i++) Box(root,"Cargo reinforcement",new Vector3(0,.91f,-1.35f+i*.6f),new Vector3(1.3f,.07f,.12f),steel);
+        }
+        else
+        {
+            Material red=ColorMaterial("Motorcycle fairing",new Color(1.3f,.12f,.27f));
+            Material glow=ColorMaterial("Motorcycle lights",Cyan);
+            Shape(root,"Motorcycle arrow fairing","ArrowHull",new Vector3(0,.05f,.08f),new Vector3(.33f,.6f,.85f),red);
+            Box(root,"Bike seat",new Vector3(0,.3f,-.23f),new Vector3(.36f,.13f,.45f),rubber);
+            Box(root,"Handlebars",new Vector3(0,.37f,.42f),new Vector3(.75f,.07f,.1f),steel);
+            Shape(root,"Rider torso","Spire",new Vector3(0,.42f,-.08f),new Vector3(.3f,.35f,.23f),steel);
+            Shape(root,"Rider helmet","OctagonalHull",new Vector3(0,1.03f,.01f),new Vector3(.23f,.65f,.25f),red);
+            Box(root,"Rider visor",new Vector3(0,1.05f,.22f),new Vector3(.32f,.1f,.05f),glow);
+            Box(root,"Motorcycle headlight",new Vector3(0,.18f,.72f),new Vector3(.19f,.12f,.08f),glow);
+            wheels.Add(VehicleWheel(root,new Vector3(0,-.32f,.65f),.38f,.24f,rubber,glow));
+            wheels.Add(VehicleWheel(root,new Vector3(0,-.32f,-.65f),.38f,.24f,rubber,glow));
+        }
+        root.gameObject.AddComponent<DefenseVehicleWheels>().Initialize(root.GetComponent<DefenseEnemy>(),wheels,kind==EnemyKind.Truck ? .34f : .38f);
+    }
+
+    private static Transform VehicleWheel(Transform root,Vector3 position,float radius,float width,Material rubber,Material glow)
+    {
+        Transform wheel=Shape(root,"Rolling wheel","Wheel",position,new Vector3(width,radius,radius),rubber).transform;
+        Box(wheel,"Glowing wheel spoke",Vector3.zero,new Vector3(1.03f,.18f,1.45f),glow);
+        return wheel;
     }
 
     public static void Bolt(Transform root,bool heavy)

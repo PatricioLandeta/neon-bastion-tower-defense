@@ -9,8 +9,8 @@ public enum DefenseState { Title, Building, Combat, Won, Lost }
 
 public class DefenseGame : MonoBehaviour
 {
-    public const int TowerLimit=5;
-    public const int TotalWaves=5;
+    public const int TowerLimit=10;
+    public const int TotalWaves=10;
     public const int StartingCredits=110;
     public int TowersPlacedThisWave { get; private set; }
     public int PlacementsRemaining => Mathf.Max(0,1-TowersPlacedThisWave);
@@ -34,7 +34,7 @@ public class DefenseGame : MonoBehaviour
     public readonly List<DefenseTower> Towers=new List<DefenseTower>();
     public readonly Vector3[] Pads={new Vector3(-16,0,-1),new Vector3(-9,0,-1),new Vector3(-9,0,8.5f),
         new Vector3(-.5f,0,0),new Vector3(0,0,-8.5f),new Vector3(8,0,0),new Vector3(8,0,9.2f),
-        new Vector3(16,0,0),new Vector3(16,0,-8.5f)};
+        new Vector3(16,0,0),new Vector3(16,0,-8.5f),new Vector3(-16,0,8.5f)};
     private List<EnemyKind> wavePlan=new List<EnemyKind>();
     private int spawned;
     private float nextSpawn;
@@ -63,7 +63,7 @@ public class DefenseGame : MonoBehaviour
         padRing=DefenseArt.Ring(battlefield,"Build cursor",DefenseArt.Cyan);padRing.enabled=false;
         if(EventSystem.current==null) new GameObject("EventSystem",typeof(EventSystem),typeof(InputSystemUIInputModule));
         HUD=new GameObject("Defense interface").AddComponent<DefenseHUD>();HUD.Initialize(this);
-        HUD.ShowMenu("NEON BASTION","THE RELAY MUST HOLD", "Build your defense. Stop every drone before it reaches the cyan relay.\nOne escaped enemy ends the run. Survive all five waves.\n\nONE new tower per wave. Click a cyan pad to place it.\nEvery kill earns cash. Upgrade towers to make them stronger and taller.","ENTER SECTOR");
+        HUD.ShowMenu("NEON BASTION","THE RELAY MUST HOLD", "Build your defense. Stop every drone before it reaches the cyan relay.\nOne escaped enemy ends the run. Survive all ten waves.\n\nONE new tower per wave. Click a cyan pad to place it.\nEvery kill earns cash. Upgrade towers to make them stronger and taller.","ENTER SECTOR");
     }
     private void FitCamera() { View.orthographicSize=Mathf.Max(21.5f,33f/Mathf.Max(.5f,View.aspect)); }
 
@@ -89,7 +89,7 @@ public class DefenseGame : MonoBehaviour
         DefenseTower existing=Towers.Find(t=>t.PadIndex==pad);
         if(existing!=null) { SelectTower(existing);return false; }
         if(PlacementsRemaining==0) { HUD.Message("Wave "+PlacementWave+" tower already placed. Earn cash and upgrade until the next wave.");return false; }
-        if(Towers.Count>=TowerLimit) { HUD.Message("Tower limit reached (5). Upgrade or sell an existing tower.");return false; }
+        if(Towers.Count>=TowerLimit) { HUD.Message("Tower limit reached (10). Upgrade or sell an existing tower.");return false; }
         int cost=DefenseTower.Cost(SelectedKind);
         if(!Spend(cost)) return false;
         GameObject root=new GameObject(SelectedKind+" tower");root.transform.position=Pads[pad]+Vector3.up*.2f;
@@ -130,20 +130,39 @@ public class DefenseGame : MonoBehaviour
 
     public static List<EnemyKind> WavePlan(int wave)
     {
-        List<EnemyKind> plan=new List<EnemyKind>();int count=wave==1 ? 8 : wave==2 ? 11 : wave==3 ? 13 : wave==4 ? 16 : 20;
+        int[] sizes={12,18,24,28,32,36,40,44,48,56};
+        int count=sizes[Mathf.Clamp(wave-1,0,sizes.Length-1)];
+        List<EnemyKind> plan=new List<EnemyKind>(count);
         for(int i=0;i<count;i++)
-            plan.Add(wave==5 && i==count-1 ? EnemyKind.Siege : wave>=3 && i%4==2 ? EnemyKind.Armored : wave>=2 && i%3==1 ? EnemyKind.Runner : EnemyKind.Scout);
+        {
+            EnemyKind kind=EnemyKind.Scout;
+            if(wave>=2 && i%5==1) kind=EnemyKind.Runner;
+            if(wave>=3 && i%6==3) kind=EnemyKind.Armored;
+            if(wave>=4 && i%7==5) kind=EnemyKind.Motorcycle;
+            if(wave>=5 && i==count/2) kind=EnemyKind.Truck;
+            if(wave==5 && i==count-1) kind=EnemyKind.Siege;
+            if(wave>=6 && i==count-1) kind=EnemyKind.Truck;
+            if(wave>=7 && i%17==10) kind=EnemyKind.Truck;
+            if(wave==10 && i==count-5) kind=EnemyKind.Truck;
+            plan.Add(kind);
+        }
         return plan;
+    }
+    public static string WaveName(int wave)
+    {
+        string[] names={"Scout patrol","Reinforcements","Armored column","Motorcycle rush","Heavy convoy",
+            "Open highway","Iron road","Overdrive","Last perimeter","Final convoy"};
+        return names[Mathf.Clamp(wave-1,0,names.Length-1)];
     }
     public void LaunchWave()
     {
         if(State!=DefenseState.Building || Paused) return;
         Wave++;State=DefenseState.Combat;wavePlan=WavePlan(Wave);spawned=0;nextSpawn=Time.time+.8f;
-        HUD.Message("WAVE "+Wave+" incoming. One new tower allowed this wave. Kills pay for upgrades.");HUD.Refresh();
+        HUD.Message("WAVE "+Wave+" / "+WaveName(Wave)+". One new tower allowed. Kills fund upgrades.");HUD.Refresh();
     }
     public DefenseEnemy SpawnEnemy(EnemyKind kind)
     {
-        GameObject root=new GameObject(kind+" drone");DefenseEnemy enemy=root.AddComponent<DefenseEnemy>();enemy.Initialize(this,kind,Mathf.Max(1,Wave));Enemies.Add(enemy);return enemy;
+        GameObject root=new GameObject(kind+(kind==EnemyKind.Truck || kind==EnemyKind.Motorcycle ? " vehicle" : " drone"));DefenseEnemy enemy=root.AddComponent<DefenseEnemy>();enemy.Initialize(this,kind,Mathf.Max(1,Wave));Enemies.Add(enemy);return enemy;
     }
     public void EnemyDestroyed(DefenseEnemy enemy)
     {
@@ -161,7 +180,7 @@ public class DefenseGame : MonoBehaviour
     {
         if(State!=DefenseState.Combat || SpawnRemaining>0 || Enemies.Count>0) return;
         ClearShots();
-        if(Wave>=TotalWaves) { State=DefenseState.Won;Finish("SECTOR SECURED","ALL FIVE WAVES DEFEATED","The relay is safe.\n"+Kills+" enemies destroyed · "+Towers.Count+" towers deployed."); }
+        if(Wave>=TotalWaves) { State=DefenseState.Won;Finish("SECTOR SECURED","ALL "+TotalWaves+" WAVES DEFEATED","The relay is safe.\n"+Kills+" enemies destroyed · "+Towers.Count+" towers deployed."); }
         else { State=DefenseState.Building;TowersPlacedThisWave=0;HUD.Message("Wave cleared! ONE new tower unlocked for wave "+(Wave+1)+". Spend your kill earnings wisely.");HUD.Refresh(); }
     }
     private void Finish(string title,string subtitle,string description)

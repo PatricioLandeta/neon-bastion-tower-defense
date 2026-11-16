@@ -61,7 +61,7 @@ public class DefenseHUD : MonoBehaviour
 
     public void Refresh()
     {
-        stats.text="MONEY  $"+game.Credits+"     TOWERS  "+game.Towers.Count+" / 5\nWAVE  "+game.PlacementWave+" / 5     HOSTILES  "+(game.Enemies.Count+game.SpawnRemaining)+"\nBUILDS LEFT  "+game.PlacementsRemaining+" / 1";
+        stats.text="MONEY  $"+game.Credits+"     TOWERS  "+game.Towers.Count+" / "+DefenseGame.TowerLimit+"\nWAVE  "+game.PlacementWave+" / "+DefenseGame.TotalWaves+"     HOSTILES  "+(game.Enemies.Count+game.SpawnRemaining)+"\nBUILDS LEFT  "+game.PlacementsRemaining+" / 1";
         pulseText.text="[ 1 ]   PULSE   /   $75\nRapid · speed 17 · height 1.4";
         siegeText.text="[ 2 ]   SIEGE   /   $110\nHeavy · speed 23 · height 2.8";
         pulseImage.color=game.SelectedTower==null && game.SelectedKind==TowerKind.Pulse ? new Color(.04f,.25f,.34f) : new Color(.055f,.08f,.14f);

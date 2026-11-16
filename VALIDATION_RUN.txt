@@ -1,8 +1,8 @@
-Unity 6000.6.0f1 on macOS — harder economy version
-47 checks passed. Full five-wave win with one new tower per wave and 68 kills.
-Starting cash $110; total kill earnings $1030; no wave-clear bonuses or injected campaign money.
-Actual turret/muzzle height growth verified. No C# compilation errors/warnings or shader errors.
-Rendered preview inspected. Tested in an isolated copy.
+Unity 6000.6.0f1 on macOS — expanded vehicle campaign
+54 checks passed. All ten waves cleared, 338 kills, exactly one new tower per wave.
+$110 starting cash; $7115 total earned from kills; no injected campaign money.
+Motorcycles and trucks: models, base stats, hitboxes and payouts checked.
+No C# compilation errors/warnings or shader errors. Main render and vehicle close-up inspected.
 
 DEFENSE PASS: Title starts with combat stopped
 DEFENSE PASS: Custom non-basic mesh assets are available
@@ -27,7 +27,7 @@ DEFENSE PASS: Armored kill pays $25
 DEFENSE PASS: Siege kill pays $100 and total kill earnings are tracked
 DEFENSE PASS: Even ample kill money cannot bypass the one-tower limit during combat
 DEFENSE PASS: Clearing a wave unlocks exactly one placement for the next wave
-DEFENSE PASS: All eight scheduled kills pay correctly and there is no free wave-clear money
+DEFENSE PASS: All twelve scheduled kills pay correctly and there is no free wave-clear money
 DEFENSE PASS: Next wave permits buying one additional tower
 DEFENSE PASS: Tower types still differ in fire rate, projectile speed and height
 DEFENSE PASS: Selling refunds 70 percent but does not restore the wave allowance
@@ -38,6 +38,12 @@ DEFENSE PASS: Maximum level cannot consume money or grow indefinitely
 DEFENSE PASS: Wave-2 launch preserves its already-used setup allowance
 DEFENSE PASS: Projectiles use dynamic Rigidbody gravity
 DEFENSE PASS: An actual projectile collision kills an enemy and pays its money reward
+DEFENSE PASS: Motorcycles are fast and trucks have 160 base HP at a slower speed
+DEFENSE PASS: Vehicles have distinct models, fitted box hitboxes and authored wheel meshes
+DEFENSE PASS: Motorcycle kill pays $20
+DEFENSE PASS: High-HP truck kill pays $120
+DEFENSE PASS: Truck payout cannot be claimed twice
+DEFENSE PASS: Ten escalating waves contain 338 enemies with larger Scout groups and both new vehicle types
 DEFENSE PASS: Enemy body stays synchronized with curved-route progress
 DEFENSE PASS: Reported target velocity matches physical speed
 DEFENSE PASS: Tower continuously fires at its configured cadence
@@ -47,9 +53,10 @@ DEFENSE PASS: Enemies remain still while paused
 DEFENSE PASS: Speed control still enables 2x
 DEFENSE PASS: Any enemy completing the path immediately ends the game
 DEFENSE PASS: Restart resets money, towers, rewards, waves and build allowance
-DEFENSE PASS: Harder campaign is winnable: all five waves and 68 enemies defeated
+DEFENSE PASS: Wave five is now the midpoint and unlocks a sixth wave instead of victory
+DEFENSE PASS: Expanded campaign is winnable: all ten waves and 338 enemies defeated
 DEFENSE PASS: Winning strategy places exactly one tower per wave
 DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases and upgrades
 DEFENSE PASS: Victory waits for every active and scheduled enemy
 
-DEFENSE VALIDATION COMPLETE: 47 checks passed
+DEFENSE VALIDATION COMPLETE: 54 checks passed

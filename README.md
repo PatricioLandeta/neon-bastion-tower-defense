@@ -29,9 +29,9 @@ The board, camera and interface appear when Play starts. Custom drone hulls, tur
 | Toggle 1× / 2× speed | Speed button |
 | Start / replay | Button or **Enter** |
 
-Towers choose targets, predict movement, and fire automatically. You can build and upgrade during a wave. Build only on marked pads, with **six towers maximum**. Tower placement also costs credits. Destroy enemies and finish waves to earn more.
+Towers choose targets, predict movement, and fire automatically. You can build and upgrade during a wave. Build only on marked pads, with **ONE new tower per wave and five towers maximum**. Setup and combat share that allowance; selling does not restore it, and unused allowances do not accumulate. You start with **$110**. Money comes from monster kills, with no wave-clear bonus.
 
-A useful opening is a Pulse tower on the left interior pad, a Siege tower near the center, and a Pulse tower on the right interior pad. Cover several sections of the winding road with each tower. Upgrade before buying towers that cover little of the route.
+Begin with one Pulse tower on the left interior pad. The first kill gives you enough money for its level-2 upgrade. Save for a Siege tower near the center in wave 2. Each later wave unlocks one more placement, which can be used during setup or combat. Cover several road sections with each tower and balance purchases against upgrades.
 
 ## Towers
 
@@ -44,16 +44,18 @@ A useful opening is a Pulse tower on the left interior pad, a Siege tower near t
 | Damage per hit | 1.15 | 4.5 |
 | Range | 10.5 units | 14 units |
 
-Towers can reach level 3. Each level increases damage, fire rate and range. Upgrades cost 45 and 90 credits. Selling returns 70% of the tower's total investment.
+Towers can reach level 3. Each level increases damage, fire rate, range, and actual turret height by **0.8 units**. The column extends and the firing muzzle rises; glowing collars mark upgrades. Upgrades cost $45 and $90. Selling returns 70% of the tower's total investment but never restores a used wave allowance. You cannot sell your last tower when no replacement placement remains.
 
 ## Enemies
 
-| Type | Speed | Base HP | Role |
-| --- | --- | --- | --- |
-| Scout | 2.6 units/s | 4 | Standard drone |
-| Runner | 3.9 units/s | 3 | Fast, lightly armored |
-| Armored | 1.65 units/s | 12 | Slow, durable crawler |
-| Siege | 1.25 units/s | 48 | Final-wave heavy |
+| Type | Speed | Base HP | Kill reward | Role |
+| --- | --- | --- | --- | --- |
+| Scout | 2.6 units/s | 4 | $10 | Standard drone |
+| Runner | 3.9 units/s | 3 | $15 | Fast, lightly armored |
+| Armored | 1.65 units/s | 12 | $25 | Slow, durable crawler |
+| Siege | 1.25 units/s | 48 | $100 | Final-wave heavy |
+
+Every destroyed monster pays immediately, with a gold `+$` popup and an updated money balance.
 
 HP increases by 12% of base per wave after wave 1. Five waves contain 8, 11, 13, 16 and 20 enemies, for 68 enemies total.
 

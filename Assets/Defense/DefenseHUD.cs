@@ -9,6 +9,7 @@ public class DefenseHUD : MonoBehaviour
     private Button launch,upgrade,sell;
     private GameObject menu;
     private Image pulseImage,siegeImage;
+    private Button pulseButton,siegeButton;
     private readonly Color accent=new Color(.35f,.9f,1f);
     private readonly Color surface=new Color(.025f,.045f,.09f,.98f);
 
@@ -27,8 +28,8 @@ public class DefenseHUD : MonoBehaviour
         Panel("Top accent",transform,0,.898f,1,.902f,new Color(.08f,.6f,.7f));
         Panel("Command deck",transform,0,0,1,.205f,surface);
         tip=Label("Placement instructions",transform,.025f,.157f,.975f,.202f,"",17,TextAnchor.MiddleLeft);tip.color=accent;
-        Button pulse=MakeButton("Pulse tower",transform,.025f,.027f,.20f,.145f,"",()=>game.Choose(TowerKind.Pulse));pulseImage=pulse.GetComponent<Image>();pulseText=pulse.GetComponentInChildren<Text>();
-        Button siege=MakeButton("Siege tower",transform,.215f,.027f,.39f,.145f,"",()=>game.Choose(TowerKind.Siege));siegeImage=siege.GetComponent<Image>();siegeText=siege.GetComponentInChildren<Text>();
+        Button pulse=MakeButton("Pulse tower",transform,.025f,.027f,.20f,.145f,"",()=>game.Choose(TowerKind.Pulse));pulseButton=pulse;pulseImage=pulse.GetComponent<Image>();pulseText=pulse.GetComponentInChildren<Text>();
+        Button siege=MakeButton("Siege tower",transform,.215f,.027f,.39f,.145f,"",()=>game.Choose(TowerKind.Siege));siegeButton=siege;siegeImage=siege.GetComponent<Image>();siegeText=siege.GetComponentInChildren<Text>();
         details=Label("Selection details",transform,.41f,.047f,.69f,.14f,"Select a tower to inspect it.",15,TextAnchor.MiddleLeft);
         upgrade=MakeButton("Upgrade",transform,.70f,.083f,.82f,.145f,"U  UPGRADE",()=>game.UpgradeSelected());
         sell=MakeButton("Sell",transform,.70f,.027f,.82f,.078f,"X  SELL",()=>game.SellSelected());
@@ -44,21 +45,35 @@ public class DefenseHUD : MonoBehaviour
         MakeButton("Start or retry",menu.transform,.34f,.205f,.66f,.285f,"ENTER SECTOR",()=>game.StartGame());
         Refresh();
     }
-    public void Message(string value) { tip.text="1 / 2  CHOOSE TOWER  ·  CLICK A CYAN PAD TO BUILD  ·  SPACE  NEXT WAVE\n"+value; }
+    public void Message(string value) { tip.text="ONE NEW TOWER PER WAVE  ·  CLICK A TOWER + U TO UPGRADE  ·  SPACE NEXT WAVE\n"+value; }
+    public void ShowReward(int amount,Vector3 worldPosition)
+    {
+        Vector3 screen=game.View.WorldToScreenPoint(worldPosition+Vector3.up*1.4f);
+        if(screen.z<=0) return;
+        Text label=Label("Kill reward",transform,.5f,.5f,.5f,.5f,"+$"+amount,24);
+        label.fontStyle=FontStyle.Bold;label.color=new Color(1f,.85f,.3f);
+        RectTransform rect=label.rectTransform;rect.sizeDelta=new Vector2(140,44);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)transform,screen,null,out Vector2 local);
+        rect.anchoredPosition=local;
+        Shadow shadow=label.gameObject.AddComponent<Shadow>();shadow.effectColor=new Color(0,0,0,.8f);shadow.effectDistance=new Vector2(1,-1);
+        label.gameObject.AddComponent<DefenseCashPopup>().Initialize(label);
+    }
+
     public void Refresh()
     {
-        stats.text="CREDITS  "+game.Credits+"     TOWERS  "+game.Towers.Count+" / 6\nWAVE  "+game.Wave+" / 5     HOSTILES  "+(game.Enemies.Count+game.SpawnRemaining);
-        pulseText.text="[ 1 ]   PULSE   /   75\nRapid · speed 17 · height 1.4";
-        siegeText.text="[ 2 ]   SIEGE   /   110\nHeavy · speed 23 · height 2.8";
+        stats.text="MONEY  $"+game.Credits+"     TOWERS  "+game.Towers.Count+" / 5\nWAVE  "+game.PlacementWave+" / 5     HOSTILES  "+(game.Enemies.Count+game.SpawnRemaining)+"\nBUILDS LEFT  "+game.PlacementsRemaining+" / 1";
+        pulseText.text="[ 1 ]   PULSE   /   $75\nRapid · speed 17 · height 1.4";
+        siegeText.text="[ 2 ]   SIEGE   /   $110\nHeavy · speed 23 · height 2.8";
         pulseImage.color=game.SelectedTower==null && game.SelectedKind==TowerKind.Pulse ? new Color(.04f,.25f,.34f) : new Color(.055f,.08f,.14f);
         siegeImage.color=game.SelectedTower==null && game.SelectedKind==TowerKind.Siege ? new Color(.28f,.18f,.055f) : new Color(.055f,.08f,.14f);
+        pulseButton.interactable=siegeButton.interactable=game.CanBuild && !game.Paused && game.PlacementsRemaining>0;
         DefenseTower tower=game.SelectedTower;
-        details.text=tower==null ? "CHOOSE 1 / 2 → CLICK A CYAN PAD\n6 towers maximum · automatic predictive aim" :
-            tower.Kind.ToString().ToUpper()+"  /  LEVEL "+tower.Level+"\nDamage "+tower.Damage.ToString("0.0")+" · "+tower.FireRate.ToString("0.0")+" shots/s · range "+tower.Range.ToString("0.0");
+        details.text=tower==null ? "CHOOSE 1 / 2 → CLICK A CYAN PAD\n1 new tower / wave · kills pay for upgrades" :
+            tower.Kind.ToString().ToUpper()+"  /  LEVEL "+tower.Level+"\nDamage "+tower.Damage.ToString("0.0")+" · "+tower.FireRate.ToString("0.0")+" shots/s\nRange "+tower.Range.ToString("0.0")+" · height "+tower.Height.ToString("0.0");
         upgrade.interactable=game.CanBuild && !game.Paused && tower!=null && tower.Level<3 && game.Credits>=tower.UpgradeCost;
-        sell.interactable=game.CanBuild && !game.Paused && tower!=null;
-        upgrade.GetComponentInChildren<Text>().text=tower!=null && tower.Level<3 ? "U  UPGRADE / "+tower.UpgradeCost : "U  UPGRADE";
-        sell.GetComponentInChildren<Text>().text=tower!=null ? "X  SELL / +"+Mathf.FloorToInt(tower.Investment*.7f) : "X  SELL";
+        sell.interactable=game.CanBuild && !game.Paused && tower!=null && (game.Towers.Count>1 || game.PlacementsRemaining>0);
+        upgrade.GetComponentInChildren<Text>().text=tower!=null && tower.Level<3 ? "U  UPGRADE / $"+tower.UpgradeCost : "U  UPGRADE";
+        sell.GetComponentInChildren<Text>().text=tower!=null ? "X  SELL / +$"+Mathf.FloorToInt(tower.Investment*.7f) : "X  SELL";
         launch.interactable=game.State==DefenseState.Building && !game.Paused;
         launchText.text=game.State==DefenseState.Combat ? "WAVE ACTIVE\nAUTO FIRE" : "LAUNCH WAVE "+(game.Wave+1)+"\n[ SPACE ]";
         pauseText.text=game.Paused ? "P  RESUME" : "P  PAUSE";speedText.text=game.Fast ? "2× SPEED" : "1× SPEED";

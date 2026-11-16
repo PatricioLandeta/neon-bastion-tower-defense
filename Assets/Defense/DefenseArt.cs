@@ -118,6 +118,16 @@ public static class DefenseArt
         muzzle=new GameObject("Muzzle").transform;muzzle.SetParent(turret,false);muzzle.localPosition=new Vector3(0,0,1.5f);
     }
 
+    public static void RaiseTower(Transform root,Transform turret,TowerKind kind,float height,int level)
+    {
+        Transform column=root.Find("Raised column");
+        column.localPosition=Vector3.up*(height/2);
+        column.localScale=new Vector3(.46f,height*2-.5f,.46f);
+        turret.localPosition=Vector3.up*height;
+        Material glow=ColorMaterial(kind==TowerKind.Pulse ? "Ion" : "Amber",kind==TowerKind.Pulse ? Cyan : new Color(2f,1f,.15f));
+        Shape(root,"Upgrade collar "+level,"HexPlatform",Vector3.up*(height-.65f),new Vector3(.56f,.15f,.56f),glow);
+    }
+
     public static void Enemy(Transform root,EnemyKind kind,out Transform barRoot,out Transform bar)
     {
         bool heavy=kind==EnemyKind.Armored || kind==EnemyKind.Siege;

@@ -9,8 +9,13 @@ public enum DefenseState { Title, Building, Combat, Won, Lost }
 
 public class DefenseGame : MonoBehaviour
 {
-    public const int TowerLimit=6;
+    public const int TowerLimit=5;
     public const int TotalWaves=5;
+    public const int StartingCredits=110;
+    public int TowersPlacedThisWave { get; private set; }
+    public int PlacementsRemaining => Mathf.Max(0,1-TowersPlacedThisWave);
+    public int PlacementWave => State==DefenseState.Building ? Mathf.Min(TotalWaves,Wave+1) : Mathf.Max(1,Wave);
+    public int KillEarnings { get; private set; }
     public DefenseState State { get; private set; }=DefenseState.Title;
     public bool IsCombat => State==DefenseState.Combat && !Paused;
     public bool CanBuild => State==DefenseState.Building || State==DefenseState.Combat;
@@ -58,7 +63,7 @@ public class DefenseGame : MonoBehaviour
         padRing=DefenseArt.Ring(battlefield,"Build cursor",DefenseArt.Cyan);padRing.enabled=false;
         if(EventSystem.current==null) new GameObject("EventSystem",typeof(EventSystem),typeof(InputSystemUIInputModule));
         HUD=new GameObject("Defense interface").AddComponent<DefenseHUD>();HUD.Initialize(this);
-        HUD.ShowMenu("NEON BASTION","THE RELAY MUST HOLD", "Build your defense. Stop every drone before it reaches the cyan relay.\nOne escaped enemy ends the run. Survive all five waves.\n\nChoose a tower, then click a glowing hex pad.\nTowers track, predict and fire automatically.","ENTER SECTOR");
+        HUD.ShowMenu("NEON BASTION","THE RELAY MUST HOLD", "Build your defense. Stop every drone before it reaches the cyan relay.\nOne escaped enemy ends the run. Survive all five waves.\n\nONE new tower per wave. Click a cyan pad to place it.\nEvery kill earns cash. Upgrade towers to make them stronger and taller.","ENTER SECTOR");
     }
     private void FitCamera() { View.orthographicSize=Mathf.Max(21.5f,33f/Mathf.Max(.5f,View.aspect)); }
 
@@ -67,14 +72,14 @@ public class DefenseGame : MonoBehaviour
         foreach(DefenseEnemy enemy in Enemies.ToArray()) if(enemy!=null) { enemy.gameObject.SetActive(false);Destroy(enemy.gameObject); }
         foreach(DefenseTower tower in Towers.ToArray()) if(tower!=null) { tower.gameObject.SetActive(false);Destroy(tower.gameObject); }
         Enemies.Clear();Towers.Clear();ClearShots();
-        Credits=320;Kills=0;Wave=0;spawned=0;wavePlan.Clear();SelectedTower=null;SelectedKind=TowerKind.Pulse;
+        Credits=StartingCredits;Kills=0;KillEarnings=0;TowersPlacedThisWave=0;Wave=0;spawned=0;wavePlan.Clear();SelectedTower=null;SelectedKind=TowerKind.Pulse;
         Paused=false;Fast=false;Time.timeScale=1;State=DefenseState.Building;rangeRing.enabled=false;
-        HUD.HideMenu();HUD.Message("Choose a tower, then click a cyan hex pad. Press SPACE when ready.");HUD.Refresh();
+        HUD.HideMenu();HUD.Message("Start with $110. Place ONE tower for wave 1. Kills fund stronger, taller upgrades.");HUD.Refresh();
     }
     public void Choose(TowerKind kind)
     {
         SelectedKind=kind;SelectedTower=null;rangeRing.enabled=false;
-        HUD.Message(kind==TowerKind.Pulse ? "PULSE: rapid fire · 75 credits. Click a free cyan hex pad." : "SIEGE: heavy ballistic shells · 110 credits. Click a free cyan hex pad.");HUD.Refresh();
+        HUD.Message(kind==TowerKind.Pulse ? "PULSE: rapid fire · $75. One new tower per wave." : "SIEGE: heavy ballistic shells · $110. One new tower per wave.");HUD.Refresh();
     }
     public bool TryPlaceAt(Vector3 point)
     {
@@ -83,13 +88,14 @@ public class DefenseGame : MonoBehaviour
         if(pad<0) { HUD.Message("Build only on marked cyan hex pads.");return false; }
         DefenseTower existing=Towers.Find(t=>t.PadIndex==pad);
         if(existing!=null) { SelectTower(existing);return false; }
-        if(Towers.Count>=TowerLimit) { HUD.Message("Tower limit reached (6). Upgrade or sell an existing tower.");return false; }
+        if(PlacementsRemaining==0) { HUD.Message("Wave "+PlacementWave+" tower already placed. Earn cash and upgrade until the next wave.");return false; }
+        if(Towers.Count>=TowerLimit) { HUD.Message("Tower limit reached (5). Upgrade or sell an existing tower.");return false; }
         int cost=DefenseTower.Cost(SelectedKind);
         if(!Spend(cost)) return false;
         GameObject root=new GameObject(SelectedKind+" tower");root.transform.position=Pads[pad]+Vector3.up*.2f;
-        DefenseTower tower=root.AddComponent<DefenseTower>();tower.Initialize(this,SelectedKind,pad);Towers.Add(tower);
+        DefenseTower tower=root.AddComponent<DefenseTower>();tower.Initialize(this,SelectedKind,pad);Towers.Add(tower);TowersPlacedThisWave++;
         SelectTower(tower);DefenseArt.Burst(root.transform.position+Vector3.up,DefenseArt.Cyan,.45f);
-        HUD.Message("Tower online. Select a tower to inspect, upgrade or sell it.");HUD.Refresh();return true;
+        HUD.Message("Wave tower deployed. Click it and press U to buy a stronger, taller upgrade.");HUD.Refresh();return true;
     }
     public int NearestPad(Vector3 point)
     {
@@ -103,22 +109,23 @@ public class DefenseGame : MonoBehaviour
     }
     public bool Spend(int amount)
     {
-        if(Credits<amount) { HUD.Message("Not enough credits. Destroy enemies to earn more.");return false; }
+        if(Credits<amount) { HUD.Message("Not enough money. Each kill pays cash for towers and upgrades.");return false; }
         Credits-=amount;return true;
     }
     public void UpgradeSelected()
     {
         if(!CanBuild || Paused || SelectedTower==null) return;
         if(SelectedTower.Level>=3) HUD.Message("This tower is at maximum level.");
-        else if(SelectedTower.Upgrade()) { SelectTower(SelectedTower);HUD.Message("Upgrade installed: more damage, faster fire, longer range."); }
+        else if(SelectedTower.Upgrade()) { SelectTower(SelectedTower);HUD.Message("Upgrade installed: taller tower, more damage, faster fire and longer range."); }
         HUD.Refresh();
     }
     public void SellSelected()
     {
         if(!CanBuild || Paused || SelectedTower==null) return;
+        if(Towers.Count==1 && PlacementsRemaining==0) { HUD.Message("Keep your only tower until the next build allowance; selling it now would leave you defenseless.");return; }
         int refund=Mathf.FloorToInt(SelectedTower.Investment*.7f);Credits+=refund;
         Towers.Remove(SelectedTower);SelectedTower.gameObject.SetActive(false);Destroy(SelectedTower.gameObject);SelectedTower=null;rangeRing.enabled=false;
-        HUD.Message("Tower sold for "+refund+" credits. Its pad and tower slot are available again.");HUD.Refresh();
+        HUD.Message("Tower sold for $"+refund+". Selling does not restore this wave's build allowance.");HUD.Refresh();
     }
 
     public static List<EnemyKind> WavePlan(int wave)
@@ -132,7 +139,7 @@ public class DefenseGame : MonoBehaviour
     {
         if(State!=DefenseState.Building || Paused) return;
         Wave++;State=DefenseState.Combat;wavePlan=WavePlan(Wave);spawned=0;nextSpawn=Time.time+.8f;
-        HUD.Message("WAVE "+Wave+" incoming. Towers fire automatically. You can still build and upgrade.");HUD.Refresh();
+        HUD.Message("WAVE "+Wave+" incoming. One new tower allowed this wave. Kills pay for upgrades.");HUD.Refresh();
     }
     public DefenseEnemy SpawnEnemy(EnemyKind kind)
     {
@@ -141,7 +148,9 @@ public class DefenseGame : MonoBehaviour
     public void EnemyDestroyed(DefenseEnemy enemy)
     {
         if(!Enemies.Remove(enemy)) return;
-        Credits+=enemy.Reward;Kills++;HUD.Refresh();CheckWaveEnd();
+        int reward=enemy.Reward;
+        Credits+=reward;KillEarnings+=reward;Kills++;
+        HUD.ShowReward(reward,enemy.transform.position);HUD.Refresh();CheckWaveEnd();
     }
     public void EnemyEscaped(DefenseEnemy enemy)
     {
@@ -153,7 +162,7 @@ public class DefenseGame : MonoBehaviour
         if(State!=DefenseState.Combat || SpawnRemaining>0 || Enemies.Count>0) return;
         ClearShots();
         if(Wave>=TotalWaves) { State=DefenseState.Won;Finish("SECTOR SECURED","ALL FIVE WAVES DEFEATED","The relay is safe.\n"+Kills+" enemies destroyed · "+Towers.Count+" towers deployed."); }
-        else { State=DefenseState.Building;Credits+=45;HUD.Message("Wave cleared! +45 credits. Reinforce, upgrade, then press SPACE for wave "+(Wave+1)+".");HUD.Refresh(); }
+        else { State=DefenseState.Building;TowersPlacedThisWave=0;HUD.Message("Wave cleared! ONE new tower unlocked for wave "+(Wave+1)+". Spend your kill earnings wisely.");HUD.Refresh(); }
     }
     private void Finish(string title,string subtitle,string description)
     {

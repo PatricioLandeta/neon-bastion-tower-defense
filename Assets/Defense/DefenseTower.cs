@@ -11,7 +11,7 @@ public class DefenseTower : MonoBehaviour
     public int Investment { get; private set; }
     public float FireRate => (Kind==TowerKind.Pulse ? 2.4f : .75f)*(1f+.2f*(Level-1));
     public float ProjectileSpeed => Kind==TowerKind.Pulse ? 17f : 23f;
-    public float Height => Kind==TowerKind.Pulse ? 1.4f : 2.8f;
+    public float Height => (Kind==TowerKind.Pulse ? 1.4f : 2.8f)+.8f*(Level-1);
     public float Range => (Kind==TowerKind.Pulse ? 10.5f : 14f)+.6f*(Level-1);
     public float Damage => (Kind==TowerKind.Pulse ? 1.15f : 4.5f)*(1f+.4f*(Level-1));
     public int UpgradeCost => 45*Level;
@@ -31,6 +31,7 @@ public class DefenseTower : MonoBehaviour
     {
         if(Level>=3 || !Game.Spend(UpgradeCost)) return false;
         Investment+=UpgradeCost;Level++;
+        DefenseArt.RaiseTower(transform,turret,Kind,Height,Level);
         DefenseArt.Burst(transform.position+Vector3.up*Height,DefenseArt.Cyan,.65f);
         return true;
     }

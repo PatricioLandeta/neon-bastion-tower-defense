@@ -13,7 +13,7 @@ public class DefenseEnemy : MonoBehaviour
     public Vector3 CurrentVelocity { get; private set; }
     public Rigidbody Body { get; private set; }
     public bool IsAlive => !finished && Health>0;
-    public int Reward => Kind==EnemyKind.Siege ? 80 : Kind==EnemyKind.Armored ? 20 : 12;
+    public int Reward => Kind==EnemyKind.Siege ? 100 : Kind==EnemyKind.Armored ? 25 : Kind==EnemyKind.Runner ? 15 : 10;
     private bool finished;
     private Transform bar;
     private Transform barRoot;

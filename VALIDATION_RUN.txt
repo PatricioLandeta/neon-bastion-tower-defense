@@ -1,34 +1,55 @@
-Unity 6000.6.0f1 on macOS
-28 scene checks passed; complete five-wave campaign won, 68 enemies destroyed.
-No C# compilation errors/warnings or shader errors. Sharper 4x-MSAA/SMAA render inspected; all checks repeated in an isolated copy.
+Unity 6000.6.0f1 on macOS — harder economy version
+47 checks passed. Full five-wave win with one new tower per wave and 68 kills.
+Starting cash $110; total kill earnings $1030; no wave-clear bonuses or injected campaign money.
+Actual turret/muzzle height growth verified. No C# compilation errors/warnings or shader errors.
+Rendered preview inspected. Tested in an isolated copy.
 
-DEFENSE PASS: Title screen starts with no active combat
-DEFENSE PASS: Custom non-basic mesh assets are baked into the project
-DEFENSE PASS: Predetermined path has bends and smoothly sampled corners
-DEFENSE PASS: Predictive ballistic solution intersects a moving target at the configured speed
-DEFENSE PASS: Unreachable targets do not produce invalid launch vectors
-DEFENSE PASS: New game begins with 320 credits and player-placed towers only
-DEFENSE PASS: Road and unmarked ground reject tower placement without spending credits
-DEFENSE PASS: Player can place a Pulse tower on a marked pad
-DEFENSE PASS: Occupied pads cannot receive duplicate towers
-DEFENSE PASS: Player can select and place a second tower type
-DEFENSE PASS: Tower types differ in fire rate, projectile speed and height
-DEFENSE PASS: Upgrade spends credits and increases tower level
-DEFENSE PASS: Selling refunds 70 percent of investment and frees the pad
-DEFENSE PASS: Enemy types have distinct speed and HP statistics
-DEFENSE PASS: Six-tower limit is enforced even with enough credits for more
-DEFENSE PASS: Projectiles use dynamic 3D Rigidbody gravity and colliders
-DEFENSE PASS: A real physics projectile collision damages and destroys an enemy
-DEFENSE PASS: Enemy Rigidbody position matches its progress along the curved path
-DEFENSE PASS: Enemy current velocity stays consistent with its configured speed
+DEFENSE PASS: Title starts with combat stopped
+DEFENSE PASS: Custom non-basic mesh assets are available
+DEFENSE PASS: Enemy route contains predetermined bends
+DEFENSE PASS: Predictive ballistic solution intersects a moving target at the launch speed
+DEFENSE PASS: Unreachable targets return no launch solution
+DEFENSE PASS: New game starts with $110 and one wave-1 placement
+DEFENSE PASS: Invalid placement spends neither money nor allowance
+DEFENSE PASS: Player can buy a Pulse tower on a pad
+DEFENSE PASS: Successful purchase spends its price and the wave's single placement
+DEFENSE PASS: Occupied pads and second placements are rejected without spending money
+DEFENSE PASS: Cannot upgrade without enough kill earnings
+DEFENSE PASS: Launching a wave does not grant a second placement
+DEFENSE PASS: Scout kill pays exactly $10
+DEFENSE PASS: A defeated enemy cannot pay twice
+DEFENSE PASS: Kill money purchases an upgrade for $45
+DEFENSE PASS: Upgrade visibly raises the turret and muzzle by 0.8 units
+DEFENSE PASS: Upgrade increases damage, fire rate and range
+DEFENSE PASS: Enemy types have different speed and HP
+DEFENSE PASS: Runner kill pays $15
+DEFENSE PASS: Armored kill pays $25
+DEFENSE PASS: Siege kill pays $100 and total kill earnings are tracked
+DEFENSE PASS: Even ample kill money cannot bypass the one-tower limit during combat
+DEFENSE PASS: Clearing a wave unlocks exactly one placement for the next wave
+DEFENSE PASS: All eight scheduled kills pay correctly and there is no free wave-clear money
+DEFENSE PASS: Next wave permits buying one additional tower
+DEFENSE PASS: Tower types still differ in fire rate, projectile speed and height
+DEFENSE PASS: Selling refunds 70 percent but does not restore the wave allowance
+DEFENSE PASS: Sell-and-rebuild cannot bypass the one-per-wave rule
+DEFENSE PASS: Cannot strand the player by selling their only tower after using the allowance
+DEFENSE PASS: A second upgrade spends $90 and makes the tower taller again
+DEFENSE PASS: Maximum level cannot consume money or grow indefinitely
+DEFENSE PASS: Wave-2 launch preserves its already-used setup allowance
+DEFENSE PASS: Projectiles use dynamic Rigidbody gravity
+DEFENSE PASS: An actual projectile collision kills an enemy and pays its money reward
+DEFENSE PASS: Enemy body stays synchronized with curved-route progress
+DEFENSE PASS: Reported target velocity matches physical speed
 DEFENSE PASS: Tower continuously fires at its configured cadence
-DEFENSE PASS: Predictive tower shots hit an actually moving enemy
-DEFENSE PASS: Pause stops combat and simulation time
+DEFENSE PASS: Predictive tower shots hit a moving enemy
+DEFENSE PASS: Pause stops combat time
 DEFENSE PASS: Enemies remain still while paused
-DEFENSE PASS: Fast mode runs at 2x
-DEFENSE PASS: An enemy completing its path immediately ends the game
-DEFENSE PASS: Restart resets towers, credits, enemies and wave progress
-DEFENSE PASS: A full five-wave campaign is winnable using placement, upgrades and earned credits
-DEFENSE PASS: Victory waits for every spawned and scheduled enemy to be destroyed
+DEFENSE PASS: Speed control still enables 2x
+DEFENSE PASS: Any enemy completing the path immediately ends the game
+DEFENSE PASS: Restart resets money, towers, rewards, waves and build allowance
+DEFENSE PASS: Harder campaign is winnable: all five waves and 68 enemies defeated
+DEFENSE PASS: Winning strategy places exactly one tower per wave
+DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases and upgrades
+DEFENSE PASS: Victory waits for every active and scheduled enemy
 
-DEFENSE VALIDATION COMPLETE: 28 checks passed
+DEFENSE VALIDATION COMPLETE: 47 checks passed

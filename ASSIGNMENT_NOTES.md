@@ -16,7 +16,7 @@
 | --- | --- |
 | Two tower types with different fire rates, projectile speeds and heights | Pulse and Siege properties in `DefenseTower`; all three required stats differ. Both use real gravity-affected projectiles. |
 | Clear placement instructions | Title screen plus persistent command deck: choose 1/2 or a tower button, then click a glowing cyan hex pad. HUD displays costs and the placement limit. |
-| Limited tower placement | Six-tower cap, finite starting credits, placement prices, and occupied-pad checks in `DefenseGame.TryPlaceAt`. Selling releases a slot. |
+| Limited tower placement | One new placement per wave (shared by setup and combat), five-tower cap, $110 starting cash, placement prices, and occupied-pad checks in `DefenseGame.TryPlaceAt`. Selling never restores a used wave allowance. |
 | Paths are not straight | The route turns repeatedly and has sampled quadratic curves at its corners. `DefenseRoute.Position` uses cumulative distance to preserve movement speed around bends. |
 
 ## A requirements
@@ -48,10 +48,10 @@ The shell then flies as a dynamic Rigidbody with gravity and continuous collisio
 ## Additional features
 
 - Five escalating waves and a final heavy enemy.
-- Earned credits, three tower levels, and 70% sell refunds.
+- Kill-earned cash ($10 / $15 / $25 / $100), three tower levels with physical height growth, and 70% sell refunds. No free wave-clear bonus.
 - Target priority favors the enemy farthest along the route.
 - Selected-tower range indicator and hover marker for build pads.
-- Enemy health bars, projectile trails and impact particles.
+- Enemy health bars, projectile trails, impact particles, and gold cash popups after kills.
 - Title, victory, defeat, restart, pause and 2× speed controls.
 - Custom neon art, readable tower cards, and a consistent interface.
 
@@ -62,3 +62,9 @@ These are candidates for the open-ended A+ category, not a guarantee of a grade.
 `DefenseGame` controls state, economy, waves and player commands. `DefenseTower`, `DefenseEnemy` and `DefenseProjectile` own their respective simulation behavior. `DefenseRoute` and `InterceptSolver` isolate reusable movement and aiming mathematics. `DefenseHUD` builds the interface. `DefenseArt` uses shared materials and meshes. Editor-only build and validation scripts are under `Assets/Defense/Editor` and are excluded from player builds.
 
 The original demo bounced random buggies around an arena and fired at clicked positions. Its scene and scripts remain available for comparison. The assignment game uses a new scene and separate scripts, replacing that demonstration loop with tower placement, route-based enemies, automatic predictive fire, campaign progression, and win/loss states.
+
+## Harder economy and tower growth
+
+`TowersPlacedThisWave` is reset for wave 1 at restart and for each next wave when the prior wave clears. Launching combat does not reset it, selling does not decrement it, and an invalid or unaffordable placement never consumes it. `PlacementWave` labels the correct upcoming wave while building. The UI displays remaining builds and disables new-tower buttons once the allowance is used; the game methods enforce the rule independently of the UI.
+
+`DefenseEnemy.Reward` defines the cash payout. `EnemyDestroyed` removes the enemy before awarding money, preventing double payment. `KillEarnings` supports an exact money audit. Tower upgrades spend $45 and $90, increase damage/rate/range, extend the support column and raise the actual gimbal and muzzle by 0.8 units per level. `DefenseArt.RaiseTower` adds a glowing upgrade collar. Five normal waves therefore permit at most five new towers in the campaign.

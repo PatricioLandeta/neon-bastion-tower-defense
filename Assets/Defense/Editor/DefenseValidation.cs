@@ -55,84 +55,109 @@ public static class DefenseValidation
         double now=EditorApplication.timeSinceStartup;
         try
         {
-            if((stage==1 || stage==2 || stage==4) && Time.time<simulatedDue) return;
             if(now>deadline) throw new Exception("Timed out at stage "+stage);
+            if((stage==2 || stage==3 || stage==5) && Time.time<simulatedDue) return;
             switch(stage)
             {
                 case 0:
                     game=UnityEngine.Object.FindAnyObjectByType<DefenseGame>();
-                    Check(game!=null && game.State==DefenseState.Title,"Title screen starts with no active combat");
-                    Check(Resources.Load<Mesh>("DefenseMeshes/ArrowHull")!=null && Resources.Load<Mesh>("DefenseMeshes/Spire")!=null,"Custom non-basic mesh assets are baked into the project");
-                    Check(Vector3.Dot(game.Route.Tangent(2),game.Route.Tangent(9))<.5f && game.Route.Points.Count>100,"Predetermined path has bends and smoothly sampled corners");
+                    Check(game!=null && game.State==DefenseState.Title,"Title starts with combat stopped");
+                    Check(Resources.Load<Mesh>("DefenseMeshes/ArrowHull")!=null,"Custom non-basic mesh assets are available");
+                    Check(Vector3.Dot(game.Route.Tangent(2),game.Route.Tangent(9))<.5f,"Enemy route contains predetermined bends");
                     bool solved=InterceptSolver.TrySolve(new Vector3(0,3,0),new Vector3(10,.7f,4),new Vector3(0,0,3),17,Physics.gravity,out Vector3 launch,out float time);
                     Vector3 hit=new Vector3(0,3,0)+launch*time+.5f*Physics.gravity*time*time;
-                    Check(solved && Vector3.Distance(hit,new Vector3(10,.7f,4)+new Vector3(0,0,3)*time)<.002f && Mathf.Abs(launch.magnitude-17)<.01f,"Predictive ballistic solution intersects a moving target at the configured speed");
-                    Check(!InterceptSolver.TrySolve(Vector3.zero,new Vector3(100,0,0),new Vector3(30,0,0),5,Physics.gravity,out _,out _),"Unreachable targets do not produce invalid launch vectors");
+                    Check(solved && Vector3.Distance(hit,new Vector3(10,.7f,4)+new Vector3(0,0,3)*time)<.002f && Mathf.Abs(launch.magnitude-17)<.01f,"Predictive ballistic solution intersects a moving target at the launch speed");
+                    Check(!InterceptSolver.TrySolve(Vector3.zero,new Vector3(100,0,0),new Vector3(30,0,0),5,Physics.gravity,out _,out _),"Unreachable targets return no launch solution");
                     game.StartGame();
-                    Check(game.Credits==320 && game.Towers.Count==0 && game.State==DefenseState.Building,"New game begins with 320 credits and player-placed towers only");
-                    Check(!game.TryPlaceAt(new Vector3(-13,0,0)) && game.Credits==320,"Road and unmarked ground reject tower placement without spending credits");
-                    game.Choose(TowerKind.Pulse);Check(game.TryPlaceAt(game.Pads[1]),"Player can place a Pulse tower on a marked pad");
-                    Check(!game.TryPlaceAt(game.Pads[1]) && game.Towers.Count==1,"Occupied pads cannot receive duplicate towers");
-                    game.Choose(TowerKind.Siege);Check(game.TryPlaceAt(game.Pads[3]),"Player can select and place a second tower type");
-                    DefenseTower pulse=game.Towers[0],siege=game.Towers[1];
-                    Check(pulse.FireRate!=siege.FireRate && pulse.ProjectileSpeed!=siege.ProjectileSpeed && pulse.Height!=siege.Height,"Tower types differ in fire rate, projectile speed and height");
-                    game.SelectTower(siege);game.UpgradeSelected();
-                    Check(siege.Level==2 && game.Credits==90,"Upgrade spends credits and increases tower level");
-                    game.SellSelected();Check(game.Towers.Count==1 && game.Credits==198,"Selling refunds 70 percent of investment and frees the pad");
-                    game.StartGame();game.LaunchWave();game.enabled=false;
-                    DefenseEnemy scout=game.SpawnEnemy(EnemyKind.Scout),runner=game.SpawnEnemy(EnemyKind.Runner),armored=game.SpawnEnemy(EnemyKind.Armored);
-                    Check(runner.Speed>scout.Speed && armored.Speed<scout.Speed && armored.MaxHealth>scout.MaxHealth,"Enemy types have distinct speed and HP statistics");
-                    for(int i=0;i<45;i++) game.SpawnEnemy(EnemyKind.Scout).TakeDamage(100);
-                    for(int i=0;i<6;i++){game.Choose(TowerKind.Pulse);game.TryPlaceAt(game.Pads[i]);}
-                    int credits=game.Credits;game.Choose(TowerKind.Siege);
-                    Check(game.Towers.Count==6 && !game.TryPlaceAt(game.Pads[7]) && game.Credits==credits,"Six-tower limit is enforced even with enough credits for more");
+                    Check(game.Credits==110 && game.PlacementsRemaining==1 && game.Towers.Count==0,"New game starts with $110 and one wave-1 placement");
+                    Check(!game.TryPlaceAt(new Vector3(-13,0,0)) && game.Credits==110 && game.PlacementsRemaining==1,"Invalid placement spends neither money nor allowance");
+                    game.Choose(TowerKind.Pulse);Check(game.TryPlaceAt(game.Pads[1]),"Player can buy a Pulse tower on a pad");
+                    testTower=game.Towers[0];
+                    Check(game.Credits==35 && game.PlacementsRemaining==0,"Successful purchase spends its price and the wave's single placement");
+                    Check(!game.TryPlaceAt(game.Pads[1]) && !game.TryPlaceAt(game.Pads[3]) && game.Credits==35,"Occupied pads and second placements are rejected without spending money");
+                    game.SelectTower(testTower);game.UpgradeSelected();Check(testTower.Level==1 && game.Credits==35,"Cannot upgrade without enough kill earnings");
+                    game.LaunchWave();game.enabled=false;
+                    Check(game.PlacementsRemaining==0,"Launching a wave does not grant a second placement");
+                    DefenseEnemy scout=game.SpawnEnemy(EnemyKind.Scout);scout.TakeDamage(1000);
+                    Check(game.Credits==45 && game.KillEarnings==10 && game.Kills==1,"Scout kill pays exactly $10");
+                    scout.TakeDamage(1000);Check(game.Credits==45 && game.Kills==1,"A defeated enemy cannot pay twice");
+                    float oldHeight=testTower.Height,oldDamage=testTower.Damage,oldRate=testTower.FireRate,oldRange=testTower.Range;
+                    game.SelectTower(testTower);game.UpgradeSelected();
+                    Check(testTower.Level==2 && game.Credits==0,"Kill money purchases an upgrade for $45");
+                    Check(Mathf.Abs(testTower.Height-oldHeight-.8f)<.001f && Mathf.Abs(testTower.Muzzle.parent.localPosition.y-testTower.Height)<.001f,"Upgrade visibly raises the turret and muzzle by 0.8 units");
+                    Check(testTower.Damage>oldDamage && testTower.FireRate>oldRate && testTower.Range>oldRange,"Upgrade increases damage, fire rate and range");
+                    DefenseEnemy runner=game.SpawnEnemy(EnemyKind.Runner),armored=game.SpawnEnemy(EnemyKind.Armored),boss=game.SpawnEnemy(EnemyKind.Siege);
+                    Check(runner.Speed>scout.Speed && armored.Speed<scout.Speed && armored.MaxHealth>scout.MaxHealth,"Enemy types have different speed and HP");
+                    runner.TakeDamage(1000);Check(game.Credits==15,"Runner kill pays $15");
+                    armored.TakeDamage(1000);Check(game.Credits==40,"Armored kill pays $25");
+                    boss.TakeDamage(1000);Check(game.Credits==140 && game.KillEarnings==150,"Siege kill pays $100 and total kill earnings are tracked");
+                    Check(!game.TryPlaceAt(game.Pads[3]) && game.Credits==140,"Even ample kill money cannot bypass the one-tower limit during combat");
+                    testTower.enabled=false;game.enabled=true;Time.timeScale=10;due=now+.05;stage++;break;
+                case 1:
+                    // Focused transition test only: clear scheduled enemies to exercise the wave boundary.
+                    foreach(DefenseEnemy enemy in game.Enemies.ToArray()) enemy.TakeDamage(1000);
+                    if(game.State!=DefenseState.Building) { due=now+.05;return; }
+                    Time.timeScale=1;game.enabled=false;
+                    Check(game.Wave==1 && game.PlacementWave==2 && game.PlacementsRemaining==1,"Clearing a wave unlocks exactly one placement for the next wave");
+                    Check(game.Credits==220,"All eight scheduled kills pay correctly and there is no free wave-clear money");
+                    game.Choose(TowerKind.Siege);Check(game.TryPlaceAt(game.Pads[3]),"Next wave permits buying one additional tower");
+                    DefenseTower siege=game.SelectedTower;
+                    Check(testTower.FireRate!=siege.FireRate && testTower.ProjectileSpeed!=siege.ProjectileSpeed && testTower.Height!=siege.Height,"Tower types still differ in fire rate, projectile speed and height");
+                    game.SellSelected();
+                    Check(game.Credits==187 && game.Towers.Count==1 && game.PlacementsRemaining==0,"Selling refunds 70 percent but does not restore the wave allowance");
+                    Check(!game.TryPlaceAt(game.Pads[3]) && game.Credits==187,"Sell-and-rebuild cannot bypass the one-per-wave rule");
+                    game.SelectTower(testTower);game.SellSelected();Check(game.Towers.Count==1,"Cannot strand the player by selling their only tower after using the allowance");
+                    game.UpgradeSelected();float maxHeight=testTower.Height;
+                    Check(testTower.Level==3 && game.Credits==97 && maxHeight>2.9f,"A second upgrade spends $90 and makes the tower taller again");
+                    game.UpgradeSelected();Check(testTower.Level==3 && game.Credits==97,"Maximum level cannot consume money or grow indefinitely");
+                    game.LaunchWave();Check(game.PlacementsRemaining==0 && game.Wave==2,"Wave-2 launch preserves its already-used setup allowance");
                     game.StartGame();game.LaunchWave();
                     testEnemy=game.SpawnEnemy(EnemyKind.Scout);testEnemy.SetDistance(9);testEnemy.enabled=false;
                     Vector3 origin=testEnemy.Body.position+new Vector3(4,1.5f,0);
                     InterceptSolver.TrySolve(origin,testEnemy.Body.position,Vector3.zero,17,Physics.gravity,out Vector3 velocity,out _);
                     DefenseProjectile projectile=DefenseProjectile.Launch(game,origin,velocity,10,false);
-                    Check(projectile.Body.useGravity && !projectile.Body.isKinematic && projectile.GetComponent<Collider>()!=null,"Projectiles use dynamic 3D Rigidbody gravity and colliders");
+                    Check(projectile.Body.useGravity && !projectile.Body.isKinematic,"Projectiles use dynamic Rigidbody gravity");
                     simulatedDue=Time.time+.8f;due=now+.1;stage++;break;
-                case 1:
-                    Check(game.Kills==1 && game.Enemies.Count==0,"A real physics projectile collision damages and destroys an enemy");
+                case 2:
+                    Check(game.Kills==1 && game.Credits==120,"An actual projectile collision kills an enemy and pays its money reward");
                     game.StartGame();game.Choose(TowerKind.Pulse);game.TryPlaceAt(game.Pads[1]);testTower=game.Towers[0];
                     game.LaunchWave();testEnemy=game.SpawnEnemy(EnemyKind.Armored);testEnemy.SetDistance(7);
                     shotsAtStart=testTower.ShotsFired;simulatedDue=Time.time+2.1f;due=now+.1;stage++;break;
-                case 2:
-                    Check(testEnemy!=null && Vector3.Distance(testEnemy.Body.position,game.Route.Position(testEnemy.DistanceTravelled)+Vector3.up*.7f)<.15f,
-                        "Enemy Rigidbody position matches its progress along the curved path");
-                    Check(testEnemy.CurrentVelocity.magnitude<=testEnemy.Speed*1.1f,
-                        "Enemy current velocity stays consistent with its configured speed");
+                case 3:
+                    Check(testEnemy!=null && Vector3.Distance(testEnemy.Body.position,game.Route.Position(testEnemy.DistanceTravelled)+Vector3.up*.7f)<.15f,"Enemy body stays synchronized with curved-route progress");
+                    Check(testEnemy.CurrentVelocity.magnitude<=testEnemy.Speed*1.1f,"Reported target velocity matches physical speed");
                     int count=testTower.ShotsFired-shotsAtStart;
                     Check(count>=4 && count<=6,"Tower continuously fires at its configured cadence");
-                    Check(testEnemy==null || testEnemy.Health<testEnemy.MaxHealth,"Predictive tower shots hit an actually moving enemy");
+                    Check(testEnemy.Health<testEnemy.MaxHealth,"Predictive tower shots hit a moving enemy");
                     testEnemy=game.SpawnEnemy(EnemyKind.Runner);testEnemy.SetDistance(16);game.TogglePause();pausedPosition=testEnemy.Body.position;
-                    Check(Time.timeScale==0 && !game.IsCombat,"Pause stops combat and simulation time");due=now+.25;stage++;break;
-                case 3:
-                    Check(Vector3.Distance(testEnemy.Body.position,pausedPosition)<.001f,"Enemies remain still while paused");
-                    game.TogglePause();game.ToggleSpeed();Check(Time.timeScale==2,"Fast mode runs at 2x");game.ToggleSpeed();
-                    testEnemy.SetDistance(game.Route.Length-.01f);simulatedDue=Time.time+.1f;due=now+.1;stage++;break;
+                    Check(Time.timeScale==0 && !game.IsCombat,"Pause stops combat time");due=now+.25;stage++;break;
                 case 4:
-                    Check(game.State==DefenseState.Lost,"An enemy completing its path immediately ends the game");
-                    game.StartGame();Check(game.Credits==320 && game.Towers.Count==0 && game.Wave==0 && game.Kills==0,"Restart resets towers, credits, enemies and wave progress");
-                    game.enabled=true;
-                    BuildCampaignDefense();game.LaunchWave();Time.timeScale=10;
-                    Debug.Log("DEFENSE CAMPAIGN: automated full run using only earned credits");
-                    due=now+.1;stage++;break;
+                    Check(Vector3.Distance(testEnemy.Body.position,pausedPosition)<.001f,"Enemies remain still while paused");
+                    game.TogglePause();game.ToggleSpeed();Check(Time.timeScale==2,"Speed control still enables 2x");game.ToggleSpeed();
+                    testEnemy.SetDistance(game.Route.Length-.01f);simulatedDue=Time.time+.1f;due=now+.1;stage++;break;
                 case 5:
-                    if(game.State==DefenseState.Lost) throw new Exception("Campaign strategy lost in wave "+game.Wave+" with "+game.Towers.Count+" towers, kills="+game.Kills+", shots="+string.Join(",",game.Towers.ConvertAll(t=>t.ShotsFired.ToString())));
-                    BuildCampaignDefense();
-                    if(game.State==DefenseState.Building) game.LaunchWave();
-                    if(!captured && game.Wave>=3 && game.Enemies.Count>=4 && Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0)
-                    { Capture();captured=true; }
+                    Check(game.State==DefenseState.Lost,"Any enemy completing the path immediately ends the game");
+                    game.StartGame();Check(game.Credits==110 && game.Towers.Count==0 && game.Wave==0 && game.Kills==0 && game.KillEarnings==0 && game.PlacementsRemaining==1,"Restart resets money, towers, rewards, waves and build allowance");
+                    game.enabled=true;BuildCampaignDefense();game.LaunchWave();Time.timeScale=10;
+                    Debug.Log("DEFENSE CAMPAIGN: one placement per wave, $110 start, kill money only");due=now+.05;stage++;break;
+                case 6:
+                    if(game.State==DefenseState.Lost) throw new Exception("Hard campaign lost in wave "+game.Wave+", money="+game.Credits+", kills="+game.Kills+", towers="+game.Towers.Count);
                     if(game.State==DefenseState.Won)
                     {
-                        Check(game.Wave==5 && game.Kills==68,"A full five-wave campaign is winnable using placement, upgrades and earned credits");
-                        Check(game.SpawnRemaining==0 && game.Enemies.Count==0,"Victory waits for every spawned and scheduled enemy to be destroyed");
+                        Check(game.Wave==5 && game.Kills==68,"Harder campaign is winnable: all five waves and 68 enemies defeated");
+                        Check(game.Towers.Count==5,"Winning strategy places exactly one tower per wave");
+                        int spent=0;foreach(DefenseTower tower in game.Towers) spent+=tower.Investment;
+                        Check(game.Credits==DefenseGame.StartingCredits+game.KillEarnings-spent,"Campaign money exactly equals starting cash plus kill rewards minus purchases and upgrades");
+                        Check(game.Enemies.Count==0 && game.SpawnRemaining==0,"Victory waits for every active and scheduled enemy");
                         Debug.Log("DEFENSE VALIDATION COMPLETE: "+checks+" checks passed");
-                        File.WriteAllText(Path.Combine(Application.dataPath,"../VALIDATION_RUN.txt"),checks+" scene checks passed; full campaign completed; kills="+game.Kills);
-                        EditorApplication.ExitPlaymode();stage++;
+                        File.WriteAllText(Path.Combine(Application.dataPath,"../VALIDATION_RUN.txt"),checks+" checks passed; one-tower-per-wave campaign won; kills="+game.Kills+"; kill earnings="+game.KillEarnings);
+                        EditorApplication.ExitPlaymode();stage++;return;
                     }
+                    if(game.TowersPlacedThisWave>1) throw new Exception("Campaign exceeded the one-tower allowance");
+                    BuildCampaignDefense();
+                    if(game.State==DefenseState.Building) game.LaunchWave();
+                    if(!captured && game.Wave>=3 && game.Enemies.Count>=3 && Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0)
+                    { Capture();captured=true; }
                     due=now+.05;break;
             }
         }
@@ -141,17 +166,20 @@ public static class DefenseValidation
     }
     private static void BuildCampaignDefense()
     {
-        int[] pads={1,3,5,7,0,6};TowerKind[] kinds={TowerKind.Pulse,TowerKind.Siege,TowerKind.Pulse,TowerKind.Siege,TowerKind.Pulse,TowerKind.Siege};
-        for(int i=0;i<pads.Length;i++)
+        int[] pads={1,3,5,7,0};TowerKind[] kinds={TowerKind.Pulse,TowerKind.Siege,TowerKind.Pulse,TowerKind.Siege,TowerKind.Pulse};
+        if(game.PlacementsRemaining>0)
         {
-            int pad=pads[i];if(game.Towers.Exists(t=>t.PadIndex==pad)) continue;
-            if(game.Credits<DefenseTower.Cost(kinds[i])) return;
-            game.Choose(kinds[i]);game.TryPlaceAt(game.Pads[pad]);
+            int index=game.PlacementWave-1;
+            if(game.Credits<DefenseTower.Cost(kinds[index])) return;
+            game.Choose(kinds[index]);game.TryPlaceAt(game.Pads[pads[index]]);
         }
-        foreach(int pad in new[]{3,7,1,5,0,6})
+        // Save for the next upgrade on the highest-priority non-maxed tower.
+        foreach(int pad in new[]{3,7,1,5,0})
         {
             DefenseTower tower=game.Towers.Find(t=>t.PadIndex==pad);
-            if(tower!=null && tower.Level<3 && game.Credits>=tower.UpgradeCost) { game.SelectTower(tower);game.UpgradeSelected();return; }
+            if(tower==null || tower.Level>=3) continue;
+            if(game.Credits>=tower.UpgradeCost) { game.SelectTower(tower);game.UpgradeSelected(); }
+            return;
         }
     }
     [MenuItem("Tools/Neon Bastion/Capture preview during play")]

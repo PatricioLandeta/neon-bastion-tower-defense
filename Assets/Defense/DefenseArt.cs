@@ -138,7 +138,38 @@ public static class DefenseArt
         column.localScale=new Vector3(.46f,height*2-.5f,.46f);
         turret.localPosition=Vector3.up*height;
         Material glow=ColorMaterial(kind==TowerKind.Pulse ? "Ion" : "Amber",kind==TowerKind.Pulse ? Cyan : new Color(2f,1f,.15f));
-        Shape(root,"Upgrade collar "+level,"HexPlatform",Vector3.up*(height-.65f),new Vector3(.56f,.15f,.56f),glow);
+        if(level>1)
+        {
+            Transform collar=root.Find("Upgrade collar "+level);
+            if(collar==null) collar=Shape(root,"Upgrade collar "+level,"HexPlatform",Vector3.zero,new Vector3(.56f,.15f,.56f),glow).transform;
+            collar.localPosition=Vector3.up*(height-.65f);
+        }
+    }
+
+    public static void MarkFusion(Transform root)
+    {
+        if(root.Find("Fusion ring")!=null) return;
+        Shape(root,"Fusion ring","HexPlatform",Vector3.up*.64f,new Vector3(1.03f,.16f,1.03f),
+            ColorMaterial("Fusion energy",new Color(1.5f,.4f,2f)));
+    }
+
+    public static Transform MergeGhost(DefenseTower source,Transform parent)
+    {
+        Transform ghost=new GameObject("Dragged tower preview").transform;
+        ghost.SetParent(parent,false);
+        Material material=ColorMaterial("Merge ghost",new Color(.15f,.7f,1f));
+        foreach(MeshFilter original in source.GetComponentsInChildren<MeshFilter>())
+        {
+            GameObject part=new GameObject("Preview part",typeof(MeshFilter),typeof(MeshRenderer));
+            part.transform.SetParent(ghost,false);
+            part.transform.localPosition=original.transform.position-source.transform.position;
+            part.transform.rotation=original.transform.rotation;
+            part.transform.localScale=original.transform.lossyScale;
+            part.GetComponent<MeshFilter>().sharedMesh=original.sharedMesh;
+            part.GetComponent<MeshRenderer>().sharedMaterial=material;
+        }
+        ghost.position=source.transform.position;
+        return ghost;
     }
 
     public static void Enemy(Transform root,EnemyKind kind,out Transform barRoot,out Transform bar)

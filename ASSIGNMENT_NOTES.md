@@ -4,7 +4,7 @@
 
 | Requirement | Where it is implemented |
 | --- | --- |
-| Player places towers | `DefenseGame.TryPlaceAt`, `Choose` and `HandlePointer`: screen ray intersects the ground, then chooses a marked pad. No towers are preplaced at game start. |
+| Player places towers | `DefenseGame.TryPlaceAt` and `Choose`, with `DefenseMerging.HandlePointer`: screen ray intersects the ground, then chooses a marked pad. No towers are preplaced at game start. |
 | Towers fire continuously at a fixed rate | `DefenseTower.FixedUpdate`: elapsed-time cooldown from `FireRate`, whenever a live enemy is in range and can be intercepted. |
 | Towers aim at an enemy | Turret gimbal rotates toward the calculated launch vector; predictive aiming upgrades direct aiming. |
 | Enemies follow predetermined paths | `DefenseRoute` defines the same ordered route every game. Straight sections are joined with quadratic curves to satisfy the B-level improvement. `DefenseEnemy.FixedUpdate` follows it by distance. |
@@ -15,7 +15,7 @@
 | Requirement | Where it is implemented |
 | --- | --- |
 | Two tower types with different fire rates, projectile speeds and heights | Pulse and Siege properties in `DefenseTower`; all three required stats differ. Both use real gravity-affected projectiles. |
-| Clear placement instructions | Four-step quick-start tutorial plus a persistent command deck: choose 1/2 or a tower button, then LEFT-CLICK a CYAN HEXAGON. The tutorial explains placement, cash rewards, and upgrade prices/benefits with a worked money example. H or ? HELP reopens it; the HUD always retains the selection-and-placement instructions. |
+| Clear placement instructions | Five-step quick-start tutorial plus a persistent command deck: choose 1/2 or a tower button, then LEFT-CLICK a CYAN HEXAGON. The tutorial explains placement, cash rewards, and upgrade prices/benefits with a worked money example. H or ? HELP reopens it; the HUD always retains the selection-and-placement instructions. |
 | Limited tower placement | One new placement per wave (shared by setup and combat), ten-tower cap, $110 starting cash, placement prices, and occupied-pad checks in `DefenseGame.TryPlaceAt`. Selling never restores a used wave allowance. |
 | Paths are not straight | The route turns repeatedly and has sampled quadratic curves at its corners. `DefenseRoute.Position` uses cumulative distance to preserve movement speed around bends. |
 
@@ -77,4 +77,12 @@ Vehicle graphics are authored by `DefenseArt.Vehicle`. A baked 20-sided wheel me
 
 ## Quick tutorial
 
-`DefenseHUD` owns four tutorial pages, Back/Next/Skip controls and a permanent Help button. The title screen start action opens the guide, and completing or skipping it starts a clean build phase. `DefenseGame.Update` routes tutorial keys before ordinary game controls, preventing Space from both advancing a page and launching a wave. Help pauses combat and remembers whether it introduced the pause, preserving an already-paused game and the player's speed choice on exit. The persistent placement line remains visible after the tutorial closes.
+`DefenseHUD` owns five tutorial pages, Back/Next/Skip controls and a permanent Help button. The title screen start action opens the guide, and completing or skipping it starts a clean build phase. `DefenseGame.Update` routes tutorial keys before ordinary game controls, preventing Space from both advancing a page and launching a wave. Help pauses combat and remembers whether it introduced the pause, preserving an already-paused game and the player's speed choice on exit. The persistent placement line remains visible after the tutorial closes.
+
+## Same-type tower fusion
+
+`DefenseMerging` owns world-pointer selection, the six-pixel drag threshold, a visual-only moving preview, valid/invalid target rings, the M/MERGE click alternative, and a single checked merge transaction. It picks towers using cached renderer bounds, so tall upgraded towers can be clicked above their pads. Drag previews contain no gameplay scripts or colliders. Cancel, invalid release, pause, tutorial, restart and game-over restore the original actor's visibility; the actual tower and firing position are never dragged around the map.
+
+`CanMerge` requires two distinct live towers in the game's tower list, matching `TowerKind`, and active, unpaused play outside the tutorial. It deliberately permits different paid levels. `DefenseTower.Absorb` adds represented units and investment, keeps the higher paid level, and updates geometry and cached selection bounds. The source is then removed from the tower list and deactivated immediately, preventing repeated consumption. Neither cash nor placement counters change.
+
+Damage is the paid-level damage multiplied by represented units. Fusion also adds 10% fire rate per doubling of units, 0.65 units of height per doubling, 0.6 range per extra unit (capped at +3), and 18% footprint per doubling. Paid upgrades remain capped at level 3 and can still be purchased for a merged tower below that cap. Merge strength comes from consuming existing purchased towers, rather than creating new build allowances or refundable investment.

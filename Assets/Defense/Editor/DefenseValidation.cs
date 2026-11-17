@@ -14,7 +14,8 @@ public static class DefenseValidation
     private static double due,deadline;
     private static DefenseGame game;
     private static DefenseEnemy testEnemy;
-    private static DefenseTower testTower;
+    private static DefenseTower testTower,mergedFireTower;
+    private static DefenseEnemy mergedFireEnemy;
     private static Vector3 pausedPosition;
     private static float simulatedDue;
 
@@ -86,6 +87,9 @@ public static class DefenseValidation
                     Check(game.HUD.TutorialPage==3 && guideText.text.Contains("$45") && guideText.text.Contains("$90") && guideText.text.Contains("0.8"),
                         "Tutorial explains upgrade prices and stronger, taller towers");
                     if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureTo("TUTORIAL_PREVIEW.png");
+                    next.onClick.Invoke();
+                    Check(game.HUD.TutorialPage==4 && guideText.text.Contains("SAME TYPE") && guideText.text.Contains("DRAG"),
+                        "Tutorial explains dragging and merging matching tower types");
                     next.onClick.Invoke();
                     Check(!game.HUD.TutorialOpen && game.State==DefenseState.Building && game.Credits==110 && game.PlacementsRemaining==1,
                         "Completing the tutorial starts a clean game without spending cash or the build allowance");
@@ -165,8 +169,12 @@ public static class DefenseValidation
                         { total++;if(kind==EnemyKind.Scout) scouts++;if(kind==EnemyKind.Motorcycle) hasBike=true;if(kind==EnemyKind.Truck) hasTruck=true; }
                     Check(DefenseGame.TotalWaves==10 && total==338 && scouts>150 && hasBike && hasTruck,
                         "Ten escalating waves contain 338 enemies with larger Scout groups and both new vehicle types");
+                    ValidateMerging();
                     game.StartGame();game.Choose(TowerKind.Pulse);game.TryPlaceAt(game.Pads[1]);testTower=game.Towers[0];
                     game.LaunchWave();testEnemy=game.SpawnEnemy(EnemyKind.Armored);testEnemy.SetDistance(7);
+                    mergedFireTower=TestTower(TowerKind.Siege,7);DefenseTower feeder=TestTower(TowerKind.Siege,8);
+                    game.TryMergeTowers(feeder,mergedFireTower);
+                    mergedFireEnemy=game.SpawnEnemy(EnemyKind.Armored);mergedFireEnemy.SetDistance(game.Route.Length-14);
                     shotsAtStart=testTower.ShotsFired;simulatedDue=Time.time+2.1f;due=now+.1;stage++;break;
                 case 3:
                     Check(testEnemy!=null && Vector3.Distance(testEnemy.Body.position,game.Route.Position(testEnemy.DistanceTravelled)+Vector3.up*.7f)<.15f,"Enemy body stays synchronized with curved-route progress");
@@ -174,6 +182,8 @@ public static class DefenseValidation
                     int count=testTower.ShotsFired-shotsAtStart;
                     Check(count>=4 && count<=6,"Tower continuously fires at its configured cadence");
                     Check(testEnemy.Health<testEnemy.MaxHealth,"Predictive tower shots hit a moving enemy");
+                    Check(mergedFireTower.ShotsFired>0 && (mergedFireEnemy==null || mergedFireEnemy.Health<mergedFireEnemy.MaxHealth),
+                        "Merged tower fires real ballistic projectiles that hit moving enemies");
                     testEnemy=game.SpawnEnemy(EnemyKind.Runner);testEnemy.SetDistance(16);game.HUD.OpenTutorial(false);pausedPosition=testEnemy.Body.position;
                     Check(Time.timeScale==0 && !game.IsCombat,"Opening the tutorial during combat pauses simulation");due=now+.25;stage++;break;
                 case 4:
@@ -221,6 +231,57 @@ public static class DefenseValidation
         catch(Exception error)
         { failed=true;Debug.LogError("DEFENSE VALIDATION FAILED: "+error);Time.timeScale=1;EditorApplication.ExitPlaymode(); }
     }
+    // Focused merge fixtures only. The later campaign starts fresh and buys every tower legally.
+    private static DefenseTower TestTower(TowerKind kind,int pad)
+    {
+        GameObject root=new GameObject("Merge test "+kind);
+        root.transform.position=game.Pads[pad]+Vector3.up*.2f;
+        DefenseTower tower=root.AddComponent<DefenseTower>();tower.Initialize(game,kind,pad);game.Towers.Add(tower);
+        return tower;
+    }
+    private static void ValidateMerging()
+    {
+        game.StartGame();game.Choose(TowerKind.Pulse);game.TryPlaceAt(game.Pads[3]);game.LaunchWave();
+        DefenseTower source=game.Towers[0];
+        game.SpawnEnemy(EnemyKind.Scout).TakeDamage(1000);game.SelectTower(source);game.UpgradeSelected();
+        DefenseTower target=TestTower(TowerKind.Pulse,1),different=TestTower(TowerKind.Siege,7);
+        int money=game.Credits,allowance=game.PlacementsRemaining,count=game.Towers.Count;
+        Check(!game.TryMergeTowers(source,different) && game.Towers.Count==count && game.Credits==money,
+            "Pulse and Siege cannot merge and a rejected merge changes no money or towers");
+        Check(!game.TryMergeTowers(source,source) && source.MergedUnits==1,"A tower cannot merge with itself");
+        Vector3 original=source.transform.position;
+        Check(game.Merging.BeginDrag(source) && game.Merging.IsDraggingTower(source),"Dragging creates a visual tower preview");
+        game.Merging.Cancel();
+        Check(source.transform.position==original && source.GetComponentInChildren<MeshRenderer>().enabled && game.Towers.Count==count,
+            "Cancelling a drag restores the visible source tower on its original pad");
+        game.Merging.BeginDrag(source);game.Merging.DropOn(null);
+        Check(game.Towers.Count==count && source.gameObject.activeSelf,"Dropping on empty ground consumes no tower");
+        game.Merging.BeginDrag(source);game.Merging.DropOn(different);
+        Check(game.Towers.Count==count && source.GetComponentInChildren<MeshRenderer>().enabled,"Dropping on a different type restores the dragged tower");
+        game.TogglePause();Check(!game.TryMergeTowers(source,target),"Merging is blocked while paused");game.TogglePause();
+        game.HUD.OpenTutorial(false);Check(!game.TryMergeTowers(source,target),"Tutorial overlay blocks merging");game.HUD.CloseTutorial();
+        float height=source.Height,damage=source.Damage,rate=source.FireRate,range=source.Range;
+        int investment=source.Investment+target.Investment;
+        game.Merging.BeginDrag(source);
+        Check(game.Merging.DropOn(target),"Dropping a matching tower performs a merge");
+        Check(game.Towers.Count==count-1 && !game.Towers.Contains(source) && !source.gameObject.activeSelf && target.PadIndex==1,
+            "Merge consumes exactly the source and keeps the destination pad");
+        Check(target.MergedUnits==2 && target.Level==2 && target.Investment==investment,
+            "Different paid upgrade levels can merge; higher level and total investment are preserved");
+        Check(target.Height>height && target.Damage>damage && target.FireRate>rate && target.Range>range && target.transform.localScale.x>1,
+            "Merged tower is visibly larger and has greater height, damage, fire rate and range");
+        Check(game.Credits==money && game.PlacementsRemaining==allowance && game.PlacementsRemaining==0,
+            "Merging spends no extra cash and never grants another placement this wave");
+        Check(!game.TryMergeTowers(source,target) && target.MergedUnits==2,"A consumed tower cannot be merged again");
+        DefenseTower third=TestTower(TowerKind.Pulse,5);game.SelectTower(target);
+        game.HUD.transform.Find("Merge").GetComponent<Button>().onClick.Invoke();
+        Check(game.Merging.Active && !game.Merging.IsDraggingTower(target),"MERGE button arms the click-to-merge alternative");
+        Check(game.Merging.DropOn(third) && third.MergedUnits==3 && third.Level==2,"Previously merged towers can combine again without losing their upgrade level");
+        Ray ray=game.View.ScreenPointToRay(game.View.WorldToScreenPoint(third.transform.position+Vector3.up*third.Height));
+        Check(game.Merging.PickTower(ray,third.transform.position)==third,"Tall tower models can be selected by clicking their upper geometry");
+        if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureTo("MERGE_PREVIEW.png");
+    }
+
     private static void BuildCampaignDefense()
     {
         int[] pads={1,3,5,7,0,6,2,8,4,9};

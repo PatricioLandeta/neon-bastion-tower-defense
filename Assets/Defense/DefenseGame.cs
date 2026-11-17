@@ -28,6 +28,7 @@ public class DefenseGame : MonoBehaviour
     public DefenseRoute Route { get; private set; }
     public Camera View { get; private set; }
     public DefenseHUD HUD { get; private set; }
+    public DefenseMerging Merging { get; private set; }
     public TowerKind SelectedKind { get; private set; }
     public DefenseTower SelectedTower { get; private set; }
     public readonly List<DefenseEnemy> Enemies=new List<DefenseEnemy>();
@@ -39,7 +40,6 @@ public class DefenseGame : MonoBehaviour
     private int spawned;
     private float nextSpawn;
     private LineRenderer rangeRing;
-    private LineRenderer padRing;
     private Transform battlefield;
 
     void Start()
@@ -60,15 +60,16 @@ public class DefenseGame : MonoBehaviour
         battlefield=new GameObject("Battlefield").transform;
         DefenseArt.World(this,battlefield);
         rangeRing=DefenseArt.Ring(battlefield,"Selected range",new Color(.05f,.55f,.65f));rangeRing.enabled=false;
-        padRing=DefenseArt.Ring(battlefield,"Build cursor",DefenseArt.Cyan);padRing.enabled=false;
         if(EventSystem.current==null) new GameObject("EventSystem",typeof(EventSystem),typeof(InputSystemUIInputModule));
         HUD=new GameObject("Defense interface").AddComponent<DefenseHUD>();HUD.Initialize(this);
+        Merging=gameObject.AddComponent<DefenseMerging>();Merging.Initialize(this,battlefield);
         HUD.ShowMenu("NEON BASTION","THE RELAY MUST HOLD", "Build your defense. Stop every drone before it reaches the cyan relay.\nOne escaped enemy ends the run. Survive all ten waves.\n\nONE new tower per wave. Click a cyan pad to place it.\nEvery kill earns cash. Upgrade towers to make them stronger and taller.","ENTER SECTOR");
     }
     private void FitCamera() { View.orthographicSize=Mathf.Max(21.5f,33f/Mathf.Max(.5f,View.aspect)); }
 
     public void StartGame()
     {
+        if(Merging!=null) Merging.Cancel();
         foreach(DefenseEnemy enemy in Enemies.ToArray()) if(enemy!=null) { enemy.gameObject.SetActive(false);Destroy(enemy.gameObject); }
         foreach(DefenseTower tower in Towers.ToArray()) if(tower!=null) { tower.gameObject.SetActive(false);Destroy(tower.gameObject); }
         Enemies.Clear();Towers.Clear();ClearShots();
@@ -78,6 +79,7 @@ public class DefenseGame : MonoBehaviour
     }
     public void Choose(TowerKind kind)
     {
+        if(Merging!=null) Merging.Cancel();
         SelectedKind=kind;SelectedTower=null;rangeRing.enabled=false;
         HUD.Message(kind==TowerKind.Pulse ? "PULSE: rapid fire · $75. One new tower per wave." : "SIEGE: heavy ballistic shells · $110. One new tower per wave.");HUD.Refresh();
     }
@@ -114,6 +116,7 @@ public class DefenseGame : MonoBehaviour
     }
     public void UpgradeSelected()
     {
+        if(Merging!=null) Merging.Cancel();
         if(!CanBuild || Paused || SelectedTower==null) return;
         if(SelectedTower.Level>=3) HUD.Message("This tower is at maximum level.");
         else if(SelectedTower.Upgrade()) { SelectTower(SelectedTower);HUD.Message("Upgrade installed: taller tower, more damage, faster fire and longer range."); }
@@ -121,6 +124,7 @@ public class DefenseGame : MonoBehaviour
     }
     public void SellSelected()
     {
+        if(Merging!=null) Merging.Cancel();
         if(!CanBuild || Paused || SelectedTower==null) return;
         if(Towers.Count==1 && PlacementsRemaining==0) { HUD.Message("Keep your only tower until the next build allowance; selling it now would leave you defenseless.");return; }
         int refund=Mathf.FloorToInt(SelectedTower.Investment*.7f);Credits+=refund;
@@ -156,6 +160,7 @@ public class DefenseGame : MonoBehaviour
     }
     public void LaunchWave()
     {
+        if(Merging!=null) Merging.Cancel();
         if(State!=DefenseState.Building || Paused) return;
         Wave++;State=DefenseState.Combat;wavePlan=WavePlan(Wave);spawned=0;nextSpawn=Time.time+.8f;
         HUD.Message("WAVE "+Wave+" / "+WaveName(Wave)+". One new tower allowed. Kills fund upgrades.");HUD.Refresh();
@@ -185,7 +190,8 @@ public class DefenseGame : MonoBehaviour
     }
     private void Finish(string title,string subtitle,string description)
     {
-        Paused=false;Fast=false;Time.timeScale=1;ClearShots();rangeRing.enabled=false;padRing.enabled=false;
+        if(Merging!=null) Merging.Cancel();
+        Paused=false;Fast=false;Time.timeScale=1;ClearShots();rangeRing.enabled=false;
         HUD.ShowMenu(title,subtitle,description,"PLAY AGAIN");HUD.Refresh();
     }
     private void ClearShots()
@@ -194,6 +200,7 @@ public class DefenseGame : MonoBehaviour
     }
     public void TogglePause()
     {
+        if(Merging!=null) Merging.Cancel();
         if(!CanBuild) return;
         Paused=!Paused;ApplyTime();HUD.Message(Paused ? "PAUSED · Press P or the pause button to resume." : "Resumed. Protect the cyan relay.");HUD.Refresh();
     }
@@ -227,23 +234,15 @@ public class DefenseGame : MonoBehaviour
                     if(keys.spaceKey.wasPressedThisFrame) LaunchWave();
                     if(keys.uKey.wasPressedThisFrame) UpgradeSelected();
                     if(keys.xKey.wasPressedThisFrame) SellSelected();
+                    if(keys.mKey.wasPressedThisFrame) Merging.BeginSelectedMerge();
+                    if(keys.escapeKey.wasPressedThisFrame) Merging.Cancel();
                 }
             }
         }
         if(IsCombat && spawned<wavePlan.Count && Time.time>=nextSpawn)
         { SpawnEnemy(wavePlan[spawned++]);nextSpawn=Time.time+Mathf.Max(.55f,1f-Wave*.07f);HUD.Refresh(); }
-        HandlePointer();
+        Merging.HandlePointer();
     }
-    private void HandlePointer()
-    {
-        padRing.enabled=false;
-        if(!CanBuild || Paused || Mouse.current==null || (EventSystem.current!=null && EventSystem.current.IsPointerOverGameObject())) return;
-        Ray ray=View.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Plane plane=new Plane(Vector3.up,Vector3.zero);
-        if(!plane.Raycast(ray,out float distance)) return;
-        Vector3 point=ray.GetPoint(distance);int pad=NearestPad(point);
-        if(pad>=0) { padRing.enabled=true;DefenseArt.SetRing(padRing,Pads[pad],1.3f); }
-        if(Mouse.current.leftButton.wasPressedThisFrame) TryPlaceAt(point);
-    }
+    public bool TryMergeTowers(DefenseTower source,DefenseTower target) => Merging.TryMerge(source,target);
     void OnDestroy() { Time.timeScale=1; }
 }

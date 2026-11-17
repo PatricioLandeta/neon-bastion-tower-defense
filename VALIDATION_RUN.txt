@@ -1,7 +1,7 @@
-Unity 6000.6.0f1 on macOS — quick tutorial version
-65 checks passed, including tutorial buttons, placement instructions, money and upgrade explanations, and pause/speed restoration.
-Full ten-wave campaign won: 338 enemies, one new tower per wave, kill-funded purchases.
-No C# compilation errors/warnings or shader errors. Tutorial and game previews inspected.
+Unity 6000.6.0f1 on macOS — same-type tower fusion
+84 checks passed, including merge drag/drop/cancel commands, invalid types, investment/allowance conservation, larger geometry and merged ballistic hits.
+Full ten-wave campaign won: 338 kills and one purchased tower per wave.
+No C# compilation errors/warnings or shader errors. Tutorial and merge renders inspected.
 
 DEFENSE PASS: Title starts with combat stopped
 DEFENSE PASS: Custom non-basic mesh assets are available
@@ -13,6 +13,7 @@ DEFENSE PASS: Tutorial explicitly explains selecting and left-clicking a cyan pa
 DEFENSE PASS: Tutorial Back returns to the previous explanation
 DEFENSE PASS: Tutorial explains kill rewards and the money display
 DEFENSE PASS: Tutorial explains upgrade prices and stronger, taller towers
+DEFENSE PASS: Tutorial explains dragging and merging matching tower types
 DEFENSE PASS: Completing the tutorial starts a clean game without spending cash or the build allowance
 DEFENSE PASS: Persistent gameplay overlay continues to explain tower selection and placement
 DEFENSE PASS: Help button reopens the guide and Close returns to the same game
@@ -51,10 +52,28 @@ DEFENSE PASS: Motorcycle kill pays $20
 DEFENSE PASS: High-HP truck kill pays $120
 DEFENSE PASS: Truck payout cannot be claimed twice
 DEFENSE PASS: Ten escalating waves contain 338 enemies with larger Scout groups and both new vehicle types
+DEFENSE PASS: Pulse and Siege cannot merge and a rejected merge changes no money or towers
+DEFENSE PASS: A tower cannot merge with itself
+DEFENSE PASS: Dragging creates a visual tower preview
+DEFENSE PASS: Cancelling a drag restores the visible source tower on its original pad
+DEFENSE PASS: Dropping on empty ground consumes no tower
+DEFENSE PASS: Dropping on a different type restores the dragged tower
+DEFENSE PASS: Merging is blocked while paused
+DEFENSE PASS: Tutorial overlay blocks merging
+DEFENSE PASS: Dropping a matching tower performs a merge
+DEFENSE PASS: Merge consumes exactly the source and keeps the destination pad
+DEFENSE PASS: Different paid upgrade levels can merge; higher level and total investment are preserved
+DEFENSE PASS: Merged tower is visibly larger and has greater height, damage, fire rate and range
+DEFENSE PASS: Merging spends no extra cash and never grants another placement this wave
+DEFENSE PASS: A consumed tower cannot be merged again
+DEFENSE PASS: MERGE button arms the click-to-merge alternative
+DEFENSE PASS: Previously merged towers can combine again without losing their upgrade level
+DEFENSE PASS: Tall tower models can be selected by clicking their upper geometry
 DEFENSE PASS: Enemy body stays synchronized with curved-route progress
 DEFENSE PASS: Reported target velocity matches physical speed
 DEFENSE PASS: Tower continuously fires at its configured cadence
 DEFENSE PASS: Predictive tower shots hit a moving enemy
+DEFENSE PASS: Merged tower fires real ballistic projectiles that hit moving enemies
 DEFENSE PASS: Opening the tutorial during combat pauses simulation
 DEFENSE PASS: Enemies remain still while paused
 DEFENSE PASS: Closing combat help resumes without resetting money or the wave
@@ -69,4 +88,4 @@ DEFENSE PASS: Winning strategy places exactly one tower per wave
 DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases and upgrades
 DEFENSE PASS: Victory waits for every active and scheduled enemy
 
-DEFENSE VALIDATION COMPLETE: 65 checks passed
+DEFENSE VALIDATION COMPLETE: 84 checks passed

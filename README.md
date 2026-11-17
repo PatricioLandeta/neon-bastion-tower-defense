@@ -11,7 +11,7 @@ A complete tower-defense game built from the Tower-Projectiles starter assignmen
 1. In Unity Hub, choose **Add → Add project from disk** and select this folder.
 2. Open it with **Unity 6000.6.0f1**, the editor already installed on this Mac.
 3. Double-click **Assets/Scenes/NeonBastion.unity** in the Project panel.
-4. Press **Play**, then click **ENTER SECTOR** or press Enter. Follow the four-step quick tutorial, or choose **SKIP & PLAY**.
+4. Press **Play**, then click **ENTER SECTOR** or press Enter. Follow the five-step quick tutorial, or choose **SKIP & PLAY**.
 
 The downloaded starter used Unity 6000.3.23f1. This separate copy was opened with 6000.6.0f1. The original starter is preserved in Downloads. `SampleScene.unity` and its scripts are retained for reference; use `NeonBastion.unity` for the assignment.
 
@@ -26,6 +26,8 @@ The board, camera and interface appear when Play starts. Custom drone hulls, tur
 | Inspect tower and show range | Left-click its occupied pad |
 | Launch next wave | Button or **Space** |
 | Upgrade selected tower | Button or **U** |
+| Merge matching placed towers | Hold left mouse on one, drag onto a same-type tower, release |
+| Click-based merge | Select a tower → **M / MERGE** → click a matching tower; **Escape** cancels |
 | Sell selected tower | Button or **X** |
 | Reopen quick tutorial | **? HELP** button or **H** |
 | Tutorial navigation | **Next / Back**, Enter / Space, or Left Arrow; Escape skips/closes |
@@ -39,7 +41,7 @@ Begin with one Pulse tower on the left interior pad. The first kill gives you en
 
 ## Quick tutorial and placement overlay
 
-The guide explains four steps: choose a Pulse or Siege tower, left-click a cyan hex pad, earn cash from defeated enemies, then select a tower and purchase upgrades. It lists the tower prices and enemy payouts and gives a concrete example: a $75 Pulse leaves $35; one $10 Scout kill funds the $45 level-2 upgrade. It also explains the one-new-tower-per-wave rule and the extra damage, firing speed, range and 0.8-unit height increase from upgrades.
+The guide explains five steps: choose a Pulse or Siege tower, left-click a cyan hex pad, earn cash from defeated enemies, purchase upgrades, and merge matching placed towers. It lists the tower prices and enemy payouts and gives a concrete example: a $75 Pulse leaves $35; one $10 Scout kill funds the $45 level-2 upgrade. It also explains the one-new-tower-per-wave rule and the extra damage, firing speed, range and 0.8-unit height increase from upgrades.
 
 The guide opens from the title screen and can be reopened with **H** or **? HELP**. Opening it during play pauses the battle. Closing it restores the prior pause state and 1x/2x speed without resetting cash, towers or waves. A persistent textual overlay says **1 / 2 CHOOSE TOWER · LEFT-CLICK A CYAN PAD TO BUILD**, so placement instructions remain available after the guide closes.
 
@@ -57,6 +59,18 @@ The guide opens from the title screen and can be reopened with **H** or **? HELP
 | Range | 10.5 units | 14 units |
 
 Towers can reach level 3. Each level increases damage, fire rate, range, and actual turret height by **0.8 units**. The column extends and the firing muzzle rises; glowing collars mark upgrades. Upgrades cost $45 and $90. Selling returns 70% of the tower's total investment but never restores a used wave allowance. You cannot sell your last tower when no replacement placement remains.
+
+## Merge matching towers
+
+Buy two towers across different waves, then **hold the left mouse button on one, drag onto the other, and release**. A moving preview and destination ring indicate the action: green means a valid match, pink means the types differ. You can also select a tower, press **M** or click **MERGE**, then click its partner. Escape cancels. Clicking a tower's upper model works as well as clicking its pad.
+
+- **Pulse + Pulse** and **Siege + Siege** merge. Different types, the same actor, paused play and the tutorial overlay cannot merge.
+- The source is consumed and the result stays on the destination pad. Invalid drops return the source to its original pad without changing money or towers.
+- The higher paid upgrade level is retained, combined tower count appears as **MERGED xN**, and the result has greater damage, fire rate, range, height and footprint, with a violet fusion ring. Already-merged towers can combine again with matching types, including at paid level 3.
+- Merging charges no additional cash, preserves both towers' total purchase/upgrade investment for the 70% sell refund, and **never restores the wave's placement allowance**. The freed pad can be used when a future wave grants a placement.
+- A tower stops firing while its drag preview is active; it resumes from its original position after a cancelled drop. The preview does not move its physical firing location or add a new tower.
+
+![Merged Pulse tower — focused mechanic demonstration](MERGE_PREVIEW.png)
 
 ## Enemies
 

@@ -27,7 +27,7 @@ public class DefenseTower : MonoBehaviour
             return bounds;
         }
     }
-    public float FireRate => (Kind==TowerKind.Pulse ? 2.4f : .6f)*(1f+.2f*(Level-1))*(1f+.1f*FusionBonus);
+    public float FireRate => (Kind==TowerKind.Pulse ? 2.4f : .6f)*(1f+.2f*(Level-1))*Mathf.Pow(1.2f,FusionBonus);
     public float ProjectileSpeed => Kind==TowerKind.Pulse ? 17f : 23f;
     public float Height => (Kind==TowerKind.Pulse ? 1.4f : 2.8f)+.8f*(Level-1);
     public float Range => ((Kind==TowerKind.Pulse ? 10.5f : 14f)+.6f*(Level-1))*Mathf.Pow(1.05f,FusionBonus);

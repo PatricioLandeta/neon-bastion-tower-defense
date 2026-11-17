@@ -85,7 +85,7 @@ Vehicle graphics are authored by `DefenseArt.Vehicle`. A baked 20-sided wheel me
 
 `CanMerge` requires distinct live towers, matching type and merge level, a tier below red, enough cash, and active unpaused play outside the tutorial. Paid upgrade levels may differ. Base pairs become green level 2 ($50), green pairs become purple level 3 ($100), and purple pairs become red level 4 ($200). `Absorb` doubles represented units, retains the higher paid upgrade level, includes the merge fee in investment, updates geometry and recolors the fusion rings and energy details. Red towers cannot merge further. Invalid drops spend nothing.
 
-Damage is the paid-level damage multiplied by represented units. Fusion also adds 10% fire rate per doubling of units, 5% compounded range per merge tier, and 18% width/depth per tier. Fusion adds no height; only paid upgrades raise the column and muzzle. Paid upgrades remain capped at level 3 and can still be purchased for a merged tower below that cap. Merge strength comes from consuming existing purchased towers, and charging merge fees.
+Damage is the paid-level damage multiplied by represented units. Fusion also compounds shot rate by 20% per merge tier, 5% compounded range per merge tier, and 18% width/depth per tier. Fusion adds no height; only paid upgrades raise the column and muzzle. Paid upgrades remain capped at level 3 and can still be purchased for a merged tower below that cap. Merge strength comes from consuming existing purchased towers, and charging merge fees.
 
 ## Animated example and tougher traffic
 

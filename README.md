@@ -76,7 +76,7 @@ Buy two towers, then **hold the left mouse button on one, drag onto the other, a
 
 Red is the final merge tier. Unequal merge levels, mixed Pulse/Siege types, self-merges, and unaffordable merges consume nothing. **Buy and merge repeatedly in the same wave** when you can pay. Merges consume the source, retain the destination pad and higher paid upgrade level, and include the fee in combined investment for selling. Paid upgrade levels (1–3) are separate from merge levels (1–4).
 
-Each merge tier increases damage, fire rate and width, and multiplies range by **1.05** (+5%). Green has +5% range, purple +10.25%, and red about +15.76%, relative to the same paid upgrade level. Merging adds no height; only paid upgrades make towers taller. Rings, capacitors and muzzle lights show green, purple or red. A red tower requires eight purchased base towers and seven paid merges: total $1,200 for Pulse or $1,480 for Siege before paid upgrades. That investment competes with board coverage and paid upgrades.
+Each merge tier increases damage and width, multiplies shot rate by **1.20** (+20%), and multiplies range by **1.05** (+5%). Green has +5% range, purple +10.25%, and red about +15.76%, relative to the same paid upgrade level. Merging adds no height; only paid upgrades make towers taller. Rings, capacitors and muzzle lights show green, purple or red. A red tower requires eight purchased base towers and seven paid merges: total $1,200 for Pulse or $1,480 for Siege before paid upgrades. That investment competes with board coverage and paid upgrades.
 
 ![Merged Pulse tower — focused mechanic demonstration](MERGE_PREVIEW.png)
 

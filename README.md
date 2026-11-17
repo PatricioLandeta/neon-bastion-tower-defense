@@ -56,10 +56,10 @@ The guide opens from the title screen and can be reopened with **H** or **? HELP
 | Stat at level 1 | Pulse | Siege |
 | --- | --- | --- |
 | Placement cost | 75 | 110 |
-| Shots per second | 2.4 | 0.75 |
+| Shots per second | 2.4 | 0.6 |
 | Projectile speed | 17 units/s | 23 units/s |
 | Turret height | 1.4 units | 2.8 units |
-| Damage per hit | 1.15 | 4.5 |
+| Damage per hit | 1.15 | 12 |
 | Range | 10.5 units | 14 units |
 
 Towers can reach level 3. Each level increases damage, fire rate, range, and actual turret height by **0.8 units**. The column extends and the firing muzzle rises; glowing collars mark upgrades. Upgrades cost $45 and $90. Selling returns 70% of the tower's total investment but never restores a used wave allowance. You cannot sell your last tower when no replacement placement remains.

@@ -1,4 +1,5 @@
-Unity 6000.6.0f1 on macOS — forgiving opening balance fix
+Unity 6000.6.0f1 on macOS — Siege heavy-shell balance
+Siege base stats: 12 damage per shell, 0.6 shots per second (1.67 seconds between shots).
 94 campaign/regression checks passed; all 522 enemies defeated.
 6 / 6 separate no-upgrade openings won with graphics enabled: both tower types on three sensible starter pads.
 No extra towers, cash or injected damage in opening runs. Later-wave compositions unchanged.

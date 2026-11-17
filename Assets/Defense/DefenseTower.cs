@@ -21,11 +21,11 @@ public class DefenseTower : MonoBehaviour
             return bounds;
         }
     }
-    public float FireRate => (Kind==TowerKind.Pulse ? 2.4f : .75f)*(1f+.2f*(Level-1))*(1f+.1f*FusionBonus);
+    public float FireRate => (Kind==TowerKind.Pulse ? 2.4f : .6f)*(1f+.2f*(Level-1))*(1f+.1f*FusionBonus);
     public float ProjectileSpeed => Kind==TowerKind.Pulse ? 17f : 23f;
     public float Height => (Kind==TowerKind.Pulse ? 1.4f : 2.8f)+.8f*(Level-1)+.65f*FusionBonus;
     public float Range => (Kind==TowerKind.Pulse ? 10.5f : 14f)+.6f*(Level-1)+Mathf.Min(3f,.6f*(MergedUnits-1));
-    public float Damage => (Kind==TowerKind.Pulse ? 1.15f : 4.5f)*(1f+.4f*(Level-1))*MergedUnits;
+    public float Damage => (Kind==TowerKind.Pulse ? 1.15f : 12f)*(1f+.4f*(Level-1))*MergedUnits;
     public int UpgradeCost => 45*Level;
     public int ShotsFired { get; private set; }
     public Transform Muzzle { get; private set; }

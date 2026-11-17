@@ -1,6 +1,6 @@
 # Validation
 
-The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **94 checks**, including a complete ten-wave win with all **528** enemies destroyed.
+The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **94 checks**, including a complete ten-wave win with all **522** enemies destroyed.
 
 The campaign strategy begins with the normal $110, places towers on legal pads, buys additional towers and upgrades only when rewards make them affordable, and uses eight placement actions and two merge actions across ten waves, never both in one wave. It does not add credits, change enemy HP or speed, skip enemies, or apply test damage during the campaign. It accelerates the campaign with Unity time scaling; projectiles and enemies still use the normal fixed physics timestep. The focused tests run separately and intentionally create isolated test situations.
 
@@ -22,7 +22,7 @@ The campaign strategy begins with the normal $110, places towers on legal pads, 
 - Upgrade prices, damage/rate/range growth, actual turret and muzzle height growth, maximum level, insufficient-funds protection, selling refunds, and blocked sell-and-rebuild loopholes.
 - Distinct speed and HP values for all six enemy types, including fast motorcycles and 160-base-HP trucks.
 - Different vehicle models, fitted box colliders, authored wheel mesh availability, $20/$120 payouts, and prevention of repeat truck payouts.
-- Ten planned waves containing 528 enemies and more than 240 Scouts, with both new types present.
+- Ten planned waves containing 522 enemies and more than 240 Scouts, with both new types present.
 - Wave 5 unlocking wave 6 instead of ending the campaign.
 - Dynamic Rigidbody projectiles with gravity and colliders.
 - Damage and destruction from an actual projectile collision, with a correct cash payout.
@@ -43,3 +43,9 @@ Outside Play mode, choose **Tools → Neon Bastion → Validate assignment and c
 ## Limits
 
 The tests call the same placement, purchase, launch and merge commands used by the UI. Focused merge fixtures also create isolated towers directly; the later campaign resets all state and pays for every tower normally. They exercise drag begin/drop/cancel and merge button callbacks, but do not automate every operating-system mouse/keyboard event or test a built player on other operating systems. A successful scripted strategy proves the campaign has a winning solution; it does not replace human playtesting for feel, difficulty, accessibility or other strategies. Before submitting, play a normal run and verify the placement instructions, camera framing, pause button, upgrades, and end screens yourself.
+
+## No-upgrade opening checks
+
+**6 / 6 opening scenarios passed** with graphics enabled: Pulse on pads 0, 1 and 3, and Siege on pads 0, 1 and 3. Each run starts with the normal $110, buys exactly one level-1 tower, launches wave 1, and performs no upgrades, additional purchases, manual damage, or extra-money grants. It must reach the wave-2 build phase without an escape. The earlier version failed the pad-0 and pad-3 Pulse cases, reproducing the reported difficulty problem.
+
+Run **Tools → Neon Bastion → Validate opening without upgrades** outside Play mode to repeat the six cases. This establishes several forgiving openings; it does not promise every pad is equally effective. The gold START HERE marker identifies the recommended opening.

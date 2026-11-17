@@ -37,7 +37,9 @@ The board, camera and interface appear when Play starts. Custom drone hulls, tur
 
 Towers choose targets, predict movement, and fire automatically. You can build and upgrade during a wave. Build only on marked pads, with **ONE action per wave: PLACE a tower OR MERGE a matching pair**. You cannot do both or merge twice in the same wave. Setup and combat share the action; selling does not restore it, and unused actions do not accumulate. There are ten pads. You start with **$110**. Money comes from monster kills, with no wave-clear bonus.
 
-Begin with one Pulse tower on the left interior pad. The first kill gives you enough money for its level-2 upgrade. Save for a Siege tower near the center in wave 2. Each later wave unlocks one action, which can be used for a placement or a merge during setup or combat. Cash upgrades are still allowed after either choice. Cover several road sections with each tower and balance purchases against upgrades.
+Begin with one Pulse tower on the gold **START HERE** pad (left interior). Wave 1 is a training wave: ten Scouts with 3 HP, speed 2 and a 1.4-second spawn interval. It can be cleared without upgrades on the three tested opening pads, using either tower type. Normal Scout stats and tougher crowds return in wave 2. The first kill gives you enough money for its level-2 upgrade. Save for a Siege tower near the center in wave 2. Each later wave unlocks one action, which can be used for a placement or a merge during setup or combat. Cash upgrades are still allowed after either choice. Cover several road sections with each tower and balance purchases against upgrades.
+
+![Recommended starter pad](OPENING_GUIDE_PREVIEW.png)
 
 ## Quick tutorial and placement overlay
 
@@ -87,7 +89,7 @@ Buy two towers across different waves, then **hold the left mouse button on one,
 
 Every destroyed monster pays immediately, with a gold `+$` popup and an updated money balance.
 
-HP increases by 12% of base per wave after wave 1. Ten waves contain 16, 24, 32, 40, 48, 56, 64, 72, 80 and 96 enemies, for **528 enemies total**, including **297 Scouts**. See [WAVE_GUIDE.md](WAVE_GUIDE.md) for the full breakdown. Truck HP reaches 236.8 on its first appearance and 332.8 in wave 10. Motorcycles have spinning wheels and a rider; trucks have six wheels, an armored cab, cargo body, lights and fitted hitboxes.
+Outside the training wave, HP increases by 12% of base per wave after wave 1. Ten waves contain 10, 24, 32, 40, 48, 56, 64, 72, 80 and 96 enemies, for **522 enemies total**, including **291 Scouts**. See [WAVE_GUIDE.md](WAVE_GUIDE.md) for the full breakdown. Truck HP reaches 236.8 on its first appearance and 332.8 in wave 10. Motorcycles have spinning wheels and a rider; trucks have six wheels, an armored cab, cargo body, lights and fitted hitboxes.
 
 ## Assignment coverage
 

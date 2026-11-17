@@ -108,6 +108,7 @@ public static class DefenseValidation
                     next.onClick.Invoke();
                     Check(!game.HUD.TutorialOpen && game.State==DefenseState.Building && game.Credits==110 && game.PlacementsRemaining==1,
                         "Completing the tutorial starts a clean game without spending cash or the build allowance");
+                    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureTo("OPENING_GUIDE_PREVIEW.png");
                     Text instructions=game.HUD.transform.Find("Placement instructions").GetComponent<Text>();
                     Check(instructions.text.Contains("1 / 2 CHOOSE") && instructions.text.Contains("LEFT-CLICK A CYAN PAD"),
                         "Persistent gameplay overlay continues to explain tower selection and placement");
@@ -146,17 +147,17 @@ public static class DefenseValidation
                     if(game.State!=DefenseState.Building) { due=now+.05;return; }
                     Time.timeScale=1;game.enabled=false;
                     Check(game.Wave==1 && game.PlacementWave==2 && game.PlacementsRemaining==1,"Clearing a wave unlocks exactly one placement for the next wave");
-                    Check(game.Credits==300,"All sixteen scheduled kills pay correctly and there is no free wave-clear money");
+                    Check(game.Credits==240,"All ten training-wave kills pay correctly and there is no free wave-clear money");
                     game.Choose(TowerKind.Siege);Check(game.TryPlaceAt(game.Pads[3]),"Next wave permits buying one additional tower");
                     DefenseTower siege=game.SelectedTower;
                     Check(testTower.FireRate!=siege.FireRate && testTower.ProjectileSpeed!=siege.ProjectileSpeed && testTower.Height!=siege.Height,"Tower types still differ in fire rate, projectile speed and height");
                     game.SellSelected();
-                    Check(game.Credits==267 && game.Towers.Count==1 && game.PlacementsRemaining==0,"Selling refunds 70 percent but does not restore the wave allowance");
-                    Check(!game.TryPlaceAt(game.Pads[3]) && game.Credits==267,"Sell-and-rebuild cannot bypass the one-per-wave rule");
+                    Check(game.Credits==207 && game.Towers.Count==1 && game.PlacementsRemaining==0,"Selling refunds 70 percent but does not restore the wave allowance");
+                    Check(!game.TryPlaceAt(game.Pads[3]) && game.Credits==207,"Sell-and-rebuild cannot bypass the one-per-wave rule");
                     game.SelectTower(testTower);game.SellSelected();Check(game.Towers.Count==1,"Cannot strand the player by selling their only tower after using the allowance");
                     game.UpgradeSelected();float maxHeight=testTower.Height;
-                    Check(testTower.Level==3 && game.Credits==177 && maxHeight>2.9f,"A second upgrade spends $90 and makes the tower taller again");
-                    game.UpgradeSelected();Check(testTower.Level==3 && game.Credits==177,"Maximum level cannot consume money or grow indefinitely");
+                    Check(testTower.Level==3 && game.Credits==117 && maxHeight>2.9f,"A second upgrade spends $90 and makes the tower taller again");
+                    game.UpgradeSelected();Check(testTower.Level==3 && game.Credits==117,"Maximum level cannot consume money or grow indefinitely");
                     game.LaunchWave();Check(game.PlacementsRemaining==0 && game.Wave==2,"Wave-2 launch preserves its already-used setup allowance");
                     game.StartGame();game.LaunchWave();
                     testEnemy=game.SpawnEnemy(EnemyKind.Scout);testEnemy.SetDistance(9);testEnemy.enabled=false;
@@ -182,8 +183,8 @@ public static class DefenseValidation
                     for(int wave=1;wave<=DefenseGame.TotalWaves;wave++)
                         foreach(EnemyKind kind in DefenseGame.WavePlan(wave))
                         { total++;if(kind==EnemyKind.Scout) scouts++;if(kind==EnemyKind.Motorcycle) hasBike=true;if(kind==EnemyKind.Truck) hasTruck=true; }
-                    Check(DefenseGame.TotalWaves==10 && total==528 && scouts>240 && hasBike && hasTruck,
-                        "Ten escalating waves contain 528 enemies with larger Scout groups and both new vehicle types");
+                    Check(DefenseGame.TotalWaves==10 && total==522 && scouts>240 && hasBike && hasTruck,
+                        "Ten escalating waves contain 522 enemies with larger Scout groups and both new vehicle types");
                     ValidateMerging();
                     game.StartGame();testTower=TestTower(TowerKind.Pulse,1);
                     game.LaunchWave();testEnemy=game.SpawnEnemy(EnemyKind.Armored);testEnemy.SetDistance(7);
@@ -229,7 +230,7 @@ public static class DefenseValidation
                     if(game.State==DefenseState.Won)
                     {
                         int expected=0;for(int wave=1;wave<=DefenseGame.TotalWaves;wave++) expected+=DefenseGame.WavePlan(wave).Count;
-                        Check(game.Wave==10 && game.Kills==expected,"Expanded campaign is winnable: all ten waves and 528 enemies defeated");
+                        Check(game.Wave==10 && game.Kills==expected,"Expanded campaign is winnable: all ten waves and 522 enemies defeated");
                         Check(game.TotalTowersPurchased==8 && game.TotalMerges==2 && game.Towers.Count==6,
                             "Winning strategy uses eight PLACE actions and two MERGE actions, never both in one wave");
                         int units=0;foreach(DefenseTower tower in game.Towers) units+=tower.MergedUnits;

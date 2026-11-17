@@ -71,7 +71,7 @@ The original demo bounced random buggies around an arena and fired at clicked po
 
 ## Expanded traffic and campaign
 
-`DefenseGame.WavePlan` specifies ten waves, growing from 16 to 96 enemies. Six enemy kinds are mixed deterministically so repeated attempts are comparable. Motorcycles arrive in wave 4; 160-base-HP trucks arrive in wave 5 and become more frequent in later waves. Wave 5 is now the midpoint, and victory requires clearing wave 10. The same exclusive PLACE-or-MERGE action applies throughout, with ten distinct pads available.
+`DefenseGame.WavePlan` specifies ten waves, growing from 10 to 96 enemies. Six enemy kinds are mixed deterministically so repeated attempts are comparable. Motorcycles arrive in wave 4; 160-base-HP trucks arrive in wave 5 and become more frequent in later waves. Wave 5 is now the midpoint, and victory requires clearing wave 10. The same exclusive PLACE-or-MERGE action applies throughout, with ten distinct pads available.
 
 Vehicle graphics are authored by `DefenseArt.Vehicle`. A baked 20-sided wheel mesh, rider geometry, truck cab and cargo assembly, and different lighting distinguish the two new vehicles. `DefenseVehicleWheels` animates the wheels at a rate derived from speed and radius and respects pause. Both vehicles use explicit BoxCollider dimensions to fit their bodies, while retaining kinematic path-following and real projectile collisions.
 
@@ -91,4 +91,10 @@ Damage is the paid-level damage multiplied by represented units. Fusion also add
 
 The last tutorial page embeds `DefenseMergeDemo`, an isolated visual scene rendered into a UI RawImage. It uses the actual tower geometry and a looping cursor/drag/growth sequence, labels the example action counter, and has a Replay button. The preview uses a dedicated camera/layer, runs on unscaled time so paused Help still animates, and contains no DefenseTower actors or economy calls. It cannot modify the player's towers, cash or wave allowance.
 
-Traffic now totals 528 enemies, with counts and spawn rates listed in `WAVE_GUIDE.md`. The complete automated run makes eight purchases and two actual merges, using exactly one shared action in every wave and ending with six actors representing eight purchased units. Its money audit includes all consumed tower investment and confirms no injected campaign funds.
+Traffic now totals 522 enemies, with counts and spawn rates listed in `WAVE_GUIDE.md`. The complete automated run makes eight purchases and two actual merges, using exactly one shared action in every wave and ending with six actors representing eight purchased units. Its money audit includes all consumed tower investment and confirms no injected campaign funds.
+
+## Opening-wave balance regression
+
+The original expanded opening relied too much on the precise placement and upgrade timing used by the automated campaign. Dedicated tests reproduced two reasonable Pulse openings failing without upgrades. Wave 1 now uses ten 3-HP Scouts at speed 2 with 1.4 seconds between spawns; normal Scout stats resume in wave 2, and all later wave compositions remain unchanged. `DefenseStarterHint` highlights the left interior pad with a gold ring and a readable billboard. It is a suggestion, not a placement restriction.
+
+`DefenseOpeningValidation` buys exactly one unupgraded tower, makes no further purchases and injects no money or damage. It tests Pulse and Siege on the entrance-side, left-interior and central pads. All six clear the training wave, including with graphics enabled. The full campaign regression is also rerun separately.

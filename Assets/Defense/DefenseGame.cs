@@ -81,7 +81,7 @@ public class DefenseGame : MonoBehaviour
         Enemies.Clear();Towers.Clear();ClearShots();
         Credits=StartingCredits;Kills=0;KillEarnings=0;TowersPlacedThisWave=0;WaveActionsUsed=0;LastWaveAction=WaveAction.None;TotalTowersPurchased=0;TotalMerges=0;Wave=0;spawned=0;wavePlan.Clear();SelectedTower=null;SelectedKind=TowerKind.Pulse;
         Paused=false;Fast=false;Time.timeScale=1;State=DefenseState.Building;rangeRing.enabled=false;
-        HUD.HideMenu();HUD.Message("Start with $110. Each wave: PLACE one tower OR MERGE one pair. Paid upgrades remain available.");HUD.Refresh();
+        HUD.HideMenu();HUD.Message("Wave 1: try a Pulse on the gold START HERE pad. No upgrades needed for this training wave. PLACE or MERGE: one action.");HUD.Refresh();
     }
     public void Choose(TowerKind kind)
     {
@@ -150,7 +150,7 @@ public class DefenseGame : MonoBehaviour
 
     public static List<EnemyKind> WavePlan(int wave)
     {
-        int[] sizes={16,24,32,40,48,56,64,72,80,96};
+        int[] sizes={10,24,32,40,48,56,64,72,80,96};
         int count=sizes[Mathf.Clamp(wave-1,0,sizes.Length-1)];
         List<EnemyKind> plan=new List<EnemyKind>(count);
         for(int i=0;i<count;i++)
@@ -256,7 +256,7 @@ public class DefenseGame : MonoBehaviour
             }
         }
         if(IsCombat && spawned<wavePlan.Count && Time.time>=nextSpawn)
-        { SpawnEnemy(wavePlan[spawned++]);nextSpawn=Time.time+Mathf.Max(.4f,.9f-Wave*.05f);HUD.Refresh(); }
+        { SpawnEnemy(wavePlan[spawned++]);nextSpawn=Time.time+(Wave==1 ? 1.4f : Mathf.Max(.4f,.9f-Wave*.05f));HUD.Refresh(); }
         Merging.HandlePointer();
     }
     public bool TryMergeTowers(DefenseTower source,DefenseTower target) => Merging.TryMerge(source,target);

@@ -281,6 +281,8 @@ public static class DefenseArt
             Box(root,"Pad plus",position+Vector3.up*.16f,new Vector3(.6f,.02f,.11f),ColorMaterial("Pad symbols",Cyan));
             Box(root,"Pad plus",position+Vector3.up*.17f,new Vector3(.11f,.02f,.6f),ColorMaterial("Pad symbols",Cyan));
         }
+        GameObject starter=new GameObject("Recommended opening marker");starter.transform.SetParent(root,false);
+        starter.AddComponent<DefenseStarterHint>().Initialize(game);
         Vector3 end=game.Route.Position(game.Route.Length), start=game.Route.Position(0);
         Shape(root,"Relay platform","HexPlatform",end+Vector3.up*.1f,new Vector3(1.8f,.8f,1.8f),ColorMaterial("Relay metal",new Color(.14f,.25f,.38f)));
         Shape(root,"Relay crystal","Spire",end+Vector3.up*1.4f,new Vector3(1f,1.4f,1f),ColorMaterial("Relay light",Cyan));

@@ -31,6 +31,8 @@ public class DefenseEnemy : MonoBehaviour
             case EnemyKind.Truck: Speed=1.05f;hp=160;Reward=120;break;
             default: Speed=2.6f;hp=4;Reward=10;break;
         }
+        // A forgiving introduction; normal Scout stats apply from wave 2 onward.
+        if(wave==1 && kind==EnemyKind.Scout) { Speed=2f;hp=3f; }
         MaxHealth=hp*(1f+.12f*(wave-1)); Health=MaxHealth;
         Body=gameObject.AddComponent<Rigidbody>();Body.isKinematic=true;Body.useGravity=false;
         if(kind==EnemyKind.Truck || kind==EnemyKind.Motorcycle)

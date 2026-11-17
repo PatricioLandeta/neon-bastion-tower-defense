@@ -1,9 +1,16 @@
-Unity 6000.6.0f1 on macOS — animated tutorial and shared wave actions
-94 checks passed. Complete ten-wave win, 528 enemies, eight PLACE actions and two MERGE actions.
-Exactly one shared action used per wave; no place-plus-merge or repeated merge allowed.
-Animated 3D tutorial and replay verified, including unscaled animation during paused Help and no real resource changes.
-$110 starting cash; $10625 earned from kills; complete investment/cash audit passed.
-No C# compilation errors/warnings or shader errors. Final tutorial frame inspected.
+Unity 6000.6.0f1 on macOS — forgiving opening balance fix
+94 campaign/regression checks passed; all 522 enemies defeated.
+6 / 6 separate no-upgrade openings won with graphics enabled: both tower types on three sensible starter pads.
+No extra towers, cash or injected damage in opening runs. Later-wave compositions unchanged.
+Gold starter guidance inspected. No C# compilation errors or warnings.
+
+OPENING RESULT: Pulse pad 0 => PASS; kills=10
+OPENING RESULT: Pulse pad 1 => PASS; kills=10
+OPENING RESULT: Pulse pad 3 => PASS; kills=10
+OPENING RESULT: Siege pad 0 => PASS; kills=10
+OPENING RESULT: Siege pad 1 => PASS; kills=10
+OPENING RESULT: Siege pad 3 => PASS; kills=10
+OPENING SUMMARY: 6 / 6 no-upgrade openings won
 
 DEFENSE PASS: Title starts with combat stopped
 DEFENSE PASS: Custom non-basic mesh assets are available
@@ -42,7 +49,7 @@ DEFENSE PASS: Armored kill pays $25
 DEFENSE PASS: Siege kill pays $100 and total kill earnings are tracked
 DEFENSE PASS: Even ample kill money cannot bypass the one-tower limit during combat
 DEFENSE PASS: Clearing a wave unlocks exactly one placement for the next wave
-DEFENSE PASS: All sixteen scheduled kills pay correctly and there is no free wave-clear money
+DEFENSE PASS: All ten training-wave kills pay correctly and there is no free wave-clear money
 DEFENSE PASS: Next wave permits buying one additional tower
 DEFENSE PASS: Tower types still differ in fire rate, projectile speed and height
 DEFENSE PASS: Selling refunds 70 percent but does not restore the wave allowance
@@ -58,7 +65,7 @@ DEFENSE PASS: Vehicles have distinct models, fitted box hitboxes and authored wh
 DEFENSE PASS: Motorcycle kill pays $20
 DEFENSE PASS: High-HP truck kill pays $120
 DEFENSE PASS: Truck payout cannot be claimed twice
-DEFENSE PASS: Ten escalating waves contain 528 enemies with larger Scout groups and both new vehicle types
+DEFENSE PASS: Ten escalating waves contain 522 enemies with larger Scout groups and both new vehicle types
 DEFENSE PASS: Mismatched towers are rejected without spending cash or the shared action
 DEFENSE PASS: Self merge does not spend an action
 DEFENSE PASS: Drag creates a visual tower preview
@@ -94,7 +101,7 @@ DEFENSE PASS: Closing help restores the player's prior 2x speed
 DEFENSE PASS: Any enemy completing the path immediately ends the game
 DEFENSE PASS: Restart resets money, towers, rewards, waves and build allowance
 DEFENSE PASS: Wave five is now the midpoint and unlocks a sixth wave instead of victory
-DEFENSE PASS: Expanded campaign is winnable: all ten waves and 528 enemies defeated
+DEFENSE PASS: Expanded campaign is winnable: all ten waves and 522 enemies defeated
 DEFENSE PASS: Winning strategy uses eight PLACE actions and two MERGE actions, never both in one wave
 DEFENSE PASS: Merging conserves all purchased tower units
 DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases and upgrades

@@ -47,7 +47,7 @@ public class DefenseMergeDemo : MonoBehaviour
     {
         elapsed=seconds;
         ApplyAnimation();
-        if(previewCamera!=null && world.activeInHierarchy) previewCamera.Render();
+        if(previewCamera!=null && world.activeInHierarchy && SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null) previewCamera.Render();
     }
     private void ApplyAnimation()
     {
@@ -74,7 +74,8 @@ public class DefenseMergeDemo : MonoBehaviour
     void LateUpdate()
     {
         if(world==null) return;
-        elapsed+=Time.unscaledDeltaTime;ApplyAnimation();previewCamera.Render();
+        elapsed+=Time.unscaledDeltaTime;ApplyAnimation();
+        if(SystemInfo.graphicsDeviceType!=UnityEngine.Rendering.GraphicsDeviceType.Null) previewCamera.Render();
     }
     void OnDestroy()
     {

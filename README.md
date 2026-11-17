@@ -43,7 +43,7 @@ Begin with one Pulse tower on the gold **START HERE** pad (left interior). Wave 
 
 ## Quick tutorial and placement overlay
 
-The guide explains five steps: choose a Pulse or Siege tower, left-click a cyan hex pad, earn cash from defeated enemies, purchase upgrades, and watch matching placed towers merge in a looping 3D demonstration. The example shows a cursor dragging one actual tower model onto another, the result growing, and the example action count changing from 1 to 0 so placement is visibly locked. It lists the tower prices and enemy payouts and gives a concrete example: a $75 Pulse leaves $35; one $10 Scout kill funds the $45 level-2 upgrade. It also explains the one-new-tower-per-wave rule and the extra damage, firing speed, range and 0.8-unit height increase from upgrades.
+The guide explains five steps: choose a Pulse or Siege tower, left-click a cyan hex pad, earn cash from defeated enemies, purchase upgrades, and watch matching placed towers merge in a looping 3D demonstration. The example shows a cursor dragging one actual tower model onto another, the result growing, and the example action count changing from 1 to 0 so placement is visibly locked. It lists the tower prices and enemy payouts and gives a concrete example: a $75 Pulse leaves $35; the opening wave earns $40, so saving for another tower matters. It also explains the one-new-tower-per-wave rule and the extra damage, firing speed, range and 0.8-unit height increase from upgrades.
 
 The guide opens from the title screen and can be reopened with **H** or **? HELP**. Opening it during play pauses the battle. Closing it restores the prior pause state and 1x/2x speed without resetting cash, towers or waves. A persistent textual overlay says **1 / 2 CHOOSE TOWER · LEFT-CLICK A CYAN PAD TO BUILD**, so placement instructions remain available after the guide closes.
 
@@ -62,7 +62,7 @@ The guide opens from the title screen and can be reopened with **H** or **? HELP
 | Damage per hit | 1.15 | 12 |
 | Range | 10.5 units | 14 units |
 
-Towers can reach level 3. Each level increases damage, fire rate, range, and actual turret height by **0.8 units**. The column extends and the firing muzzle rises; glowing collars mark upgrades. Upgrades cost $45 and $90. Selling returns 70% of the tower's total investment but never restores a used wave allowance. You cannot sell your last tower when no replacement placement remains.
+Towers can reach level 3. Each level increases damage, fire rate, range, and actual turret height by **0.8 units**. The column extends and the firing muzzle rises; glowing collars mark upgrades. Upgrades cost $100 and $200 per represented tower unit. A two-unit merged tower costs $200 and $400, so fusion does not make future upgrades cheap. Selling returns 70% of the tower's total investment but never restores a used wave allowance. You cannot sell your last tower when no replacement placement remains.
 
 ## Merge matching towers
 
@@ -80,12 +80,12 @@ Buy two towers across different waves, then **hold the left mouse button on one,
 
 | Type | Speed | Base HP | Kill reward | Role |
 | --- | --- | --- | --- | --- |
-| Scout | 2.6 units/s | 4 | $10 | Standard drone |
-| Runner | 3.9 units/s | 3 | $15 | Fast, lightly armored |
-| Armored | 1.65 units/s | 12 | $25 | Slow, durable crawler |
-| Siege | 1.25 units/s | 48 | $100 | Wave-5 elite |
-| Motorcycle | 5.2 units/s | 6 | $20 | Fast two-wheeled vehicle, introduced in wave 4 |
-| Truck | 1.05 units/s | 160 | $120 | Huge armored cargo truck, introduced in wave 5 |
+| Scout | 2.6 units/s | 4 | $4 | Standard drone |
+| Runner | 3.9 units/s | 3 | $5 | Fast, lightly armored |
+| Armored | 1.65 units/s | 12 | $8 | Slow, durable crawler |
+| Siege | 1.25 units/s | 48 | $30 | Wave-5 elite |
+| Motorcycle | 5.2 units/s | 6 | $6 | Fast two-wheeled vehicle, introduced in wave 4 |
+| Truck | 1.05 units/s | 160 | $40 | Huge armored cargo truck, introduced in wave 5 |
 
 Every destroyed monster pays immediately, with a gold `+$` popup and an updated money balance.
 

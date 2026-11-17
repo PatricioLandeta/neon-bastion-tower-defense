@@ -24,12 +24,12 @@ public class DefenseEnemy : MonoBehaviour
         float hp;
         switch(kind)
         {
-            case EnemyKind.Runner: Speed=3.9f;hp=3;Reward=15;break;
-            case EnemyKind.Armored: Speed=1.65f;hp=12;Reward=25;break;
-            case EnemyKind.Siege: Speed=1.25f;hp=48;Reward=100;break;
-            case EnemyKind.Motorcycle: Speed=5.2f;hp=6;Reward=20;break;
-            case EnemyKind.Truck: Speed=1.05f;hp=160;Reward=120;break;
-            default: Speed=2.6f;hp=4;Reward=10;break;
+            case EnemyKind.Runner: Speed=3.9f;hp=3;Reward=5;break;
+            case EnemyKind.Armored: Speed=1.65f;hp=12;Reward=8;break;
+            case EnemyKind.Siege: Speed=1.25f;hp=48;Reward=30;break;
+            case EnemyKind.Motorcycle: Speed=5.2f;hp=6;Reward=6;break;
+            case EnemyKind.Truck: Speed=1.05f;hp=160;Reward=40;break;
+            default: Speed=2.6f;hp=4;Reward=4;break;
         }
         // A forgiving introduction; normal Scout stats apply from wave 2 onward.
         if(wave==1 && kind==EnemyKind.Scout) { Speed=2f;hp=3f; }

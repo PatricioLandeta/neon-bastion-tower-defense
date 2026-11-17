@@ -81,10 +81,10 @@ public static class DefenseValidation
                         "Tutorial explicitly explains selecting and left-clicking a cyan pad to place a tower");
                     back.onClick.Invoke();Check(game.HUD.TutorialPage==0,"Tutorial Back returns to the previous explanation");
                     next.onClick.Invoke();next.onClick.Invoke();
-                    Check(game.HUD.TutorialPage==2 && guideText.text.Contains("$10") && guideText.text.Contains("MONEY"),
+                    Check(game.HUD.TutorialPage==2 && guideText.text.Contains("$4") && guideText.text.Contains("MONEY"),
                         "Tutorial explains kill rewards and the money display");
                     next.onClick.Invoke();
-                    Check(game.HUD.TutorialPage==3 && guideText.text.Contains("$45") && guideText.text.Contains("$90") && guideText.text.Contains("0.8"),
+                    Check(game.HUD.TutorialPage==3 && guideText.text.Contains("$100") && guideText.text.Contains("$200") && guideText.text.Contains("0.8"),
                         "Tutorial explains upgrade prices and stronger, taller towers");
                     if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureTo("TUTORIAL_PREVIEW.png");
                     next.onClick.Invoke();
@@ -127,19 +127,21 @@ public static class DefenseValidation
                     game.LaunchWave();game.enabled=false;
                     Check(game.PlacementsRemaining==0,"Launching a wave does not grant a second placement");
                     DefenseEnemy scout=game.SpawnEnemy(EnemyKind.Scout);scout.TakeDamage(1000);
-                    Check(game.Credits==45 && game.KillEarnings==10 && game.Kills==1,"Scout kill pays exactly $10");
-                    scout.TakeDamage(1000);Check(game.Credits==45 && game.Kills==1,"A defeated enemy cannot pay twice");
+                    Check(game.Credits==39 && game.KillEarnings==4 && game.Kills==1,"Scout kill pays exactly $4");
+                    scout.TakeDamage(1000);Check(game.Credits==39 && game.Kills==1,"A defeated enemy cannot pay twice");
+                    game.UpgradeSelected();Check(testTower.Level==1 && game.Credits==39,"One kill cannot fund an immediate upgrade");
+                    for(int i=0;i<24;i++) game.SpawnEnemy(EnemyKind.Scout).TakeDamage(1000);
                     float oldHeight=testTower.Height,oldDamage=testTower.Damage,oldRate=testTower.FireRate,oldRange=testTower.Range;
                     game.SelectTower(testTower);game.UpgradeSelected();
-                    Check(testTower.Level==2 && game.Credits==0,"Kill money purchases an upgrade for $45");
+                    Check(testTower.Level==2 && game.Credits==35,"Kill money purchases an upgrade for $100");
                     Check(Mathf.Abs(testTower.Height-oldHeight-.8f)<.001f && Mathf.Abs(testTower.Muzzle.parent.localPosition.y-testTower.Height)<.001f,"Upgrade visibly raises the turret and muzzle by 0.8 units");
                     Check(testTower.Damage>oldDamage && testTower.FireRate>oldRate && testTower.Range>oldRange,"Upgrade increases damage, fire rate and range");
                     DefenseEnemy runner=game.SpawnEnemy(EnemyKind.Runner),armored=game.SpawnEnemy(EnemyKind.Armored),boss=game.SpawnEnemy(EnemyKind.Siege);
                     Check(runner.Speed>scout.Speed && armored.Speed<scout.Speed && armored.MaxHealth>scout.MaxHealth,"Enemy types have different speed and HP");
-                    runner.TakeDamage(1000);Check(game.Credits==15,"Runner kill pays $15");
-                    armored.TakeDamage(1000);Check(game.Credits==40,"Armored kill pays $25");
-                    boss.TakeDamage(1000);Check(game.Credits==140 && game.KillEarnings==150,"Siege kill pays $100 and total kill earnings are tracked");
-                    Check(!game.TryPlaceAt(game.Pads[3]) && game.Credits==140,"Even ample kill money cannot bypass the one-tower limit during combat");
+                    runner.TakeDamage(1000);Check(game.Credits==40,"Runner kill pays $5");
+                    armored.TakeDamage(1000);Check(game.Credits==48,"Armored kill pays $8");
+                    boss.TakeDamage(1000);Check(game.Credits==78 && game.KillEarnings==143,"Siege kill pays $30 and total kill earnings are tracked");
+                    Check(!game.TryPlaceAt(game.Pads[3]) && game.Credits==78,"Even kill money cannot bypass the one-tower limit during combat");
                     testTower.enabled=false;game.enabled=true;Time.timeScale=10;due=now+.05;stage++;break;
                 case 1:
                     // Focused transition test only: clear scheduled enemies to exercise the wave boundary.
@@ -147,17 +149,19 @@ public static class DefenseValidation
                     if(game.State!=DefenseState.Building) { due=now+.05;return; }
                     Time.timeScale=1;game.enabled=false;
                     Check(game.Wave==1 && game.PlacementWave==2 && game.PlacementsRemaining==1,"Clearing a wave unlocks exactly one placement for the next wave");
-                    Check(game.Credits==240,"All ten training-wave kills pay correctly and there is no free wave-clear money");
+                    Check(game.Credits==118,"All ten training-wave kills pay correctly and there is no free wave-clear money");
                     game.Choose(TowerKind.Siege);Check(game.TryPlaceAt(game.Pads[3]),"Next wave permits buying one additional tower");
                     DefenseTower siege=game.SelectedTower;
                     Check(testTower.FireRate!=siege.FireRate && testTower.ProjectileSpeed!=siege.ProjectileSpeed && testTower.Height!=siege.Height,"Tower types still differ in fire rate, projectile speed and height");
                     game.SellSelected();
-                    Check(game.Credits==207 && game.Towers.Count==1 && game.PlacementsRemaining==0,"Selling refunds 70 percent but does not restore the wave allowance");
-                    Check(!game.TryPlaceAt(game.Pads[3]) && game.Credits==207,"Sell-and-rebuild cannot bypass the one-per-wave rule");
+                    Check(game.Credits==85 && game.Towers.Count==1 && game.PlacementsRemaining==0,"Selling refunds 70 percent but does not restore the wave allowance");
+                    Check(!game.TryPlaceAt(game.Pads[3]) && game.Credits==85,"Sell-and-rebuild cannot bypass the one-per-wave rule");
                     game.SelectTower(testTower);game.SellSelected();Check(game.Towers.Count==1,"Cannot strand the player by selling their only tower after using the allowance");
+                    game.LaunchWave();
+                    while(game.Credits<testTower.UpgradeCost) game.SpawnEnemy(EnemyKind.Truck).TakeDamage(10000);
                     game.UpgradeSelected();float maxHeight=testTower.Height;
-                    Check(testTower.Level==3 && game.Credits==117 && maxHeight>2.9f,"A second upgrade spends $90 and makes the tower taller again");
-                    game.UpgradeSelected();Check(testTower.Level==3 && game.Credits==117,"Maximum level cannot consume money or grow indefinitely");
+                    Check(testTower.Level==3 && game.Credits==5 && maxHeight>2.9f,"A second upgrade spends $200 and makes the tower taller again");
+                    game.UpgradeSelected();Check(testTower.Level==3 && game.Credits==5,"Maximum level cannot consume money or grow indefinitely");
                     game.LaunchWave();Check(game.PlacementsRemaining==0 && game.Wave==2,"Wave-2 launch preserves its already-used setup allowance");
                     game.StartGame();game.LaunchWave();
                     testEnemy=game.SpawnEnemy(EnemyKind.Scout);testEnemy.SetDistance(9);testEnemy.enabled=false;
@@ -167,7 +171,7 @@ public static class DefenseValidation
                     Check(projectile.Body.useGravity && !projectile.Body.isKinematic,"Projectiles use dynamic Rigidbody gravity");
                     simulatedDue=Time.time+.8f;due=now+.1;stage++;break;
                 case 2:
-                    Check(game.Kills==1 && game.Credits==120,"An actual projectile collision kills an enemy and pays its money reward");
+                    Check(game.Kills==1 && game.Credits==114,"An actual projectile collision kills an enemy and pays its money reward");
                     DefenseEnemy motorcycle=game.SpawnEnemy(EnemyKind.Motorcycle),truck=game.SpawnEnemy(EnemyKind.Truck);
                     Check(motorcycle.Speed>3.9f && motorcycle.MaxHealth==6 && truck.MaxHealth==160 && truck.Speed<1.25f,
                         "Motorcycles are fast and trucks have 160 base HP at a slower speed");
@@ -176,9 +180,9 @@ public static class DefenseValidation
                         Resources.Load<Mesh>("DefenseMeshes/Wheel")!=null,
                         "Vehicles have distinct models, fitted box hitboxes and authored wheel meshes");
                     if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureVehicles(motorcycle,truck);
-                    motorcycle.TakeDamage(10000);Check(game.Credits==140,"Motorcycle kill pays $20");
-                    truck.TakeDamage(10000);Check(game.Credits==260,"High-HP truck kill pays $120");
-                    truck.TakeDamage(10000);Check(game.Credits==260,"Truck payout cannot be claimed twice");
+                    motorcycle.TakeDamage(10000);Check(game.Credits==120,"Motorcycle kill pays $6");
+                    truck.TakeDamage(10000);Check(game.Credits==160,"High-HP truck kill pays $40");
+                    truck.TakeDamage(10000);Check(game.Credits==160,"Truck payout cannot be claimed twice");
                     int total=0,scouts=0;bool hasBike=false,hasTruck=false;
                     for(int wave=1;wave<=DefenseGame.TotalWaves;wave++)
                         foreach(EnemyKind kind in DefenseGame.WavePlan(wave))
@@ -294,13 +298,14 @@ public static class DefenseValidation
             "Merge grows real geometry and raises combat stats");
         Check(game.Credits==money && game.WaveActionsRemaining==0 && game.LastWaveAction==WaveAction.Merge,
             "Successful merge spends the wave action and no extra cash");
-        game.SpawnEnemy(EnemyKind.Truck).TakeDamage(10000);money=game.Credits;
+        while(game.Credits<target.UpgradeCost) game.SpawnEnemy(EnemyKind.Truck).TakeDamage(10000);money=game.Credits;
         game.Choose(TowerKind.Pulse);
         Check(money>=75 && !game.TryPlaceAt(game.Pads[3]) && game.Credits==money,
             "After MERGE, placing a tower is blocked even when money and a pad are available");
         DefenseTower third=TestTower(TowerKind.Pulse,5);
         Check(!game.TryMergeTowers(target,third) && third.MergedUnits==1 && game.WaveActionsRemaining==0,
             "Second merge in the same wave is blocked");
+        Check(target.UpgradeCost==400,"Two-unit merged tower charges double the level-3 upgrade price");
         game.SelectTower(target);game.UpgradeSelected();
         Check(target.Level==3 && game.WaveActionsRemaining==0,"Paid cash upgrades remain available after the wave action is used");
         Ray ray=game.View.ScreenPointToRay(game.View.WorldToScreenPoint(target.transform.position+Vector3.up*target.Height));

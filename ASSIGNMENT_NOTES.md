@@ -48,7 +48,7 @@ The shell then flies as a dynamic Rigidbody with gravity and continuous collisio
 ## Additional features
 
 - Ten escalating waves, much larger Scout groups, fast motorcycles and heavy truck convoys.
-- Kill-earned cash ($10 / $15 / $25 / $100 / $20 / $120), three tower levels with physical height growth, and 70% sell refunds. No free wave-clear bonus.
+- Kill-earned cash ($4 / $5 / $8 / $30 / $6 / $40), three tower levels with physical height growth, and 70% sell refunds. No free wave-clear bonus.
 - Target priority favors the enemy farthest along the route.
 - Selected-tower range indicator and hover marker for build pads.
 - Enemy health bars, projectile trails, impact particles, and gold cash popups after kills.
@@ -67,7 +67,7 @@ The original demo bounced random buggies around an arena and fired at clicked po
 
 `WaveActionsUsed` is reset for wave 1 and at each wave-clear boundary. `TryConsumeWaveAction` is the single gate used by both placement and merging, and it records `LastWaveAction`, `TotalTowersPurchased` and `TotalMerges`. Launching combat, selling, and failed drops do not restore an action. The UI says ACTION LEFT and locks both choices after either succeeds. Paid upgrades use money without consuming the wave action.
 
-`DefenseEnemy.Reward` defines the cash payout. `EnemyDestroyed` removes the enemy before awarding money, preventing double payment. `KillEarnings` supports an exact money audit. Tower upgrades spend $45 and $90, increase damage/rate/range, extend the support column and raise the actual gimbal and muzzle by 0.8 units per level. `DefenseArt.RaiseTower` adds a glowing upgrade collar. Ten normal waves therefore permit at most ten new towers in the campaign.
+`DefenseEnemy.Reward` defines the cash payout. `EnemyDestroyed` removes the enemy before awarding money, preventing double payment. `KillEarnings` supports an exact money audit. Tower upgrades spend $100 and $200 per represented tower unit, increase damage/rate/range, extend the support column and raise the actual gimbal and muzzle by 0.8 units per level. `DefenseArt.RaiseTower` adds a glowing upgrade collar. Ten normal waves therefore permit at most ten new towers in the campaign.
 
 ## Expanded traffic and campaign
 

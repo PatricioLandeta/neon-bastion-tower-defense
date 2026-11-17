@@ -17,6 +17,8 @@ Each wave grants **ONE shared action: PLACE a new tower OR MERGE one matching pa
 
 **Total: 522 enemies — 291 Scout, 76 Runner, 67 Armored, 57 Motorcycle, 30 Truck, 1 Siege.**
 
-Wave 1 is a forgiving training wave: ten 3-HP Scouts moving at 2 units/second, with a 1.4-second spawn interval. A gold marker recommends a starting pad. Normal stats return in wave 2. Spawning accelerates to every 0.4 seconds in wave 10. Money comes only from kills: $10 Scout, $15 Runner, $25 Armored, $20 Motorcycle, $120 Truck, $100 Siege. The full campaign pays $10,565. HP scaling remains +12% of base per wave, making trucks 236.8 HP in wave 5 and 332.8 in wave 10.
+Wave 1 is a forgiving training wave: ten 3-HP Scouts moving at 2 units/second, with a 1.4-second spawn interval. A gold marker recommends a starting pad. Normal stats return in wave 2. Spawning accelerates to every 0.4 seconds in wave 10. Money comes only from kills: $4 Scout, $5 Runner, $8 Armored, $6 Motorcycle, $40 Truck, $30 Siege. The full campaign pays $3,652. HP scaling remains +12% of base per wave, making trucks 236.8 HP in wave 5 and 332.8 in wave 10.
 
 Build coverage before concentrating too much power in one merged tower. One winning tested route buys towers in waves 1, 2, 3, 5, 6, 7, 9 and 10, and merges in waves 4 and 8. It ends with six physical towers representing eight purchases. It buys upgrades only with earned cash. This is one proven strategy, not a guarantee for every arrangement.
+
+Economy: tower prices remain $75 / $110 and starting cash is $110. Single-tower upgrades cost $100 then $200; merged towers multiply these prices by their represented units. Prioritize coverage before upgrades. You may need to earn a few kills during a wave before affording its new tower.

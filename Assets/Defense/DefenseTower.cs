@@ -26,7 +26,7 @@ public class DefenseTower : MonoBehaviour
     public float Height => (Kind==TowerKind.Pulse ? 1.4f : 2.8f)+.8f*(Level-1)+.65f*FusionBonus;
     public float Range => (Kind==TowerKind.Pulse ? 10.5f : 14f)+.6f*(Level-1)+Mathf.Min(3f,.6f*(MergedUnits-1));
     public float Damage => (Kind==TowerKind.Pulse ? 1.15f : 12f)*(1f+.4f*(Level-1))*MergedUnits;
-    public int UpgradeCost => 45*Level;
+    public int UpgradeCost => 100*Level*MergedUnits;
     public int ShotsFired { get; private set; }
     public Transform Muzzle { get; private set; }
     private Transform turret;

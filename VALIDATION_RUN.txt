@@ -1,17 +1,8 @@
-Unity 6000.6.0f1 on macOS — Siege heavy-shell balance
-Siege base stats: 12 damage per shell, 0.6 shots per second (1.67 seconds between shots).
-94 campaign/regression checks passed; all 522 enemies defeated.
-6 / 6 separate no-upgrade openings won with graphics enabled: both tower types on three sensible starter pads.
-No extra towers, cash or injected damage in opening runs. Later-wave compositions unchanged.
-Gold starter guidance inspected. No C# compilation errors or warnings.
-
-OPENING RESULT: Pulse pad 0 => PASS; kills=10
-OPENING RESULT: Pulse pad 1 => PASS; kills=10
-OPENING RESULT: Pulse pad 3 => PASS; kills=10
-OPENING RESULT: Siege pad 0 => PASS; kills=10
-OPENING RESULT: Siege pad 1 => PASS; kills=10
-OPENING RESULT: Siege pad 3 => PASS; kills=10
-OPENING SUMMARY: 6 / 6 no-upgrade openings won
+Unity 6000.6.0f1 on macOS — tighter kill economy
+96 campaign/regression checks passed; all 522 enemies defeated.
+Full campaign kill income: $3,652, reduced from $10,565. Starting cash $110; normal purchases only.
+Upgrades: $100 / $200 per represented tower unit.
+No C# compilation errors or warnings.
 
 DEFENSE PASS: Title starts with combat stopped
 DEFENSE PASS: Custom non-basic mesh assets are available
@@ -39,16 +30,17 @@ DEFENSE PASS: Successful purchase spends its price and the wave's single placeme
 DEFENSE PASS: Occupied pads and second placements are rejected without spending money
 DEFENSE PASS: Cannot upgrade without enough kill earnings
 DEFENSE PASS: Launching a wave does not grant a second placement
-DEFENSE PASS: Scout kill pays exactly $10
+DEFENSE PASS: Scout kill pays exactly $4
 DEFENSE PASS: A defeated enemy cannot pay twice
-DEFENSE PASS: Kill money purchases an upgrade for $45
+DEFENSE PASS: One kill cannot fund an immediate upgrade
+DEFENSE PASS: Kill money purchases an upgrade for $100
 DEFENSE PASS: Upgrade visibly raises the turret and muzzle by 0.8 units
 DEFENSE PASS: Upgrade increases damage, fire rate and range
 DEFENSE PASS: Enemy types have different speed and HP
-DEFENSE PASS: Runner kill pays $15
-DEFENSE PASS: Armored kill pays $25
-DEFENSE PASS: Siege kill pays $100 and total kill earnings are tracked
-DEFENSE PASS: Even ample kill money cannot bypass the one-tower limit during combat
+DEFENSE PASS: Runner kill pays $5
+DEFENSE PASS: Armored kill pays $8
+DEFENSE PASS: Siege kill pays $30 and total kill earnings are tracked
+DEFENSE PASS: Even kill money cannot bypass the one-tower limit during combat
 DEFENSE PASS: Clearing a wave unlocks exactly one placement for the next wave
 DEFENSE PASS: All ten training-wave kills pay correctly and there is no free wave-clear money
 DEFENSE PASS: Next wave permits buying one additional tower
@@ -56,15 +48,15 @@ DEFENSE PASS: Tower types still differ in fire rate, projectile speed and height
 DEFENSE PASS: Selling refunds 70 percent but does not restore the wave allowance
 DEFENSE PASS: Sell-and-rebuild cannot bypass the one-per-wave rule
 DEFENSE PASS: Cannot strand the player by selling their only tower after using the allowance
-DEFENSE PASS: A second upgrade spends $90 and makes the tower taller again
+DEFENSE PASS: A second upgrade spends $200 and makes the tower taller again
 DEFENSE PASS: Maximum level cannot consume money or grow indefinitely
 DEFENSE PASS: Wave-2 launch preserves its already-used setup allowance
 DEFENSE PASS: Projectiles use dynamic Rigidbody gravity
 DEFENSE PASS: An actual projectile collision kills an enemy and pays its money reward
 DEFENSE PASS: Motorcycles are fast and trucks have 160 base HP at a slower speed
 DEFENSE PASS: Vehicles have distinct models, fitted box hitboxes and authored wheel meshes
-DEFENSE PASS: Motorcycle kill pays $20
-DEFENSE PASS: High-HP truck kill pays $120
+DEFENSE PASS: Motorcycle kill pays $6
+DEFENSE PASS: High-HP truck kill pays $40
 DEFENSE PASS: Truck payout cannot be claimed twice
 DEFENSE PASS: Ten escalating waves contain 522 enemies with larger Scout groups and both new vehicle types
 DEFENSE PASS: Mismatched towers are rejected without spending cash or the shared action
@@ -82,6 +74,7 @@ DEFENSE PASS: Merge grows real geometry and raises combat stats
 DEFENSE PASS: Successful merge spends the wave action and no extra cash
 DEFENSE PASS: After MERGE, placing a tower is blocked even when money and a pad are available
 DEFENSE PASS: Second merge in the same wave is blocked
+DEFENSE PASS: Two-unit merged tower charges double the level-3 upgrade price
 DEFENSE PASS: Paid cash upgrades remain available after the wave action is used
 DEFENSE PASS: Tall fused tower can be picked by its model
 DEFENSE PASS: After PLACE, merging is blocked even with a matching partner
@@ -107,5 +100,12 @@ DEFENSE PASS: Winning strategy uses eight PLACE actions and two MERGE actions, n
 DEFENSE PASS: Merging conserves all purchased tower units
 DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases and upgrades
 DEFENSE PASS: Victory waits for every active and scheduled enemy
+DEFENSE VALIDATION COMPLETE: 96 checks passed
 
-DEFENSE VALIDATION COMPLETE: 94 checks passed
+OPENING RESULT: Pulse pad 0 => PASS; kills=10
+OPENING RESULT: Pulse pad 1 => PASS; kills=10
+OPENING RESULT: Pulse pad 3 => PASS; kills=10
+OPENING RESULT: Siege pad 0 => PASS; kills=10
+OPENING RESULT: Siege pad 1 => PASS; kills=10
+OPENING RESULT: Siege pad 3 => PASS; kills=10
+OPENING SUMMARY: 6 / 6 no-upgrade openings won

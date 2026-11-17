@@ -1,6 +1,6 @@
 # Validation
 
-The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **153 checks**, including a complete ten-wave win with all **522** enemies destroyed.
+The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **180 checks**, including a complete ten-wave win with all **522** enemies destroyed.
 
 The campaign strategy begins with the normal $110, places towers on legal pads, buys additional towers and upgrades only when rewards make them affordable, and makes eight purchases and two paid merges across ten waves. It does not add credits, change enemy HP or speed, skip enemies, or apply test damage during the campaign. It accelerates the campaign with Unity time scaling; projectiles and enemies still use the normal fixed physics timestep. The focused tests run separately and intentionally create isolated test situations.
 
@@ -57,3 +57,7 @@ Run **Tools → Neon Bastion → Validate opening without upgrades** outside Pla
 ## Supplied background recording
 
 The supplied Kingdom Hearts Dearly Beloved (Original Version) MP3 imports as streaming audio (about 4 minutes 20 seconds). A separate actual-playback validator passed **9 checks**: title playback, normal starting/rerun progression, playback during pause and tutorial, unchanged pitch at 2x game speed, ending-screen playback, and a single stable music source. Run **Tools → Neon Bastion → Validate background music** outside Play mode.
+
+## Expanded animated field guide
+
+Every slide now has a live example. Checks verify both tower selections, placement and example cash subtraction, movement/HP/rewards for all six enemy types, previous/next enemy buttons, upgrade payments and actual height changes, all merge tiers, replay, and isolation from real money and actors. Tutorial screenshots were inspected for readable text, preview framing and non-overlapping controls. The full 180-check campaign run passed; a focused tutorial rerun also covers preserving the current enemy when Replay follows automatic cycling.

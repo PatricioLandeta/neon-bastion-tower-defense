@@ -89,7 +89,7 @@ Damage is the paid-level damage multiplied by represented units. Fusion also com
 
 ## Animated example and tougher traffic
 
-The last tutorial page embeds `DefenseMergeDemo`, an isolated visual scene rendered into a UI RawImage. It uses the actual tower geometry and a looping cursor/drag/widening sequence, labels the merge levels and example cash, and has a Replay button. The preview uses a dedicated camera/layer, runs on unscaled time so paused Help still animates, and contains no DefenseTower actors or economy calls. It cannot modify the player's towers or cash.
+Every tutorial page uses `DefenseMergeDemo`, an isolated visual scene rendered into a UI RawImage. It uses the actual tower geometry and looping selection/firing, placement/payment, moving-enemy/HP/reward, upgrade/growth and drag/merge sequences, labels the merge levels and example cash, and has a Replay button. The preview uses a dedicated camera/layer, runs on unscaled time so paused Help still animates, and contains no DefenseTower actors or economy calls. It cannot modify the player's towers or cash.
 
 Traffic now totals 522 enemies, with counts and spawn rates listed in `WAVE_GUIDE.md`. The complete automated run makes eight purchases and two actual merges, ending with six actors representing eight purchased units. Its money audit includes all consumed tower investment and confirms no injected campaign funds.
 
@@ -104,3 +104,5 @@ The original expanded opening relied too much on the precise placement and upgra
 `DefenseAudio` is initialized once in `DefenseGame.Start`. It maintains one independent looping background source and 32 reusable shot sources. Original Pulse/Siege laser WAVs live in `Resources/DefenseAudio`; `DefenseTower.FixedUpdate` calls `PlayShot` for every launched shell. Pitch rises two semitones per paid upgrade and three per merge tier; each voice has independent pitch and stereo position. Music remains at pitch 1 and its source survives game resets. The supplied Kingdom Hearts Dearly Beloved recording is imported as streaming audio at `Resources/DefenseAudio/DearlyBeloved`, starts at the title screen and loops continuously.
 
 `DefenseArt.LightScout` replaces the Scout's old tracked bug-like model with an enclosed light vehicle, cyan circuitry, four glowing wheel discs and a short light trail. It reuses authored wheel meshes and `DefenseVehicleWheels`. Gameplay statistics and the original collider are preserved.
+
+The enemy guide cycles all six models and offers manual previous/next selection. Shared `DefenseEnemy.BaseStats` definitions supply HP, speed, rewards and calculated ideal hit counts. Paid-upgrade examples show two separate payments and actual column/muzzle growth; visual actors have no DefenseEnemy/DefenseTower/Rigidbody simulation. All examples animate with unscaled time and use example balances, leaving the real game untouched.

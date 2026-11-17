@@ -14,6 +14,7 @@ public class DefenseHUD : MonoBehaviour
     private Text tutorialProgress,tutorialHeading,tutorialBody,tutorialNextLabel,tutorialSkipLabel;
     private Button tutorialBack;
     private GameObject mergeDemoPanel;
+    private Button previousEnemy,nextEnemy;
     public DefenseMergeDemo MergeDemo { get; private set; }
     private int tutorialPage;
     private bool tutorialStartsGame,tutorialPausedByUs;
@@ -21,12 +22,11 @@ public class DefenseHUD : MonoBehaviour
     public int TutorialPage => tutorialPage;
     private static readonly string[] TutorialTitles={"CHOOSE YOUR TOWER","PLACE ON A CYAN PAD","KILLS EARN MONEY","UPGRADE YOUR DEFENSE","THREE MERGE TIERS"};
     private static readonly string[] TutorialBodies={
-        "You start with $110.\n\nPULSE — $75: rapid fire, useful against Scouts and motorcycles.\nSIEGE — $110: 12-damage shells, one shot every 1.67 seconds.\n\nClick a tower card at the bottom, or press 1 for Pulse / 2 for Siege.\nFor your first tower, try a Pulse on the gold START HERE pad.\nWave 1 is a slower training wave; upgrades are optional.",
-        "Move the pointer over a glowing CYAN HEXAGON on the board.\nLEFT-CLICK the pad to place your selected tower.\n\nBuild and merge as often as you can afford. There is no per-wave action limit.\nRoads, unmarked ground and occupied pads cannot take a new tower.\n\nPress SPACE or LAUNCH WAVE when your defense is ready.\nKeep enough cash for both coverage and upgrades.",
-        "Every defeated enemy immediately adds cash to MONEY at the top.\nWatch for the gold +$ reward above the enemy.\n\nScout $4  /  Runner $5  /  Motorcycle $6\nArmored $8  /  Siege $30  /  Truck $40\n\nSave cash to buy your next wave's tower or improve an existing one.\nUnspent money carries over. There is no free wave-clear bonus.",
-        "LEFT-CLICK a placed tower to select it and see its range and stats.\nClick UPGRADE or press U when you can afford it.\n\nLevel 2 costs $100. Level 3 costs $200.\nMerged towers multiply these costs by their combined tower count.\nEach upgrade adds damage, firing speed, range and 0.8 units of height.\n\nA $75 Pulse leaves $35. Wave 1 pays $40 —\nsave for another tower before spending on upgrades!",
-        "HOLD left mouse on a tower.\nDRAG onto SAME TYPE + MERGE LEVEL\nand RELEASE. M / MERGE also works.\n\nLv1 + Lv1 → GREEN Lv2 ($50)\nLv2 + Lv2 → PURPLE Lv3 ($100)\nLv3 + Lv3 → RED Lv4 ($200)\nRED is the final merge tier.\n\nBuy AND merge in the same wave.\nPay only for valid merges.\nMerge: wider, +5% range, +20% shot rate.\nOnly paid upgrades add height."
-
+        "Protect the CYAN RELAY. One escaped enemy ends the run.\n\nStart with $110. Select a tower card or press 1 / 2.\n\nPULSE — $75\n1.15 damage · 2.4 shots/s · range 10.5\nFast fire suits Scouts and motorcycles.\n\nSIEGE — $110\n12 damage · 0.6 shots/s · range 14\nHeavy shells suit armored enemies and trucks.\n\nThe animated ring shows which tower is selected.\nBegin with Pulse on the gold START HERE pad.",
+        "1  Choose PULSE / SIEGE using 1 / 2 or its card.\n2  Move onto a free glowing CYAN HEXAGON.\n3  LEFT-CLICK the pad to buy and place the tower.\n\nExample: $110 − $75 Pulse = $35 left.\nRoads, empty terrain and occupied pads reject builds.\nIf you cannot afford it, no money is spent.\n\nPress SPACE / LAUNCH WAVE when ready.\nTowers aim and shoot automatically.\nBuy, merge and upgrade during setup OR combat.\nThere is no per-wave action limit; cash is the limit.\n\nUse several bends for better road coverage.",
+        "",
+        "1  LEFT-CLICK a placed tower to select it.\n2  Check the upgrade price and your MONEY.\n3  Click UPGRADE or press U.\n\nPaid level 1 → 2 costs $100.\nPaid level 2 → 3 costs $200. Level 3 is the cap.\n\nEach upgrade: +0.8 height, more damage,\nfaster shots, more range and sharper laser sound.\nThe example shows $350 → $250 → $50.\n\nMerged towers multiply prices by their tower units.\nA green x2 tower costs $200, then $400.\n\nUpgrades add HEIGHT. Merges add WIDTH.\nWave 1 pays $40: save for coverage first.",
+        "HOLD left mouse on a placed tower.\nDRAG onto SAME TYPE + MERGE LEVEL.\nRELEASE to combine. M / MERGE also works.\n\nLv1 + Lv1 → GREEN Lv2 ($50)\nLv2 + Lv2 → PURPLE Lv3 ($100)\nLv3 + Lv3 → RED Lv4 ($200 / MAX)\n\nTwo towers become one; the other pad is freed.\nKeep the higher paid upgrade level.\nMerge: wider, +5% range, +20% shot rate.\nEach tier makes the laser sound sharper.\nMerging adds no height. Paid upgrades do.\n\nBuy AND merge in the same wave if you can pay.\nWrong type / level or too little cash spends nothing."
     };
     private readonly Color accent=new Color(.35f,.9f,1f);
     private readonly Color surface=new Color(.025f,.045f,.09f,.98f);
@@ -70,16 +70,16 @@ public class DefenseHUD : MonoBehaviour
     private void BuildTutorial()
     {
         tutorial=Panel("Quick tutorial",transform,0,0,1,1,new Color(.005f,.012f,.035f,.94f)).gameObject;
-        Panel("Tutorial card",tutorial.transform,.16f,.12f,.84f,.89f,surface);
-        Panel("Tutorial accent",tutorial.transform,.16f,.884f,.84f,.89f,accent);
-        tutorialProgress=Label("Tutorial progress",tutorial.transform,.20f,.79f,.80f,.85f,"",17);tutorialProgress.color=accent;
-        tutorialHeading=Label("Tutorial heading",tutorial.transform,.18f,.66f,.82f,.79f,"",43);tutorialHeading.fontStyle=FontStyle.Bold;
-        tutorialBody=Label("Tutorial instructions",tutorial.transform,.22f,.32f,.78f,.66f,"",22,TextAnchor.MiddleLeft);
-        Label("Tutorial shortcuts",tutorial.transform,.2f,.27f,.8f,.31f,"ENTER / SPACE: NEXT     ESC: SKIP OR CLOSE     H: REOPEN GUIDE",13).color=accent;
+        Panel("Tutorial card",tutorial.transform,.08f,.12f,.92f,.91f,surface);
+        Panel("Tutorial accent",tutorial.transform,.08f,.904f,.92f,.91f,accent);
+        tutorialProgress=Label("Tutorial progress",tutorial.transform, .12f,.85f,.88f,.89f,"",17);tutorialProgress.color=accent;
+        tutorialHeading=Label("Tutorial heading",tutorial.transform, .12f,.75f,.88f,.85f,"",43);tutorialHeading.fontStyle=FontStyle.Bold;
+        tutorialBody=Label("Tutorial instructions",tutorial.transform, .57f,.32f,.88f,.74f,"",22,TextAnchor.MiddleLeft);
+        Label("Tutorial shortcuts",tutorial.transform,.2f,.252f,.8f,.274f,"ENTER / SPACE: NEXT     ESC: SKIP OR CLOSE     H: REOPEN GUIDE",13).color=accent;
         tutorialBack=MakeButton("Tutorial back",tutorial.transform,.20f,.17f,.34f,.25f,"BACK",PreviousTutorialPage);
         tutorialSkipLabel=MakeButton("Tutorial skip",tutorial.transform,.36f,.17f,.58f,.25f,"SKIP & PLAY",CloseTutorial).GetComponentInChildren<Text>();
         tutorialNextLabel=MakeButton("Tutorial next",tutorial.transform,.60f,.17f,.80f,.25f,"NEXT",NextTutorialPage).GetComponentInChildren<Text>();
-        mergeDemoPanel=Panel("Animated merge example",tutorial.transform,.20f,.35f,.51f,.68f,new Color(.02f,.035f,.07f,1)).gameObject;
+        mergeDemoPanel=Panel("Animated merge example",tutorial.transform, .12f,.35f,.53f,.74f,new Color(.02f,.035f,.07f,1)).gameObject;
         GameObject imageObject=new GameObject("Live 3D preview",typeof(RectTransform),typeof(RawImage));
         imageObject.transform.SetParent(mergeDemoPanel.transform,false);Rect(imageObject,0,.14f,1,.91f);
         RawImage raw=imageObject.GetComponent<RawImage>();raw.raycastTarget=false;
@@ -87,8 +87,12 @@ public class DefenseHUD : MonoBehaviour
         Text action=Label("Demo action counter",mergeDemoPanel.transform,.01f,.02f,.99f,.16f,"",12);
         Text cursor=Label("Demo mouse cursor",imageObject.transform,.2f,.5f,.2f,.5f,"▼",27);cursor.color=Color.white;
         cursor.rectTransform.sizeDelta=new Vector2(40,40);
-        MergeDemo=mergeDemoPanel.AddComponent<DefenseMergeDemo>();MergeDemo.Initialize(game,raw,phase,action,cursor.rectTransform);
-        MakeButton("Replay merge animation",mergeDemoPanel.transform,.15f,-.09f,.85f,0f,"REPLAY EXAMPLE",()=>MergeDemo.Replay());
+        Image upgradeExample=Panel("Example upgrade button",imageObject.transform,.65f,.03f,.98f,.18f,new Color(.04f,.2f,.26f,1));upgradeExample.raycastTarget=false;
+        Text upgradeCaption=Label("Upgrade caption",upgradeExample.transform,0,0,1,1,"",14);
+        MergeDemo=mergeDemoPanel.AddComponent<DefenseMergeDemo>();MergeDemo.Initialize(game,raw,phase,action,cursor.rectTransform,upgradeCaption);
+        MakeButton("Replay merge animation",mergeDemoPanel.transform,.15f,-.19f,.85f,-.105f,"REPLAY EXAMPLE",()=>MergeDemo.Replay());
+        previousEnemy=MakeButton("Previous enemy",mergeDemoPanel.transform,0,-.085f,.48f,0,"< PREV ENEMY",()=>MergeDemo.CycleEnemy(-1));
+        nextEnemy=MakeButton("Next enemy",mergeDemoPanel.transform,.52f,-.085f,1,0,"NEXT ENEMY >",()=>MergeDemo.CycleEnemy(1));
         mergeDemoPanel.SetActive(false);
         tutorial.SetActive(false);
     }
@@ -113,15 +117,19 @@ public class DefenseHUD : MonoBehaviour
     }
     private void RefreshTutorial()
     {
-        bool mergingPage=tutorialPage==4;
-        mergeDemoPanel.SetActive(mergingPage);
-        Rect(tutorialBody.gameObject,mergingPage ? .54f : .22f,.32f,.80f,.66f);
-        tutorialBody.fontSize=mergingPage ? 18 : 22;tutorialBody.resizeTextMaxSize=mergingPage ? 18 : 22;
-        tutorialProgress.text="QUICK START  /  STEP "+(tutorialPage+1)+" OF "+TutorialTitles.Length;
-        tutorialHeading.text=TutorialTitles[tutorialPage];tutorialBody.text=TutorialBodies[tutorialPage];
+        mergeDemoPanel.SetActive(true);MergeDemo.SetPage(tutorialPage);
+        previousEnemy.gameObject.SetActive(tutorialPage==2);nextEnemy.gameObject.SetActive(tutorialPage==2);
+        Rect(tutorialBody.gameObject,.57f,.32f,.88f,.74f);
+        tutorialBody.fontSize=18;tutorialBody.resizeTextMaxSize=18;
+        tutorialProgress.text="FIELD GUIDE  /  STEP "+(tutorialPage+1)+" OF "+TutorialTitles.Length;
+        tutorialHeading.text=TutorialTitles[tutorialPage];tutorialBody.text=tutorialPage==2 ? MergeDemo.EnemyExplanation : TutorialBodies[tutorialPage];
         tutorialBack.interactable=tutorialPage>0;
         tutorialSkipLabel.text=tutorialStartsGame ? "SKIP & PLAY" : "CLOSE GUIDE";
         tutorialNextLabel.text=tutorialPage==TutorialTitles.Length-1 ? (tutorialStartsGame ? "START DEFENDING" : "BACK TO GAME") : "NEXT  >";
+    }
+    void LateUpdate()
+    {
+        if(TutorialOpen && tutorialPage==2) tutorialBody.text=MergeDemo.EnemyExplanation;
     }
     public void CloseTutorial()
     {

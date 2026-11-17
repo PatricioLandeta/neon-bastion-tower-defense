@@ -18,19 +18,30 @@ public class DefenseEnemy : MonoBehaviour
     private Transform bar;
     private Transform barRoot;
 
+    public readonly struct EnemyStats
+    {
+        public readonly float Speed,Health;
+        public readonly int Reward;
+        public EnemyStats(float speed,float health,int reward) { Speed=speed;Health=health;Reward=reward; }
+    }
+    public static EnemyStats BaseStats(EnemyKind kind)
+    {
+        switch(kind)
+        {
+            case EnemyKind.Runner:return new EnemyStats(3.9f,3,5);
+            case EnemyKind.Armored:return new EnemyStats(1.65f,12,8);
+            case EnemyKind.Siege:return new EnemyStats(1.25f,48,30);
+            case EnemyKind.Motorcycle:return new EnemyStats(5.2f,6,6);
+            case EnemyKind.Truck:return new EnemyStats(1.05f,160,40);
+            default:return new EnemyStats(2.6f,4,4);
+        }
+    }
+
     public void Initialize(DefenseGame game,EnemyKind kind,int wave)
     {
         Game=game;Kind=kind;
-        float hp;
-        switch(kind)
-        {
-            case EnemyKind.Runner: Speed=3.9f;hp=3;Reward=5;break;
-            case EnemyKind.Armored: Speed=1.65f;hp=12;Reward=8;break;
-            case EnemyKind.Siege: Speed=1.25f;hp=48;Reward=30;break;
-            case EnemyKind.Motorcycle: Speed=5.2f;hp=6;Reward=6;break;
-            case EnemyKind.Truck: Speed=1.05f;hp=160;Reward=40;break;
-            default: Speed=2.6f;hp=4;Reward=4;break;
-        }
+        EnemyStats stats=BaseStats(kind);
+        Speed=stats.Speed;Reward=stats.Reward;float hp=stats.Health;
         // A forgiving introduction; normal Scout stats apply from wave 2 onward.
         if(wave==1 && kind==EnemyKind.Scout) { Speed=2f;hp=3f; }
         MaxHealth=hp*(1f+.12f*(wave-1)); Health=MaxHealth;

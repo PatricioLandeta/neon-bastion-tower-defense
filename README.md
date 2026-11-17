@@ -45,11 +45,23 @@ Begin with a Pulse on the gold **START HERE** pad. Wave 1 contains ten slow 3-HP
 
 ## Quick tutorial and placement overlay
 
-The guide explains five steps: choose a Pulse or Siege tower, left-click a cyan hex pad, earn cash from defeated enemies, purchase upgrades, and watch matching placed towers merge in a looping 3D demonstration. The example shows a cursor dragging one actual tower model onto another, the result widening without getting taller, and example cash decreasing by the merge fee. It lists the tower prices and enemy payouts and gives a concrete example: a $75 Pulse leaves $35; the opening wave earns $40, so saving for another tower matters. It also explains all three colored merge tiers and unrestricted buying with available money and the extra damage, firing speed, range and 0.8-unit height increase from upgrades.
+Every slide has a live 3D animated example and a **REPLAY EXAMPLE** button:
+
+1. **Choose:** Pulse and Siege selection, prices, damage and different firing cadences.
+2. **Place:** move onto a cyan pad, left-click, materialize the tower and show $110 − $75 = $35.
+3. **Enemies and money:** browse all six moving enemy types using **PREV / NEXT ENEMY**, or watch them cycle automatically. Each shows its base HP, speed, cash reward and ideal Pulse/Siege hit counts. The accelerated fight reduces HP to zero, then adds the correct example reward. Shooting costs no money; later-wave HP scaling and easier wave-1 Scouts are explained.
+4. **Upgrade:** select a placed tower, use U / UPGRADE, spend $100 then $200, and watch the column, muzzle and range grow through paid levels 1–3. The example budget changes $350 → $250 → $50. Merged upgrade prices and the difference between height and width are explained.
+5. **Merge:** drag matching types and merge levels through green, purple and red, paying the proper fee, adding width, 5% range and 20% shot rate per tier, with no extra height.
+
+The examples use separate visual models and example cash: watching, replaying or browsing them never changes real towers, enemies, money or kills. Enemy statistics come from the same base-stat definitions used by gameplay.
 
 The guide opens from the title screen and can be reopened with **H** or **? HELP**. Opening it during play pauses the battle. Closing it restores the prior pause state and 1x/2x speed without resetting cash, towers or waves. A persistent textual overlay says **1 / 2 CHOOSE TOWER · LEFT-CLICK A CYAN PAD TO BUILD**, so placement instructions remain available after the guide closes.
 
-![Quick tutorial: upgrades and money example](TUTORIAL_PREVIEW.png)
+![Quick tutorial: animated placement](TUTORIAL_PLACEMENT_PREVIEW.png)
+
+![Quick tutorial: moving enemies and rewards](TUTORIAL_ENEMIES_PREVIEW.png)
+
+![Quick tutorial: animated upgrades and spending](TUTORIAL_PREVIEW.png)
 
 ![Frame from the live merge demonstration](ANIMATED_MERGE_TUTORIAL.png)
 

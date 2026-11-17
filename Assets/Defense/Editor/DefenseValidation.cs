@@ -85,16 +85,44 @@ public static class DefenseValidation
                     Button next=guide.Find("Tutorial next").GetComponent<Button>();
                     Button back=guide.Find("Tutorial back").GetComponent<Button>();
                     Text guideText=guide.Find("Tutorial instructions").GetComponent<Text>();
+                    game.HUD.MergeDemo.Seek(1);Check(game.HUD.MergeDemo.Page==0 && game.HUD.MergeDemo.ChosenKind==TowerKind.Pulse,"First slide animates the Pulse selection and firing example");
+                    game.HUD.MergeDemo.Seek(5);Check(game.HUD.MergeDemo.ChosenKind==TowerKind.Siege,"First slide also animates the Siege selection and firing example");
+                    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureTo("TUTORIAL_CHOOSE_PREVIEW.png");
                     next.onClick.Invoke();
                     Check(game.HUD.TutorialPage==1 && guideText.text.Contains("LEFT-CLICK") && guideText.text.Contains("CYAN HEXAGON"),
                         "Tutorial explicitly explains selecting and left-clicking a cyan pad to place a tower");
+                    game.HUD.MergeDemo.Seek(1);Check(!game.HUD.MergeDemo.ExamplePlaced && game.HUD.MergeDemo.ExampleCash==110,"Placement animation begins before purchasing a tower");
+                    game.HUD.MergeDemo.Seek(4);Check(game.HUD.MergeDemo.ExamplePlaced && game.HUD.MergeDemo.ExampleCash==35,"Placement animation builds a tower and shows $110 minus $75");
+                    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureTo("TUTORIAL_PLACEMENT_PREVIEW.png");
                     back.onClick.Invoke();Check(game.HUD.TutorialPage==0,"Tutorial Back returns to the previous explanation");
                     next.onClick.Invoke();next.onClick.Invoke();
                     Check(game.HUD.TutorialPage==2 && guideText.text.Contains("$4") && guideText.text.Contains("MONEY"),
                         "Tutorial explains kill rewards and the money display");
+                    int tutorialCash=game.Credits,tutorialKills=game.Kills;int enemyTypes=0;
+                    foreach(EnemyKind kind in new[]{EnemyKind.Scout,EnemyKind.Runner,EnemyKind.Armored,EnemyKind.Motorcycle,EnemyKind.Truck,EnemyKind.Siege})
+                    {
+                        game.HUD.MergeDemo.SelectEnemy(enemyTypes++);game.HUD.MergeDemo.Seek(1);Vector3 before=game.HUD.MergeDemo.ExampleEnemyPosition;
+                        game.HUD.MergeDemo.Seek(2);DefenseEnemy.EnemyStats enemyStats=DefenseEnemy.BaseStats(kind);
+                        Check(game.HUD.MergeDemo.PreviewEnemyKind==kind && Vector3.Distance(before,game.HUD.MergeDemo.ExampleEnemyPosition)>.01f,"Enemy guide visibly moves the "+kind);
+                        Check(game.HUD.MergeDemo.EnemyExplanation.Contains("+$"+enemyStats.Reward) && game.HUD.MergeDemo.EnemyExplanation.Contains("Base HP "+enemyStats.Health.ToString("0")),"Enemy guide shows actual HP and kill reward for "+kind);
+                        game.HUD.MergeDemo.Seek(6);Check(game.HUD.MergeDemo.ExampleHealth==0 && game.HUD.MergeDemo.ExampleCash==35+enemyStats.Reward,"Animated "+kind+" defeat depletes HP and adds the correct example reward");
+                    }
+                    game.HUD.MergeDemo.SelectEnemy(0);guide.Find("Animated merge example/Next enemy").GetComponent<Button>().onClick.Invoke();
+                    Check(game.HUD.MergeDemo.PreviewEnemyKind==EnemyKind.Runner,"Next enemy button browses the animated roster");
+                    guide.Find("Animated merge example/Previous enemy").GetComponent<Button>().onClick.Invoke();
+                    Check(game.HUD.MergeDemo.PreviewEnemyKind==EnemyKind.Scout,"Previous enemy button returns to the Scout");
+                    game.HUD.MergeDemo.Seek(10);int replayEnemy=game.HUD.MergeDemo.EnemyIndex;
+                    guide.Find("Animated merge example/Replay merge animation").GetComponent<Button>().onClick.Invoke();
+                    Check(game.HUD.MergeDemo.EnemyIndex==replayEnemy && game.HUD.MergeDemo.AnimationTime==0,"Replay preserves the currently displayed enemy after automatic cycling");
+                    game.HUD.MergeDemo.SelectEnemy(0);game.HUD.MergeDemo.Seek(2);Canvas.ForceUpdateCanvases();
+                    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureTo("TUTORIAL_ENEMIES_PREVIEW.png");
+                    Check(game.Credits==tutorialCash && game.Kills==tutorialKills && game.Towers.Count==0 && game.Enemies.Count==0,"All tutorial examples leave real money, kills and actors untouched");
                     next.onClick.Invoke();
                     Check(game.HUD.TutorialPage==3 && guideText.text.Contains("$100") && guideText.text.Contains("$200") && guideText.text.Contains("0.8"),
                         "Tutorial explains upgrade prices and stronger, taller towers");
+                    game.HUD.MergeDemo.Seek(1);float initialDemoHeight=game.HUD.MergeDemo.DisplayedTowerHeight;
+                    game.HUD.MergeDemo.Seek(4);Check(game.HUD.MergeDemo.ExampleUpgradeLevel==2 && game.HUD.MergeDemo.ExampleCash==250 && Mathf.Abs(game.HUD.MergeDemo.DisplayedTowerHeight-initialDemoHeight-.8f)<.001f,"Upgrade animation pays $100 and visibly raises the tower by 0.8");
+                    game.HUD.MergeDemo.Seek(7);Check(game.HUD.MergeDemo.ExampleUpgradeLevel==3 && game.HUD.MergeDemo.ExampleCash==50 && Mathf.Abs(game.HUD.MergeDemo.DisplayedTowerHeight-initialDemoHeight-1.6f)<.001f,"Second upgrade animation pays $200 and raises the tower again");
                     if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureTo("TUTORIAL_PREVIEW.png");
                     next.onClick.Invoke();
                     Check(game.HUD.TutorialPage==4 && guideText.text.Contains("SAME TYPE") && guideText.text.Contains("DRAG"),
@@ -120,6 +148,8 @@ public static class DefenseValidation
                     Check(!game.HUD.TutorialOpen && game.State==DefenseState.Building && game.Credits==110,
                         "Completing the tutorial starts a clean game without spending cash");
                     if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureTo("OPENING_GUIDE_PREVIEW.png");
+                    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-validateTutorialOnly")>=0)
+                    { Debug.Log("TUTORIAL VALIDATION COMPLETE: "+checks+" checks passed");EditorApplication.ExitPlaymode();stage=7;return; }
                     Text instructions=game.HUD.transform.Find("Placement instructions").GetComponent<Text>();
                     Check(instructions.text.Contains("1 / 2 CHOOSE") && instructions.text.Contains("LEFT-CLICK A CYAN PAD"),
                         "Persistent gameplay overlay continues to explain tower selection and placement");

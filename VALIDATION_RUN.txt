@@ -1,10 +1,10 @@
-Unity 6000.6.0f1 on macOS — laser audio and futuristic Scout vehicles
-153 campaign/regression checks passed; all 522 enemies defeated with earned money.
-Distinct imported Pulse/Siege laser sounds; rising pitch at every paid upgrade and merge tier.
-One stable looping music source and bounded 32-voice shot pool.
-Supplied Kingdom Hearts Dearly Beloved recording imported and verified playing continuously with looping enabled.
-Scout vehicle graphics replace track pods while preserving gameplay stats and collider.
-No C# compilation errors/warnings or FMOD resource errors in the final run.
+Unity 6000.6.0f1 on macOS — detailed animated field guide
+180 full campaign/regression checks passed; all 522 enemies defeated using earned money.
+61 final focused tutorial checks passed after the replay and visual refinements.
+Every slide has an animated example; all six enemy types show movement, real base stats, hit counts and kill rewards.
+Placement and upgrade animations display purchases; upgrade height and all merge tiers are demonstrated.
+Examples use isolated visuals and sample money, with no real actor/economy changes.
+No C# compilation errors or warnings.
 
 DEFENSE PASS: Title starts with combat stopped
 DEFENSE PASS: Both tower kinds have distinct imported laser sound assets
@@ -26,10 +26,37 @@ DEFENSE PASS: Enemy route contains predetermined bends
 DEFENSE PASS: Predictive ballistic solution intersects a moving target at the launch speed
 DEFENSE PASS: Unreachable targets return no launch solution
 DEFENSE PASS: Start button opens the quick tutorial before any gameplay begins
+DEFENSE PASS: First slide animates the Pulse selection and firing example
+DEFENSE PASS: First slide also animates the Siege selection and firing example
 DEFENSE PASS: Tutorial explicitly explains selecting and left-clicking a cyan pad to place a tower
+DEFENSE PASS: Placement animation begins before purchasing a tower
+DEFENSE PASS: Placement animation builds a tower and shows $110 minus $75
 DEFENSE PASS: Tutorial Back returns to the previous explanation
 DEFENSE PASS: Tutorial explains kill rewards and the money display
+DEFENSE PASS: Enemy guide visibly moves the Scout
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Scout
+DEFENSE PASS: Animated Scout defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Enemy guide visibly moves the Runner
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Runner
+DEFENSE PASS: Animated Runner defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Enemy guide visibly moves the Armored
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Armored
+DEFENSE PASS: Animated Armored defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Enemy guide visibly moves the Motorcycle
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Motorcycle
+DEFENSE PASS: Animated Motorcycle defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Enemy guide visibly moves the Truck
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Truck
+DEFENSE PASS: Animated Truck defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Enemy guide visibly moves the Siege
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Siege
+DEFENSE PASS: Animated Siege defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Next enemy button browses the animated roster
+DEFENSE PASS: Previous enemy button returns to the Scout
+DEFENSE PASS: All tutorial examples leave real money, kills and actors untouched
 DEFENSE PASS: Tutorial explains upgrade prices and stronger, taller towers
+DEFENSE PASS: Upgrade animation pays $100 and visibly raises the tower by 0.8
+DEFENSE PASS: Second upgrade animation pays $200 and raises the tower again
 DEFENSE PASS: Tutorial explains dragging and merging matching tower types
 DEFENSE PASS: Tutorial explains all three tiers and money-limited buying plus merging
 DEFENSE PASS: Animated example begins with base towers and example money
@@ -159,15 +186,68 @@ DEFENSE PASS: Winning strategy pays for eight towers and two merges
 DEFENSE PASS: Merging conserves all purchased tower units
 DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases, merges and upgrades
 DEFENSE PASS: Victory waits for every active and scheduled enemy
-DEFENSE VALIDATION COMPLETE: 153 checks passed
+DEFENSE VALIDATION COMPLETE: 180 checks passed
 
-MUSIC PASS: The supplied Dearly Beloved recording imports successfully
-MUSIC PASS: Music actually plays and loops at the title screen
-MUSIC PASS: Starting a run keeps the song progressing without restarting it
-MUSIC PASS: Pausing combat keeps the music playing
-MUSIC PASS: Double game speed preserves the song's normal pitch
-MUSIC PASS: Restarting a run preserves the same progressing music source
-MUSIC PASS: The tutorial keeps the background song playing
-MUSIC PASS: The ending screen keeps the background song playing
-MUSIC PASS: Scene transitions do not duplicate music or laser sources
-MUSIC VALIDATION COMPLETE: 9 checks passed
+FINAL TUTORIAL RERUN
+DEFENSE PASS: Title starts with combat stopped
+DEFENSE PASS: Both tower kinds have distinct imported laser sound assets
+DEFENSE PASS: Background music loops in 2D at its normal pitch
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 1, merge 1
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 1, merge 2
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 1, merge 3
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 1, merge 4
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 2, merge 1
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 2, merge 2
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 2, merge 3
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 2, merge 4
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 3, merge 1
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 3, merge 2
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 3, merge 3
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 3, merge 4
+DEFENSE PASS: Custom non-basic mesh assets are available
+DEFENSE PASS: Enemy route contains predetermined bends
+DEFENSE PASS: Predictive ballistic solution intersects a moving target at the launch speed
+DEFENSE PASS: Unreachable targets return no launch solution
+DEFENSE PASS: Start button opens the quick tutorial before any gameplay begins
+DEFENSE PASS: First slide animates the Pulse selection and firing example
+DEFENSE PASS: First slide also animates the Siege selection and firing example
+DEFENSE PASS: Tutorial explicitly explains selecting and left-clicking a cyan pad to place a tower
+DEFENSE PASS: Placement animation begins before purchasing a tower
+DEFENSE PASS: Placement animation builds a tower and shows $110 minus $75
+DEFENSE PASS: Tutorial Back returns to the previous explanation
+DEFENSE PASS: Tutorial explains kill rewards and the money display
+DEFENSE PASS: Enemy guide visibly moves the Scout
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Scout
+DEFENSE PASS: Animated Scout defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Enemy guide visibly moves the Runner
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Runner
+DEFENSE PASS: Animated Runner defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Enemy guide visibly moves the Armored
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Armored
+DEFENSE PASS: Animated Armored defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Enemy guide visibly moves the Motorcycle
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Motorcycle
+DEFENSE PASS: Animated Motorcycle defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Enemy guide visibly moves the Truck
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Truck
+DEFENSE PASS: Animated Truck defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Enemy guide visibly moves the Siege
+DEFENSE PASS: Enemy guide shows actual HP and kill reward for Siege
+DEFENSE PASS: Animated Siege defeat depletes HP and adds the correct example reward
+DEFENSE PASS: Next enemy button browses the animated roster
+DEFENSE PASS: Previous enemy button returns to the Scout
+DEFENSE PASS: Replay preserves the currently displayed enemy after automatic cycling
+DEFENSE PASS: All tutorial examples leave real money, kills and actors untouched
+DEFENSE PASS: Tutorial explains upgrade prices and stronger, taller towers
+DEFENSE PASS: Upgrade animation pays $100 and visibly raises the tower by 0.8
+DEFENSE PASS: Second upgrade animation pays $200 and raises the tower again
+DEFENSE PASS: Tutorial explains dragging and merging matching tower types
+DEFENSE PASS: Tutorial explains all three tiers and money-limited buying plus merging
+DEFENSE PASS: Animated example begins with base towers and example money
+DEFENSE PASS: Animated example visibly merges to green and spends only example cash
+DEFENSE PASS: Animated second merge produces purple for $100
+DEFENSE PASS: Animated final merge produces red for $200
+DEFENSE PASS: Tutorial animation uses only visual models and never spends real game resources
+DEFENSE PASS: Replay button restarts the merge demonstration
+DEFENSE PASS: Completing the tutorial starts a clean game without spending cash
+TUTORIAL VALIDATION COMPLETE: 61 checks passed

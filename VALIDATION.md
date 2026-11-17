@@ -1,6 +1,6 @@
 # Validation
 
-The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **134 checks**, including a complete ten-wave win with all **522** enemies destroyed.
+The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **153 checks**, including a complete ten-wave win with all **522** enemies destroyed.
 
 The campaign strategy begins with the normal $110, places towers on legal pads, buys additional towers and upgrades only when rewards make them affordable, and makes eight purchases and two paid merges across ten waves. It does not add credits, change enemy HP or speed, skip enemies, or apply test damage during the campaign. It accelerates the campaign with Unity time scaling; projectiles and enemies still use the normal fixed physics timestep. The focused tests run separately and intentionally create isolated test situations.
 
@@ -35,6 +35,8 @@ The campaign strategy begins with the normal $110, places towers on legal pads, 
 - Immediate defeat after an enemy reaches the route endpoint.
 - Restart restoring economy, towers, waves, kill earnings and merge history.
 - A legal full-campaign win, with victory delayed until every scheduled and active enemy is gone.
+
+Audio checks load distinct original laser assets, verify increasing pitch across all paid/merge levels, require actual tower fire to call the sound system, and check that resets keep the same looping music source. The sound-source count remains bounded. These automated checks do not judge perceived loudness or confirm a music recording that has not been supplied. Scout checks require its new vehicle model and preserve training-wave stats.
 
 The rendered preview was also inspected for board framing, readable controls, tower models, enemy health bars and range display. The main preview depicts the validator's legal campaign in progress. The merged-tower screenshot is an isolated mechanic demonstration, rather than a normally purchased wave-1 defense. A separate vehicle close-up poses the motorcycle and truck to inspect their graphics; that posing is outside the legal campaign run.
 

@@ -1,10 +1,26 @@
-Unity 6000.6.0f1 on macOS — 20% merge shot-rate bonus
-134 campaign/regression checks passed; all 522 enemies defeated using earned money.
-Each merge tier compounds shot rate by 20% and range by 5%, adds width and no height.
-Only paid upgrades raise tower height and muzzle elevation.
-No C# compilation errors or warnings.
+Unity 6000.6.0f1 on macOS — laser audio and futuristic Scout vehicles
+153 campaign/regression checks passed; all 522 enemies defeated with earned money.
+Distinct imported Pulse/Siege laser sounds; rising pitch at every paid upgrade and merge tier.
+One stable looping music source and bounded 32-voice shot pool.
+Dearly Beloved recording not supplied: loop support implemented; song playback awaits the audio file.
+Scout vehicle graphics replace track pods while preserving gameplay stats and collider.
+No C# compilation errors/warnings or FMOD resource errors in the final run.
 
 DEFENSE PASS: Title starts with combat stopped
+DEFENSE PASS: Both tower kinds have distinct imported laser sound assets
+DEFENSE PASS: Background music loops in 2D at its normal pitch
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 1, merge 1
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 1, merge 2
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 1, merge 3
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 1, merge 4
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 2, merge 1
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 2, merge 2
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 2, merge 3
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 2, merge 4
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 3, merge 1
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 3, merge 2
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 3, merge 3
+DEFENSE PASS: Laser pitch rises with paid upgrades and merges: upgrade 3, merge 4
 DEFENSE PASS: Custom non-basic mesh assets are available
 DEFENSE PASS: Enemy route contains predetermined bends
 DEFENSE PASS: Predictive ballistic solution intersects a moving target at the launch speed
@@ -59,6 +75,8 @@ DEFENSE PASS: Motorcycle kill pays $6
 DEFENSE PASS: High-HP truck kill pays $40
 DEFENSE PASS: Truck payout cannot be claimed twice
 DEFENSE PASS: Ten escalating waves contain 522 enemies with larger Scout groups and both new vehicle types
+DEFENSE PASS: Scout uses a futuristic light vehicle instead of bug-like track pods
+DEFENSE PASS: Scout redesign preserves training-wave gameplay stats
 DEFENSE PASS: Different tower types cannot merge or spend money
 DEFENSE PASS: Self merge spends nothing
 DEFENSE PASS: Insufficient funds block merging without consuming towers
@@ -120,6 +138,8 @@ DEFENSE PASS: Multiple affordable placements are allowed in a single wave
 DEFENSE PASS: Board capacity and occupied pads remain protected
 DEFENSE PASS: Enemy body stays synchronized with curved-route progress
 DEFENSE PASS: Reported target velocity matches physical speed
+DEFENSE PASS: Audio system retains one music source and a bounded 32-voice shot pool
+DEFENSE PASS: Real tower firing triggers the laser audio system
 DEFENSE PASS: Tower continuously fires at its configured cadence
 DEFENSE PASS: Predictive tower shots hit a moving enemy
 DEFENSE PASS: Merged tower fires real ballistic projectiles that hit moving enemies
@@ -131,6 +151,7 @@ DEFENSE PASS: Closing help preserves an already-paused game
 DEFENSE PASS: Speed control still enables 2x
 DEFENSE PASS: Closing help restores the player's prior 2x speed
 DEFENSE PASS: Any enemy completing the path immediately ends the game
+DEFENSE PASS: Restart preserves the background music source without restarting the song
 DEFENSE PASS: Restart resets money, towers, rewards, waves and merge history
 DEFENSE PASS: Wave five is now the midpoint and unlocks a sixth wave instead of victory
 DEFENSE PASS: Expanded campaign is winnable: all ten waves and 522 enemies defeated
@@ -138,4 +159,4 @@ DEFENSE PASS: Winning strategy pays for eight towers and two merges
 DEFENSE PASS: Merging conserves all purchased tower units
 DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases, merges and upgrades
 DEFENSE PASS: Victory waits for every active and scheduled enemy
-DEFENSE VALIDATION COMPLETE: 134 checks passed
+DEFENSE VALIDATION COMPLETE: 153 checks passed

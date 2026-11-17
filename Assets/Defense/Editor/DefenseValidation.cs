@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public static class DefenseValidation
 {
     private const string Key="NeonBastionValidation";
-    private static int stage,checks,shotsAtStart;
+    private static int stage,checks,shotsAtStart,audioShotsAtStart;
     private static bool failed,captured,midpointChecked;
     private static double due,deadline;
     private static readonly System.Collections.Generic.HashSet<int> campaignPlans=new System.Collections.Generic.HashSet<int>();
@@ -64,6 +64,14 @@ public static class DefenseValidation
                 case 0:
                     game=UnityEngine.Object.FindAnyObjectByType<DefenseGame>();
                     Check(game!=null && game.State==DefenseState.Title,"Title starts with combat stopped");
+                    Check(game.Audio!=null && game.Audio.PulseLaser!=null && game.Audio.SiegeLaser!=null && game.Audio.PulseLaser!=game.Audio.SiegeLaser,"Both tower kinds have distinct imported laser sound assets");
+                    Check(game.Audio.Music.loop && game.Audio.Music.pitch==1 && game.Audio.Music.spatialBlend==0,"Background music loops in 2D at its normal pitch");
+                    for(int paid=1;paid<=3;paid++)
+                        for(int tier=1;tier<=4;tier++)
+                        {
+                            float pitch=DefenseAudio.PitchFor(paid,tier);
+                            Check(pitch>0 && pitch<3 && (paid==1 || pitch>DefenseAudio.PitchFor(paid-1,tier)) && (tier==1 || pitch>DefenseAudio.PitchFor(paid,tier-1)),"Laser pitch rises with paid upgrades and merges: upgrade "+paid+", merge "+tier);
+                        }
                     Check(Resources.Load<Mesh>("DefenseMeshes/ArrowHull")!=null,"Custom non-basic mesh assets are available");
                     Check(Vector3.Dot(game.Route.Tangent(2),game.Route.Tangent(9))<.5f,"Enemy route contains predetermined bends");
                     bool solved=InterceptSolver.TrySolve(new Vector3(0,3,0),new Vector3(10,.7f,4),new Vector3(0,0,3),17,Physics.gravity,out Vector3 launch,out float time);
@@ -191,17 +199,24 @@ public static class DefenseValidation
                         { total++;if(kind==EnemyKind.Scout) scouts++;if(kind==EnemyKind.Motorcycle) hasBike=true;if(kind==EnemyKind.Truck) hasTruck=true; }
                     Check(DefenseGame.TotalWaves==10 && total==522 && scouts>240 && hasBike && hasTruck,
                         "Ten escalating waves contain 522 enemies with larger Scout groups and both new vehicle types");
+                    DefenseEnemy lightScout=game.SpawnEnemy(EnemyKind.Scout);
+                    Check(lightScout.transform.Find("Light scout chassis")!=null && lightScout.transform.Find("Enclosed glass cockpit")!=null && lightScout.transform.Find("Track pod")==null && lightScout.GetComponent<DefenseVehicleWheels>()!=null,
+                        "Scout uses a futuristic light vehicle instead of bug-like track pods");
+                    Check(lightScout.Speed==2 && lightScout.MaxHealth==3 && lightScout.Reward==4,"Scout redesign preserves training-wave gameplay stats");
+                    if(Array.IndexOf(Environment.GetCommandLineArgs(),"-captureDefense")>=0) CaptureScout(lightScout);
                     ValidateMerging();
                     game.StartGame();testTower=TestTower(TowerKind.Pulse,1);
                     game.LaunchWave();testEnemy=game.SpawnEnemy(EnemyKind.Armored);testEnemy.SetDistance(7);
                     mergedFireTower=TestTower(TowerKind.Siege,7);DefenseTower feeder=TestTower(TowerKind.Siege,8);
                     game.TryMergeTowers(feeder,mergedFireTower);
                     mergedFireEnemy=game.SpawnEnemy(EnemyKind.Armored);mergedFireEnemy.SetDistance(game.Route.Length-14);
-                    shotsAtStart=testTower.ShotsFired;simulatedDue=Time.time+2.1f;due=now+.1;stage++;break;
+                    audioShotsAtStart=game.Audio.ShotsPlayed;shotsAtStart=testTower.ShotsFired;simulatedDue=Time.time+2.1f;due=now+.1;stage++;break;
                 case 3:
                     Check(testEnemy!=null && Vector3.Distance(testEnemy.Body.position,game.Route.Position(testEnemy.DistanceTravelled)+Vector3.up*.7f)<.15f,"Enemy body stays synchronized with curved-route progress");
                     Check(testEnemy.CurrentVelocity.magnitude<=testEnemy.Speed*1.1f,"Reported target velocity matches physical speed");
                     int count=testTower.ShotsFired-shotsAtStart;
+                    Check(game.GetComponents<DefenseAudio>().Length==1 && game.GetComponentsInChildren<AudioSource>().Length==33,"Audio system retains one music source and a bounded 32-voice shot pool");
+                    Check(game.Audio.ShotsPlayed>audioShotsAtStart,"Real tower firing triggers the laser audio system");
                     Check(count>=4 && count<=6,"Tower continuously fires at its configured cadence");
                     Check(testEnemy.Health<testEnemy.MaxHealth,"Predictive tower shots hit a moving enemy");
                     Check(mergedFireTower.ShotsFired>0 && (mergedFireEnemy==null || mergedFireEnemy.Health<mergedFireEnemy.MaxHealth),
@@ -228,7 +243,8 @@ public static class DefenseValidation
                     testEnemy.SetDistance(game.Route.Length-.01f);simulatedDue=Time.time+.1f;due=now+.1;stage++;break;
                 case 5:
                     Check(game.State==DefenseState.Lost,"Any enemy completing the path immediately ends the game");
-                    game.StartGame();Check(game.Credits==110 && game.Towers.Count==0 && game.Wave==0 && game.Kills==0 && game.KillEarnings==0,"Restart resets money, towers, rewards, waves and merge history");
+                    AudioSource existingMusic=game.Audio.Music;
+                    game.StartGame();Check(game.Audio.Music==existingMusic,"Restart preserves the background music source without restarting the song");Check(game.Credits==110 && game.Towers.Count==0 && game.Wave==0 && game.Kills==0 && game.KillEarnings==0,"Restart resets money, towers, rewards, waves and merge history");
                     game.enabled=true;BuildCampaignDefense();game.LaunchWave();Time.timeScale=10;
                     Debug.Log("DEFENSE CAMPAIGN: budget-limited purchases and merges, $110 start, kill money only");due=now+.05;stage++;break;
                 case 6:
@@ -391,6 +407,25 @@ public static class DefenseValidation
             if(tower==null || tower.Level>=3) continue;
             if(game.Credits>=tower.UpgradeCost) { game.SelectTower(tower);game.UpgradeSelected(); }
             return;
+        }
+    }
+    private static void CaptureScout(DefenseEnemy scout)
+    {
+        Camera view=game.View;Vector3 position=view.transform.position;Quaternion rotation=view.transform.rotation;float size=view.orthographicSize;
+        Vector3 bodyPosition=scout.Body.position;
+        try
+        {
+            scout.enabled=false;scout.Body.position=scout.transform.position=new Vector3(-13,.7f,-3);
+            foreach(TrailRenderer trail in scout.GetComponentsInChildren<TrailRenderer>()) trail.Clear();
+            view.transform.position=scout.transform.position+new Vector3(4,4.5f,6);view.transform.LookAt(scout.transform.position);view.orthographicSize=2.1f;
+            game.HUD.gameObject.SetActive(false);scout.transform.Find("Health billboard").gameObject.SetActive(false);
+            CaptureTo("SCOUT_PREVIEW.png");
+        }
+        finally
+        {
+            game.HUD.gameObject.SetActive(true);scout.transform.Find("Health billboard").gameObject.SetActive(true);
+            scout.Body.position=scout.transform.position=bodyPosition;scout.enabled=true;
+            view.transform.SetPositionAndRotation(position,rotation);view.orthographicSize=size;
         }
     }
     private static void CaptureVehicles(DefenseEnemy motorcycle,DefenseEnemy truck)

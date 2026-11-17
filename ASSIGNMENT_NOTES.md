@@ -98,3 +98,9 @@ Traffic now totals 522 enemies, with counts and spawn rates listed in `WAVE_GUID
 The original expanded opening relied too much on the precise placement and upgrade timing used by the automated campaign. Dedicated tests reproduced two reasonable Pulse openings failing without upgrades. Wave 1 now uses ten 3-HP Scouts at speed 2 with 1.4 seconds between spawns; normal Scout stats resume in wave 2, and all later wave compositions remain unchanged. `DefenseStarterHint` highlights the left interior pad with a gold ring and a readable billboard. It is a suggestion, not a placement restriction.
 
 `DefenseOpeningValidation` buys exactly one unupgraded tower, makes no further purchases and injects no money or damage. It tests Pulse and Siege on the entrance-side, left-interior and central pads. All six clear the training wave, including with graphics enabled. The full campaign regression is also rerun separately.
+
+## Audio and light Scouts
+
+`DefenseAudio` is initialized once in `DefenseGame.Start`. It maintains one independent looping background source and 32 reusable shot sources. Original Pulse/Siege laser WAVs live in `Resources/DefenseAudio`; `DefenseTower.FixedUpdate` calls `PlayShot` for every launched shell. Pitch rises two semitones per paid upgrade and three per merge tier; each voice has independent pitch and stereo position. Music remains at pitch 1 and its source survives game resets. The requested Dearly Beloved recording still needs to be provided as `Resources/DefenseAudio/DearlyBeloved` before music is audible. No substitute recording is bundled.
+
+`DefenseArt.LightScout` replaces the Scout's old tracked bug-like model with an enclosed light vehicle, cyan circuitry, four glowing wheel discs and a short light trail. It reuses authored wheel meshes and `DefenseVehicleWheels`. Gameplay statistics and the original collider are preserved.

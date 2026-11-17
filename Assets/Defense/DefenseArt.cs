@@ -181,6 +181,10 @@ public static class DefenseArt
 
     public static void Enemy(Transform root,EnemyKind kind,out Transform barRoot,out Transform bar)
     {
+        if(kind==EnemyKind.Scout)
+        {
+            LightScout(root);HealthBar(root,1.2f,out barRoot,out bar);return;
+        }
         if(kind==EnemyKind.Truck || kind==EnemyKind.Motorcycle)
         {
             Vehicle(root,kind);
@@ -209,6 +213,36 @@ public static class DefenseArt
         Transform anchor=new GameObject("HP left anchor").transform;anchor.SetParent(barRoot,false);anchor.localPosition=new Vector3(-.52f,0,-.04f);
         bar=new GameObject("HP fill scale").transform;bar.SetParent(anchor,false);
         Box(bar,"HP",new Vector3(.52f,0,0),new Vector3(1.04f,.065f,.04f),ColorMaterial("Health",Cyan));
+    }
+
+    private static void LightScout(Transform root)
+    {
+        Material shell=ColorMaterial("Scout obsidian body",new Color(.06f,.11f,.2f));
+        Material glass=ColorMaterial("Scout dark glass",new Color(.09f,.22f,.33f));
+        Material light=ColorMaterial("Scout cyan circuitry",new Color(.05f,1.6f,2f));
+        Material rubber=ColorMaterial("Scout tire",new Color(.025f,.035f,.06f));
+        Box(root,"Light scout chassis",new Vector3(0,-.16f,0),new Vector3(.94f,.22f,1.65f),shell);
+        Shape(root,"Light scout nose","ArrowHull",new Vector3(0,-.02f,.32f),new Vector3(.55f,.36f,.8f),shell);
+        Shape(root,"Enclosed glass cockpit","HeavyHull",new Vector3(0,.15f,-.1f),new Vector3(.35f,.45f,.43f),glass);
+        Box(root,"Cyan windshield",new Vector3(0,.23f,.27f),new Vector3(.5f,.12f,.06f),light);
+        Box(root,"Front light blade",new Vector3(0,-.08f,.85f),new Vector3(.72f,.055f,.06f),light);
+        Box(root,"Rear energy strip",new Vector3(0,-.09f,-.86f),new Vector3(.7f,.055f,.05f),light);
+        List<Transform> wheels=new List<Transform>();
+        for(int side=-1;side<=1;side+=2)
+        {
+            Box(root,"Light scout circuit rail",new Vector3(side*.47f,-.02f,0),new Vector3(.05f,.07f,1.35f),light);
+            foreach(float z in new[]{-.52f,.53f})
+            {
+                Transform wheel=VehicleWheel(root,new Vector3(side*.52f,-.3f,z),.28f,.16f,rubber,light);
+                Shape(wheel,"Luminous wheel disc","Wheel",Vector3.zero,new Vector3(1.04f,.78f,.78f),light);
+                wheels.Add(wheel);
+            }
+        }
+        root.gameObject.AddComponent<DefenseVehicleWheels>().Initialize(root.GetComponent<DefenseEnemy>(),wheels,.28f);
+        Transform exhaust=new GameObject("Scout light wake").transform;exhaust.SetParent(root,false);exhaust.localPosition=new Vector3(0,-.2f,-.9f);
+        TrailRenderer wake=exhaust.gameObject.AddComponent<TrailRenderer>();wake.sharedMaterial=light;
+        wake.time=.25f;wake.startWidth=.18f;wake.endWidth=0;wake.minVertexDistance=.08f;
+        wake.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;wake.receiveShadows=false;
     }
 
     private static void Vehicle(Transform root,EnemyKind kind)

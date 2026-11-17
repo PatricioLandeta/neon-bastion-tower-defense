@@ -6,6 +6,8 @@ A complete tower-defense game built from the Tower-Projectiles starter assignmen
 
 ![New armored truck and motorcycle](VEHICLES_PREVIEW.png)
 
+![Futuristic Scout light vehicle](SCOUT_PREVIEW.png)
+
 ## Open in Unity
 
 1. In Unity Hub, choose **Add → Add project from disk** and select this folder.
@@ -51,6 +53,14 @@ The guide opens from the title screen and can be reopened with **H** or **? HELP
 
 ![Frame from the live merge demonstration](ANIMATED_MERGE_TUTORIAL.png)
 
+## Music and laser sounds
+
+Pulse and Siege use distinct original laser WAV assets. Every real shot plays its tower's sound; paid upgrades raise pitch by two semitones per level and merges by three semitones per tier. Voices overlap independently with a fixed 32-source pool. Background music uses its own quieter source and keeps its normal pitch across pause, 2x speed, restart and menu screens.
+
+**The requested “Dearly Beloved” recording has not been supplied and is not included.** To enable that track, add its audio file as `Assets/Defense/Resources/DefenseAudio/DearlyBeloved.mp3` (or `.wav` / `.ogg`, with the same base name). Use only one format. Restart Play mode: the music starts at the title screen and loops throughout the session. Tower sound effects already work without the music file.
+
+Scouts now use custom-built futuristic cyan light vehicles with enclosed cockpits, four glowing wheels, animated wheel rotation and a short light wake. This visual replacement preserves their hitbox, speed, HP and cash reward.
+
 ## Towers
 
 | Stat at level 1 | Pulse | Siege |
@@ -84,7 +94,7 @@ Each merge tier increases damage and width, multiplies shot rate by **1.20** (+2
 
 | Type | Speed | Base HP | Kill reward | Role |
 | --- | --- | --- | --- | --- |
-| Scout | 2.6 units/s | 4 | $4 | Standard drone |
+| Scout | 2.6 units/s | 4 | $4 | Cyan light vehicle with enclosed cockpit, glowing wheels and light wake |
 | Runner | 3.9 units/s | 3 | $5 | Fast, lightly armored |
 | Armored | 1.65 units/s | 12 | $8 | Slow, durable crawler |
 | Siege | 1.25 units/s | 48 | $30 | Wave-5 elite |

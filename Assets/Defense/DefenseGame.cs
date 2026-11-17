@@ -28,6 +28,7 @@ public class DefenseGame : MonoBehaviour
     public int SpawnRemaining => wavePlan.Count-spawned;
     public DefenseRoute Route { get; private set; }
     public Camera View { get; private set; }
+    public DefenseAudio Audio { get; private set; }
     public DefenseHUD HUD { get; private set; }
     public DefenseMerging Merging { get; private set; }
     public TowerKind SelectedKind { get; private set; }
@@ -57,6 +58,7 @@ public class DefenseGame : MonoBehaviour
         cameraData.renderPostProcessing=true;
         cameraData.antialiasing=AntialiasingMode.SubpixelMorphologicalAntiAliasing;
         cameraData.antialiasingQuality=AntialiasingQuality.High;
+        Audio=gameObject.AddComponent<DefenseAudio>();Audio.Initialize(this);
         FitCamera();
         battlefield=new GameObject("Battlefield").transform;
         DefenseArt.World(this,battlefield);

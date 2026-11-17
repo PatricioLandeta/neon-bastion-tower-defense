@@ -92,6 +92,7 @@ public class DefenseTower : MonoBehaviour
             ProjectileSpeed,Physics.gravity,out launch,out flight)) return;
         turret.rotation=Quaternion.LookRotation(launch);
         DefenseProjectile.Launch(Game,Muzzle.position,launch,Damage,Kind==TowerKind.Siege);
+        Game.Audio.PlayShot(this);
         ShotsFired++;
         nextShot=Time.time+1f/FireRate;
     }

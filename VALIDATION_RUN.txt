@@ -2,7 +2,7 @@ Unity 6000.6.0f1 on macOS — laser audio and futuristic Scout vehicles
 153 campaign/regression checks passed; all 522 enemies defeated with earned money.
 Distinct imported Pulse/Siege laser sounds; rising pitch at every paid upgrade and merge tier.
 One stable looping music source and bounded 32-voice shot pool.
-Dearly Beloved recording not supplied: loop support implemented; song playback awaits the audio file.
+Supplied Kingdom Hearts Dearly Beloved recording imported and verified playing continuously with looping enabled.
 Scout vehicle graphics replace track pods while preserving gameplay stats and collider.
 No C# compilation errors/warnings or FMOD resource errors in the final run.
 
@@ -160,3 +160,14 @@ DEFENSE PASS: Merging conserves all purchased tower units
 DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases, merges and upgrades
 DEFENSE PASS: Victory waits for every active and scheduled enemy
 DEFENSE VALIDATION COMPLETE: 153 checks passed
+
+MUSIC PASS: The supplied Dearly Beloved recording imports successfully
+MUSIC PASS: Music actually plays and loops at the title screen
+MUSIC PASS: Starting a run keeps the song progressing without restarting it
+MUSIC PASS: Pausing combat keeps the music playing
+MUSIC PASS: Double game speed preserves the song's normal pitch
+MUSIC PASS: Restarting a run preserves the same progressing music source
+MUSIC PASS: The tutorial keeps the background song playing
+MUSIC PASS: The ending screen keeps the background song playing
+MUSIC PASS: Scene transitions do not duplicate music or laser sources
+MUSIC VALIDATION COMPLETE: 9 checks passed

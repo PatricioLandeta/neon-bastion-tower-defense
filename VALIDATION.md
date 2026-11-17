@@ -36,7 +36,7 @@ The campaign strategy begins with the normal $110, places towers on legal pads, 
 - Restart restoring economy, towers, waves, kill earnings and merge history.
 - A legal full-campaign win, with victory delayed until every scheduled and active enemy is gone.
 
-Audio checks load distinct original laser assets, verify increasing pitch across all paid/merge levels, require actual tower fire to call the sound system, and check that resets keep the same looping music source. The sound-source count remains bounded. These automated checks do not judge perceived loudness or confirm a music recording that has not been supplied. Scout checks require its new vehicle model and preserve training-wave stats.
+Audio checks load distinct original laser assets, verify increasing pitch across all paid/merge levels, require actual tower fire to call the sound system, and check that resets keep the same looping music source. The sound-source count remains bounded. These automated checks do not judge perceived loudness. Scout checks require its new vehicle model and preserve training-wave stats.
 
 The rendered preview was also inspected for board framing, readable controls, tower models, enemy health bars and range display. The main preview depicts the validator's legal campaign in progress. The merged-tower screenshot is an isolated mechanic demonstration, rather than a normally purchased wave-1 defense. A separate vehicle close-up poses the motorcycle and truck to inspect their graphics; that posing is outside the legal campaign run.
 
@@ -53,3 +53,7 @@ The tests call the same placement, purchase, launch and merge commands used by t
 **6 / 6 opening scenarios passed** with graphics enabled: Pulse on pads 0, 1 and 3, and Siege on pads 0, 1 and 3. Each run starts with the normal $110, buys exactly one level-1 tower, launches wave 1, and performs no upgrades, additional purchases, manual damage, or extra-money grants. It must reach the wave-2 build phase without an escape. The earlier version failed the pad-0 and pad-3 Pulse cases, reproducing the reported difficulty problem.
 
 Run **Tools → Neon Bastion → Validate opening without upgrades** outside Play mode to repeat the six cases. This establishes several forgiving openings; it does not promise every pad is equally effective. The gold START HERE marker identifies the recommended opening.
+
+## Supplied background recording
+
+The supplied Kingdom Hearts Dearly Beloved (Original Version) MP3 imports as streaming audio (about 4 minutes 20 seconds). A separate actual-playback validator passed **9 checks**: title playback, normal starting/rerun progression, playback during pause and tutorial, unchanged pitch at 2x game speed, ending-screen playback, and a single stable music source. Run **Tools → Neon Bastion → Validate background music** outside Play mode.

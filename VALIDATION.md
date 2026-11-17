@@ -1,8 +1,8 @@
 # Validation
 
-The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **84 checks**, including a complete ten-wave win with all **338** enemies destroyed.
+The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **94 checks**, including a complete ten-wave win with all **528** enemies destroyed.
 
-The campaign strategy begins with the normal $110, places towers on legal pads, buys additional towers and upgrades only when rewards make them affordable, and places exactly one tower per wave and obeys the ten-tower cap. It does not add credits, change enemy HP or speed, skip enemies, or apply test damage during the campaign. It accelerates the campaign with Unity time scaling; projectiles and enemies still use the normal fixed physics timestep. The focused tests run separately and intentionally create isolated test situations.
+The campaign strategy begins with the normal $110, places towers on legal pads, buys additional towers and upgrades only when rewards make them affordable, and uses eight placement actions and two merge actions across ten waves, never both in one wave. It does not add credits, change enemy HP or speed, skip enemies, or apply test damage during the campaign. It accelerates the campaign with Unity time scaling; projectiles and enemies still use the normal fixed physics timestep. The focused tests run separately and intentionally create isolated test situations.
 
 ## What is checked
 
@@ -10,18 +10,19 @@ The campaign strategy begins with the normal $110, places towers on legal pads, 
 - Actual tutorial button callbacks, including the new matching-type merge page: opening, Back/Next, explicit placement text, money/upgrade explanations, finishing without spending cash or a build allowance, and reopening through Help.
 - Tutorial pause during combat, preserving cash and wave state on return, preserving an existing manual pause, and restoring the prior 2x speed.
 - Persistent selection-and-placement text after the tutorial closes.
+- Live tutorial example transitions from separate towers/action 1 to a larger merged tower/action 0, replays, keeps animating while the battle is paused, and never changes real towers, money or actions.
 - Custom mesh assets present on disk and a curved, predetermined route.
 - Mathematical interception of a moving target at the configured launch speed, and rejection of an unreachable target.
-- Valid pad placement, rejection of road placement, occupied-pad protection, and the one-per-wave limit during both setup and combat.
+- Valid pad placement, rejection of road placement, occupied-pad protection, and the one shared PLACE-or-MERGE action per wave during both setup and combat.
 - Both tower types and all three required stat differences.
 - Merge rejection for different types and self-merges; safe cancellation, empty drops and wrong-type drops; pause/tutorial blocking.
-- Matching drag/drop consuming exactly one source, retaining destination pad, higher upgrade level, represented units and investment, without spending cash or restoring the placement allowance.
+- Matching drag/drop consuming exactly one source, retaining destination pad, higher upgrade level, represented units and investment, without spending cash but consuming the shared action. Additional checks block PLACE after MERGE, MERGE after PLACE, and a second merge in the same wave even with enough cash and matching partners.
 - Larger fusion geometry, increased stats, repeated fusion, prevention of consuming the same source twice, click-to-merge button routing, and ray selection of tall tower geometry.
 - Real projectile hits from a merged tower against a moving enemy.
 - Upgrade prices, damage/rate/range growth, actual turret and muzzle height growth, maximum level, insufficient-funds protection, selling refunds, and blocked sell-and-rebuild loopholes.
 - Distinct speed and HP values for all six enemy types, including fast motorcycles and 160-base-HP trucks.
 - Different vehicle models, fitted box colliders, authored wheel mesh availability, $20/$120 payouts, and prevention of repeat truck payouts.
-- Ten planned waves containing 338 enemies and more than 150 Scouts, with both new types present.
+- Ten planned waves containing 528 enemies and more than 240 Scouts, with both new types present.
 - Wave 5 unlocking wave 6 instead of ending the campaign.
 - Dynamic Rigidbody projectiles with gravity and colliders.
 - Damage and destruction from an actual projectile collision, with a correct cash payout.
@@ -30,7 +31,7 @@ The campaign strategy begins with the normal $110, places towers on legal pads, 
 - Continuous tower fire at the expected cadence and real hits on moving enemies.
 - Pause stopping simulation, stationary enemies while paused, and the 2x setting.
 - Immediate defeat after an enemy reaches the route endpoint.
-- Restart restoring economy, towers, waves, kill earnings and the single build allowance.
+- Restart restoring economy, towers, waves, kill earnings and the shared PLACE-or-MERGE action.
 - A legal full-campaign win, with victory delayed until every scheduled and active enemy is gone.
 
 The rendered preview was also inspected for board framing, readable controls, tower models, enemy health bars and range display. The main preview depicts the validator's legal campaign in progress. The merged-tower screenshot is an isolated mechanic demonstration, rather than a normally purchased wave-1 defense. A separate vehicle close-up poses the motorcycle and truck to inspect their graphics; that posing is outside the legal campaign run.

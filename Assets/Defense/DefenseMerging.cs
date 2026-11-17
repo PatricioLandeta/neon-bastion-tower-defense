@@ -21,27 +21,31 @@ public class DefenseMerging : MonoBehaviour
     }
     public bool CanMerge(DefenseTower from,DefenseTower to)
     {
-        return game.CanBuild && !game.Paused && !game.HUD.TutorialOpen && from!=null && to!=null && from!=to
+        return game.WaveActionsRemaining>0 && game.CanBuild && !game.Paused && !game.HUD.TutorialOpen && from!=null && to!=null && from!=to
             && from.Kind==to.Kind && game.Towers.Contains(from) && game.Towers.Contains(to);
     }
     public bool TryMerge(DefenseTower from,DefenseTower to)
     {
         Cancel();
+        if(game.WaveActionsRemaining==0)
+        { game.HUD.Message("Wave action already used. Choose PLACE or MERGE in the next wave; you cannot do both.");return false; }
         if(!CanMerge(from,to))
         {
             game.HUD.Message("Merge requires two different placed towers of the SAME TYPE: Pulse + Pulse or Siege + Siege.");
             return false;
         }
+        if(!game.TryConsumeWaveAction(WaveAction.Merge)) return false;
         to.Absorb(from);
         game.Towers.Remove(from);from.gameObject.SetActive(false);Destroy(from.gameObject);
         game.SelectTower(to);
         DefenseArt.Burst(to.transform.position+Vector3.up*to.Height,new Color(1.5f,.4f,2f),.8f);
-        game.HUD.Message("MERGED! "+to.Kind+" x"+to.MergedUnits+": bigger, taller and stronger. No cash charged; this wave's allowance is unchanged.");
+        game.HUD.Message("MERGED! "+to.Kind+" x"+to.MergedUnits+": bigger, taller and stronger. MERGE used this wave's action. Placing and another merge are locked until next wave.");
         game.HUD.Refresh();return true;
     }
     public void BeginSelectedMerge()
     {
         DefenseTower selected=game.SelectedTower;Cancel();
+        if(game.WaveActionsRemaining==0) { game.HUD.Message("No wave action left. Placing and merging share ONE action; try next wave.");return; }
         if(!game.CanBuild || game.Paused || game.HUD.TutorialOpen || selected==null) return;
         if(!game.Towers.Exists(t=>t!=selected && t.Kind==selected.Kind))
         { game.HUD.Message("Buy another "+selected.Kind+" in a later wave, then merge the matching pair.");return; }
@@ -51,6 +55,7 @@ public class DefenseMerging : MonoBehaviour
     public bool BeginDrag(DefenseTower tower)
     {
         Cancel();
+        if(game.WaveActionsRemaining==0) { game.HUD.Message("No action left: you may PLACE or MERGE once per wave, not both.");return false; }
         if(!game.CanBuild || game.Paused || game.HUD.TutorialOpen || tower==null || !game.Towers.Contains(tower)) return false;
         source=tower;game.SelectTower(tower);
         ghost=DefenseArt.MergeGhost(tower,battlefield);tower.SetVisualsVisible(false);link.enabled=true;

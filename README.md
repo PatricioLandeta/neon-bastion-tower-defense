@@ -35,17 +35,19 @@ The board, camera and interface appear when Play starts. Custom drone hulls, tur
 | Toggle 1× / 2× speed | Speed button |
 | Start / replay | Button or **Enter** |
 
-Towers choose targets, predict movement, and fire automatically. You can build and upgrade during a wave. Build only on marked pads, with **ONE new tower per wave and ten towers maximum**. Setup and combat share that allowance; selling does not restore it, and unused allowances do not accumulate. You start with **$110**. Money comes from monster kills, with no wave-clear bonus.
+Towers choose targets, predict movement, and fire automatically. You can build and upgrade during a wave. Build only on marked pads, with **ONE action per wave: PLACE a tower OR MERGE a matching pair**. You cannot do both or merge twice in the same wave. Setup and combat share the action; selling does not restore it, and unused actions do not accumulate. There are ten pads. You start with **$110**. Money comes from monster kills, with no wave-clear bonus.
 
-Begin with one Pulse tower on the left interior pad. The first kill gives you enough money for its level-2 upgrade. Save for a Siege tower near the center in wave 2. Each later wave unlocks one more placement, which can be used during setup or combat. Cover several road sections with each tower and balance purchases against upgrades.
+Begin with one Pulse tower on the left interior pad. The first kill gives you enough money for its level-2 upgrade. Save for a Siege tower near the center in wave 2. Each later wave unlocks one action, which can be used for a placement or a merge during setup or combat. Cash upgrades are still allowed after either choice. Cover several road sections with each tower and balance purchases against upgrades.
 
 ## Quick tutorial and placement overlay
 
-The guide explains five steps: choose a Pulse or Siege tower, left-click a cyan hex pad, earn cash from defeated enemies, purchase upgrades, and merge matching placed towers. It lists the tower prices and enemy payouts and gives a concrete example: a $75 Pulse leaves $35; one $10 Scout kill funds the $45 level-2 upgrade. It also explains the one-new-tower-per-wave rule and the extra damage, firing speed, range and 0.8-unit height increase from upgrades.
+The guide explains five steps: choose a Pulse or Siege tower, left-click a cyan hex pad, earn cash from defeated enemies, purchase upgrades, and watch matching placed towers merge in a looping 3D demonstration. The example shows a cursor dragging one actual tower model onto another, the result growing, and the example action count changing from 1 to 0 so placement is visibly locked. It lists the tower prices and enemy payouts and gives a concrete example: a $75 Pulse leaves $35; one $10 Scout kill funds the $45 level-2 upgrade. It also explains the one-new-tower-per-wave rule and the extra damage, firing speed, range and 0.8-unit height increase from upgrades.
 
 The guide opens from the title screen and can be reopened with **H** or **? HELP**. Opening it during play pauses the battle. Closing it restores the prior pause state and 1x/2x speed without resetting cash, towers or waves. A persistent textual overlay says **1 / 2 CHOOSE TOWER · LEFT-CLICK A CYAN PAD TO BUILD**, so placement instructions remain available after the guide closes.
 
 ![Quick tutorial: upgrades and money example](TUTORIAL_PREVIEW.png)
+
+![Frame from the live merge demonstration](ANIMATED_MERGE_TUTORIAL.png)
 
 ## Towers
 
@@ -67,7 +69,7 @@ Buy two towers across different waves, then **hold the left mouse button on one,
 - **Pulse + Pulse** and **Siege + Siege** merge. Different types, the same actor, paused play and the tutorial overlay cannot merge.
 - The source is consumed and the result stays on the destination pad. Invalid drops return the source to its original pad without changing money or towers.
 - The higher paid upgrade level is retained, combined tower count appears as **MERGED xN**, and the result has greater damage, fire rate, range, height and footprint, with a violet fusion ring. Already-merged towers can combine again with matching types, including at paid level 3.
-- Merging charges no additional cash, preserves both towers' total purchase/upgrade investment for the 70% sell refund, and **never restores the wave's placement allowance**. The freed pad can be used when a future wave grants a placement.
+- Merging charges no additional cash and preserves both towers' total purchase/upgrade investment for the 70% sell refund. It **consumes the same action as placing a tower**: after merging, you cannot place or merge again until the next wave. After placing, you cannot merge that wave. The freed pad can be used when a future wave grants an action.
 - A tower stops firing while its drag preview is active; it resumes from its original position after a cancelled drop. The preview does not move its physical firing location or add a new tower.
 
 ![Merged Pulse tower — focused mechanic demonstration](MERGE_PREVIEW.png)
@@ -85,7 +87,7 @@ Buy two towers across different waves, then **hold the left mouse button on one,
 
 Every destroyed monster pays immediately, with a gold `+$` popup and an updated money balance.
 
-HP increases by 12% of base per wave after wave 1. Ten waves contain 12, 18, 24, 28, 32, 36, 40, 44, 48 and 56 enemies, for **338 enemies total**, including **188 Scouts**. See [WAVE_GUIDE.md](WAVE_GUIDE.md) for the full breakdown. Truck HP reaches 236.8 on its first appearance and 332.8 in wave 10. Motorcycles have spinning wheels and a rider; trucks have six wheels, an armored cab, cargo body, lights and fitted hitboxes.
+HP increases by 12% of base per wave after wave 1. Ten waves contain 16, 24, 32, 40, 48, 56, 64, 72, 80 and 96 enemies, for **528 enemies total**, including **297 Scouts**. See [WAVE_GUIDE.md](WAVE_GUIDE.md) for the full breakdown. Truck HP reaches 236.8 on its first appearance and 332.8 in wave 10. Motorcycles have spinning wheels and a rider; trucks have six wheels, an armored cab, cargo body, lights and fitted hitboxes.
 
 ## Assignment coverage
 

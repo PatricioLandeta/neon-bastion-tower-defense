@@ -16,7 +16,7 @@
 | --- | --- |
 | Two tower types with different fire rates, projectile speeds and heights | Pulse and Siege properties in `DefenseTower`; all three required stats differ. Both use real gravity-affected projectiles. |
 | Clear placement instructions | Five-step quick-start tutorial plus a persistent command deck: choose 1/2 or a tower button, then LEFT-CLICK a CYAN HEXAGON. The tutorial explains placement, cash rewards, and upgrade prices/benefits with a worked money example. H or ? HELP reopens it; the HUD always retains the selection-and-placement instructions. |
-| Limited tower placement | One new placement per wave (shared by setup and combat), ten-tower cap, $110 starting cash, placement prices, and occupied-pad checks in `DefenseGame.TryPlaceAt`. Selling never restores a used wave allowance. |
+| Limited tower placement | One shared PLACE-or-MERGE action per wave (setup and combat share it), ten-tower cap, $110 starting cash, placement prices, and occupied-pad checks in `DefenseGame.TryPlaceAt`. Selling never restores a used wave allowance. |
 | Paths are not straight | The route turns repeatedly and has sampled quadratic curves at its corners. `DefenseRoute.Position` uses cumulative distance to preserve movement speed around bends. |
 
 ## A requirements
@@ -65,13 +65,13 @@ The original demo bounced random buggies around an arena and fired at clicked po
 
 ## Harder economy and tower growth
 
-`TowersPlacedThisWave` is reset for wave 1 at restart and for each next wave when the prior wave clears. Launching combat does not reset it, selling does not decrement it, and an invalid or unaffordable placement never consumes it. `PlacementWave` labels the correct upcoming wave while building. The UI displays remaining builds and disables new-tower buttons once the allowance is used; the game methods enforce the rule independently of the UI.
+`WaveActionsUsed` is reset for wave 1 and at each wave-clear boundary. `TryConsumeWaveAction` is the single gate used by both placement and merging, and it records `LastWaveAction`, `TotalTowersPurchased` and `TotalMerges`. Launching combat, selling, and failed drops do not restore an action. The UI says ACTION LEFT and locks both choices after either succeeds. Paid upgrades use money without consuming the wave action.
 
 `DefenseEnemy.Reward` defines the cash payout. `EnemyDestroyed` removes the enemy before awarding money, preventing double payment. `KillEarnings` supports an exact money audit. Tower upgrades spend $45 and $90, increase damage/rate/range, extend the support column and raise the actual gimbal and muzzle by 0.8 units per level. `DefenseArt.RaiseTower` adds a glowing upgrade collar. Ten normal waves therefore permit at most ten new towers in the campaign.
 
 ## Expanded traffic and campaign
 
-`DefenseGame.WavePlan` specifies ten waves, growing from 12 to 56 enemies. Six enemy kinds are mixed deterministically so repeated attempts are comparable. Motorcycles arrive in wave 4; 160-base-HP trucks arrive in wave 5 and become more frequent in later waves. Wave 5 is now the midpoint, and victory requires clearing wave 10. The same one-placement allowance applies throughout, with ten distinct pads available.
+`DefenseGame.WavePlan` specifies ten waves, growing from 16 to 96 enemies. Six enemy kinds are mixed deterministically so repeated attempts are comparable. Motorcycles arrive in wave 4; 160-base-HP trucks arrive in wave 5 and become more frequent in later waves. Wave 5 is now the midpoint, and victory requires clearing wave 10. The same exclusive PLACE-or-MERGE action applies throughout, with ten distinct pads available.
 
 Vehicle graphics are authored by `DefenseArt.Vehicle`. A baked 20-sided wheel mesh, rider geometry, truck cab and cargo assembly, and different lighting distinguish the two new vehicles. `DefenseVehicleWheels` animates the wheels at a rate derived from speed and radius and respects pause. Both vehicles use explicit BoxCollider dimensions to fit their bodies, while retaining kinematic path-following and real projectile collisions.
 
@@ -83,6 +83,12 @@ Vehicle graphics are authored by `DefenseArt.Vehicle`. A baked 20-sided wheel me
 
 `DefenseMerging` owns world-pointer selection, the six-pixel drag threshold, a visual-only moving preview, valid/invalid target rings, the M/MERGE click alternative, and a single checked merge transaction. It picks towers using cached renderer bounds, so tall upgraded towers can be clicked above their pads. Drag previews contain no gameplay scripts or colliders. Cancel, invalid release, pause, tutorial, restart and game-over restore the original actor's visibility; the actual tower and firing position are never dragged around the map.
 
-`CanMerge` requires two distinct live towers in the game's tower list, matching `TowerKind`, and active, unpaused play outside the tutorial. It deliberately permits different paid levels. `DefenseTower.Absorb` adds represented units and investment, keeps the higher paid level, and updates geometry and cached selection bounds. The source is then removed from the tower list and deactivated immediately, preventing repeated consumption. Neither cash nor placement counters change.
+`CanMerge` requires an unused shared wave action and two distinct live towers in the game's tower list, matching `TowerKind`, and active, unpaused play outside the tutorial. It deliberately permits different paid levels. `DefenseTower.Absorb` adds represented units and investment, keeps the higher paid level, and updates geometry and cached selection bounds. The source is then removed from the tower list and deactivated immediately, preventing repeated consumption. Cash is unchanged, but merging consumes the shared wave action, preventing a placement or another merge in that wave.
 
 Damage is the paid-level damage multiplied by represented units. Fusion also adds 10% fire rate per doubling of units, 0.65 units of height per doubling, 0.6 range per extra unit (capped at +3), and 18% footprint per doubling. Paid upgrades remain capped at level 3 and can still be purchased for a merged tower below that cap. Merge strength comes from consuming existing purchased towers, rather than creating new build allowances or refundable investment.
+
+## Animated example and tougher traffic
+
+The last tutorial page embeds `DefenseMergeDemo`, an isolated visual scene rendered into a UI RawImage. It uses the actual tower geometry and a looping cursor/drag/growth sequence, labels the example action counter, and has a Replay button. The preview uses a dedicated camera/layer, runs on unscaled time so paused Help still animates, and contains no DefenseTower actors or economy calls. It cannot modify the player's towers, cash or wave allowance.
+
+Traffic now totals 528 enemies, with counts and spawn rates listed in `WAVE_GUIDE.md`. The complete automated run makes eight purchases and two actual merges, using exactly one shared action in every wave and ending with six actors representing eight purchased units. Its money audit includes all consumed tower investment and confirms no injected campaign funds.

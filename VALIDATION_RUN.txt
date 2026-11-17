@@ -1,7 +1,8 @@
-Unity 6000.6.0f1 on macOS — tighter kill economy
-96 campaign/regression checks passed; all 522 enemies defeated.
-Full campaign kill income: $3,652, reduced from $10,565. Starting cash $110; normal purchases only.
-Upgrades: $100 / $200 per represented tower unit.
+Unity 6000.6.0f1 on macOS — budget-limited building and three merge tiers
+124 campaign/regression checks passed; all 522 enemies defeated; $3,652 kill income.
+No per-wave build or merge limit. Ten-pad board capacity remains.
+Matching type and merge level: base pairs -> green ($50), green pairs -> purple ($100), purple pairs -> red ($200). Red is the cap.
+Paid upgrades remain separate and scale with represented units.
 No C# compilation errors or warnings.
 
 DEFENSE PASS: Title starts with combat stopped
@@ -15,21 +16,23 @@ DEFENSE PASS: Tutorial Back returns to the previous explanation
 DEFENSE PASS: Tutorial explains kill rewards and the money display
 DEFENSE PASS: Tutorial explains upgrade prices and stronger, taller towers
 DEFENSE PASS: Tutorial explains dragging and merging matching tower types
-DEFENSE PASS: Tutorial explains the exclusive PLACE-or-MERGE wave action
-DEFENSE PASS: Animated example begins with two towers and one available action
-DEFENSE PASS: Animated example visibly merges and locks placement by spending its example action
+DEFENSE PASS: Tutorial explains all three tiers and money-limited buying plus merging
+DEFENSE PASS: Animated example begins with base towers and example money
+DEFENSE PASS: Animated example visibly merges to green and spends only example cash
+DEFENSE PASS: Animated second merge produces purple for $100
+DEFENSE PASS: Animated final merge produces red for $200
 DEFENSE PASS: Tutorial animation uses only visual models and never spends real game resources
 DEFENSE PASS: Replay button restarts the merge demonstration
-DEFENSE PASS: Completing the tutorial starts a clean game without spending cash or the build allowance
+DEFENSE PASS: Completing the tutorial starts a clean game without spending cash
 DEFENSE PASS: Persistent gameplay overlay continues to explain tower selection and placement
 DEFENSE PASS: Help button reopens the guide and Close returns to the same game
-DEFENSE PASS: New game starts with $110 and one wave-1 placement
-DEFENSE PASS: Invalid placement spends neither money nor allowance
+DEFENSE PASS: New game starts with $110 and no towers
+DEFENSE PASS: Invalid placement spends no money
 DEFENSE PASS: Player can buy a Pulse tower on a pad
-DEFENSE PASS: Successful purchase spends its price and the wave's single placement
-DEFENSE PASS: Occupied pads and second placements are rejected without spending money
+DEFENSE PASS: Successful purchase spends the tower price
+DEFENSE PASS: Occupied pads and unaffordable purchases spend no money
 DEFENSE PASS: Cannot upgrade without enough kill earnings
-DEFENSE PASS: Launching a wave does not grant a second placement
+DEFENSE PASS: Launching a wave does not grant free cash
 DEFENSE PASS: Scout kill pays exactly $4
 DEFENSE PASS: A defeated enemy cannot pay twice
 DEFENSE PASS: One kill cannot fund an immediate upgrade
@@ -40,17 +43,15 @@ DEFENSE PASS: Enemy types have different speed and HP
 DEFENSE PASS: Runner kill pays $5
 DEFENSE PASS: Armored kill pays $8
 DEFENSE PASS: Siege kill pays $30 and total kill earnings are tracked
-DEFENSE PASS: Even kill money cannot bypass the one-tower limit during combat
-DEFENSE PASS: Clearing a wave unlocks exactly one placement for the next wave
+DEFENSE PASS: Unaffordable towers are blocked during combat
+DEFENSE PASS: Clearing a wave advances the build phase without an action allowance
 DEFENSE PASS: All ten training-wave kills pay correctly and there is no free wave-clear money
 DEFENSE PASS: Next wave permits buying one additional tower
 DEFENSE PASS: Tower types still differ in fire rate, projectile speed and height
-DEFENSE PASS: Selling refunds 70 percent but does not restore the wave allowance
-DEFENSE PASS: Sell-and-rebuild cannot bypass the one-per-wave rule
-DEFENSE PASS: Cannot strand the player by selling their only tower after using the allowance
+DEFENSE PASS: Selling refunds 70 percent
+DEFENSE PASS: Buying again in the same build phase is allowed when affordable
 DEFENSE PASS: A second upgrade spends $200 and makes the tower taller again
 DEFENSE PASS: Maximum level cannot consume money or grow indefinitely
-DEFENSE PASS: Wave-2 launch preserves its already-used setup allowance
 DEFENSE PASS: Projectiles use dynamic Rigidbody gravity
 DEFENSE PASS: An actual projectile collision kills an enemy and pays its money reward
 DEFENSE PASS: Motorcycles are fast and trucks have 160 base HP at a slower speed
@@ -59,27 +60,55 @@ DEFENSE PASS: Motorcycle kill pays $6
 DEFENSE PASS: High-HP truck kill pays $40
 DEFENSE PASS: Truck payout cannot be claimed twice
 DEFENSE PASS: Ten escalating waves contain 522 enemies with larger Scout groups and both new vehicle types
-DEFENSE PASS: Mismatched towers are rejected without spending cash or the shared action
-DEFENSE PASS: Self merge does not spend an action
+DEFENSE PASS: Different tower types cannot merge or spend money
+DEFENSE PASS: Self merge spends nothing
+DEFENSE PASS: Insufficient funds block merging without consuming towers
 DEFENSE PASS: Drag creates a visual tower preview
-DEFENSE PASS: Cancelling restores the tower and leaves the shared action available
-DEFENSE PASS: Empty drop uses no tower or action
-DEFENSE PASS: Wrong-type drop uses no tower or action
+DEFENSE PASS: Cancelling restores tower visuals and spends nothing
+DEFENSE PASS: Empty drop spends nothing
+DEFENSE PASS: Wrong-type drop spends nothing
 DEFENSE PASS: Merging is blocked while paused
 DEFENSE PASS: Tutorial blocks actual merging
-DEFENSE PASS: Matching drag/drop performs a merge
-DEFENSE PASS: Merge consumes exactly the source and retains the destination pad
-DEFENSE PASS: Merge retains the higher paid level and complete investment
+DEFENSE PASS: Matching drag/drop performs a paid merge
+DEFENSE PASS: Merge consumes source and retains destination pad
+DEFENSE PASS: Green merge costs exactly $50 and retains paid upgrades and investment
+DEFENSE PASS: Merge level 2 has the correct color and 2 represented units
 DEFENSE PASS: Merge grows real geometry and raises combat stats
-DEFENSE PASS: Successful merge spends the wave action and no extra cash
-DEFENSE PASS: After MERGE, placing a tower is blocked even when money and a pad are available
-DEFENSE PASS: Second merge in the same wave is blocked
-DEFENSE PASS: Two-unit merged tower charges double the level-3 upgrade price
-DEFENSE PASS: Paid cash upgrades remain available after the wave action is used
-DEFENSE PASS: Tall fused tower can be picked by its model
-DEFENSE PASS: After PLACE, merging is blocked even with a matching partner
-DEFENSE PASS: MERGE button arms the click alternative while an action is available
-DEFENSE PASS: Click-to-merge also consumes the same shared action
+DEFENSE PASS: Buying immediately after a merge in the same wave is allowed
+DEFENSE PASS: Unequal merge levels cannot combine or spend cash
+DEFENSE PASS: Merging immediately after buying in the same wave is allowed
+DEFENSE PASS: Green plus green costs exactly $100
+DEFENSE PASS: Merge level 3 has the correct color and 4 represented units
+DEFENSE PASS: Matching fixture tier 1 merges successfully
+DEFENSE PASS: Matching fixture tier 1 merges successfully
+DEFENSE PASS: Matching fixture tier 2 merges successfully
+DEFENSE PASS: Purple plus purple costs exactly $200
+DEFENSE PASS: Merge level 4 has the correct color and 8 represented units
+DEFENSE PASS: Red max towers cannot start another merge drag
+DEFENSE PASS: Matching fixture tier 1 merges successfully
+DEFENSE PASS: Matching fixture tier 1 merges successfully
+DEFENSE PASS: Matching fixture tier 2 merges successfully
+DEFENSE PASS: Matching fixture tier 1 merges successfully
+DEFENSE PASS: Matching fixture tier 1 merges successfully
+DEFENSE PASS: Matching fixture tier 2 merges successfully
+DEFENSE PASS: Matching fixture tier 3 merges successfully
+DEFENSE PASS: Red plus red is rejected without spending or consuming towers
+DEFENSE PASS: Eight-unit merged tower scales the next paid upgrade cost
+DEFENSE PASS: Paid upgrades remain separate from capped merge levels
+DEFENSE PASS: Tall red tower can be picked by its model
+DEFENSE PASS: MERGE button arms the click alternative when the pair is affordable
+DEFENSE PASS: Click-to-merge charges the same $50 as dragging
+DEFENSE PASS: Multiple affordable placements are allowed in a single wave
+DEFENSE PASS: Multiple affordable placements are allowed in a single wave
+DEFENSE PASS: Multiple affordable placements are allowed in a single wave
+DEFENSE PASS: Multiple affordable placements are allowed in a single wave
+DEFENSE PASS: Multiple affordable placements are allowed in a single wave
+DEFENSE PASS: Multiple affordable placements are allowed in a single wave
+DEFENSE PASS: Multiple affordable placements are allowed in a single wave
+DEFENSE PASS: Multiple affordable placements are allowed in a single wave
+DEFENSE PASS: Multiple affordable placements are allowed in a single wave
+DEFENSE PASS: Multiple affordable placements are allowed in a single wave
+DEFENSE PASS: Board capacity and occupied pads remain protected
 DEFENSE PASS: Enemy body stays synchronized with curved-route progress
 DEFENSE PASS: Reported target velocity matches physical speed
 DEFENSE PASS: Tower continuously fires at its configured cadence
@@ -93,19 +122,11 @@ DEFENSE PASS: Closing help preserves an already-paused game
 DEFENSE PASS: Speed control still enables 2x
 DEFENSE PASS: Closing help restores the player's prior 2x speed
 DEFENSE PASS: Any enemy completing the path immediately ends the game
-DEFENSE PASS: Restart resets money, towers, rewards, waves and build allowance
+DEFENSE PASS: Restart resets money, towers, rewards, waves and merge history
 DEFENSE PASS: Wave five is now the midpoint and unlocks a sixth wave instead of victory
 DEFENSE PASS: Expanded campaign is winnable: all ten waves and 522 enemies defeated
-DEFENSE PASS: Winning strategy uses eight PLACE actions and two MERGE actions, never both in one wave
+DEFENSE PASS: Winning strategy pays for eight towers and two merges
 DEFENSE PASS: Merging conserves all purchased tower units
-DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases and upgrades
+DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases, merges and upgrades
 DEFENSE PASS: Victory waits for every active and scheduled enemy
-DEFENSE VALIDATION COMPLETE: 96 checks passed
-
-OPENING RESULT: Pulse pad 0 => PASS; kills=10
-OPENING RESULT: Pulse pad 1 => PASS; kills=10
-OPENING RESULT: Pulse pad 3 => PASS; kills=10
-OPENING RESULT: Siege pad 0 => PASS; kills=10
-OPENING RESULT: Siege pad 1 => PASS; kills=10
-OPENING RESULT: Siege pad 3 => PASS; kills=10
-OPENING SUMMARY: 6 / 6 no-upgrade openings won
+DEFENSE VALIDATION COMPLETE: 124 checks passed

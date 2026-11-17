@@ -35,15 +35,15 @@ The board, camera and interface appear when Play starts. Custom drone hulls, tur
 | Toggle 1× / 2× speed | Speed button |
 | Start / replay | Button or **Enter** |
 
-Towers choose targets, predict movement, and fire automatically. You can build and upgrade during a wave. Build only on marked pads, with **ONE action per wave: PLACE a tower OR MERGE a matching pair**. You cannot do both or merge twice in the same wave. Setup and combat share the action; selling does not restore it, and unused actions do not accumulate. There are ten pads. You start with **$110**. Money comes from monster kills, with no wave-clear bonus.
+Towers choose targets, predict movement, and fire automatically. Buy, merge and upgrade during setup or combat as often as your money allows. There are ten pads and a ten-tower board cap. You start with **$110**. Money comes only from kills, with no wave-clear bonus.
 
-Begin with one Pulse tower on the gold **START HERE** pad (left interior). Wave 1 is a training wave: ten Scouts with 3 HP, speed 2 and a 1.4-second spawn interval. It can be cleared without upgrades on the three tested opening pads, using either tower type. Normal Scout stats and tougher crowds return in wave 2. The first kill gives you enough money for its level-2 upgrade. Save for a Siege tower near the center in wave 2. Each later wave unlocks one action, which can be used for a placement or a merge during setup or combat. Cash upgrades are still allowed after either choice. Cover several road sections with each tower and balance purchases against upgrades.
+Begin with a Pulse on the gold **START HERE** pad. Wave 1 contains ten slow 3-HP Scouts and can be cleared without upgrades. It earns $40, leaving $75 after a Pulse purchase. Save for coverage before expensive upgrades. Normal Scout stats and tougher crowds return in wave 2.
 
 ![Recommended starter pad](OPENING_GUIDE_PREVIEW.png)
 
 ## Quick tutorial and placement overlay
 
-The guide explains five steps: choose a Pulse or Siege tower, left-click a cyan hex pad, earn cash from defeated enemies, purchase upgrades, and watch matching placed towers merge in a looping 3D demonstration. The example shows a cursor dragging one actual tower model onto another, the result growing, and the example action count changing from 1 to 0 so placement is visibly locked. It lists the tower prices and enemy payouts and gives a concrete example: a $75 Pulse leaves $35; the opening wave earns $40, so saving for another tower matters. It also explains the one-new-tower-per-wave rule and the extra damage, firing speed, range and 0.8-unit height increase from upgrades.
+The guide explains five steps: choose a Pulse or Siege tower, left-click a cyan hex pad, earn cash from defeated enemies, purchase upgrades, and watch matching placed towers merge in a looping 3D demonstration. The example shows a cursor dragging one actual tower model onto another, the result growing, and example cash decreasing by the merge fee. It lists the tower prices and enemy payouts and gives a concrete example: a $75 Pulse leaves $35; the opening wave earns $40, so saving for another tower matters. It also explains all three colored merge tiers and unrestricted buying with available money and the extra damage, firing speed, range and 0.8-unit height increase from upgrades.
 
 The guide opens from the title screen and can be reopened with **H** or **? HELP**. Opening it during play pauses the battle. Closing it restores the prior pause state and 1x/2x speed without resetting cash, towers or waves. A persistent textual overlay says **1 / 2 CHOOSE TOWER · LEFT-CLICK A CYAN PAD TO BUILD**, so placement instructions remain available after the guide closes.
 
@@ -62,17 +62,21 @@ The guide opens from the title screen and can be reopened with **H** or **? HELP
 | Damage per hit | 1.15 | 12 |
 | Range | 10.5 units | 14 units |
 
-Towers can reach level 3. Each level increases damage, fire rate, range, and actual turret height by **0.8 units**. The column extends and the firing muzzle rises; glowing collars mark upgrades. Upgrades cost $100 and $200 per represented tower unit. A two-unit merged tower costs $200 and $400, so fusion does not make future upgrades cheap. Selling returns 70% of the tower's total investment but never restores a used wave allowance. You cannot sell your last tower when no replacement placement remains.
+Towers can reach level 3. Each level increases damage, fire rate, range, and actual turret height by **0.8 units**. The column extends and the firing muzzle rises; glowing collars mark upgrades. Upgrades cost $100 and $200 per represented tower unit. A two-unit merged tower costs $200 and $400, so fusion does not make future upgrades cheap. Selling returns 70% of the tower's total investment and includes merge fees. Selling your last tower is blocked if the refund plus cash cannot afford a replacement Pulse.
 
 ## Merge matching towers
 
-Buy two towers across different waves, then **hold the left mouse button on one, drag onto the other, and release**. A moving preview and destination ring indicate the action: green means a valid match, pink means the types differ. You can also select a tower, press **M** or click **MERGE**, then click its partner. Escape cancels. Clicking a tower's upper model works as well as clicking its pad.
+Buy two towers, then **hold the left mouse button on one, drag onto the other, and release**. Both type and merge level must match. A green target halo indicates an affordable valid match; pink indicates an invalid or unaffordable merge. Select a tower and press **M / MERGE** for the click alternative. Escape cancels.
 
-- **Pulse + Pulse** and **Siege + Siege** merge. Different types, the same actor, paused play and the tutorial overlay cannot merge.
-- The source is consumed and the result stays on the destination pad. Invalid drops return the source to its original pad without changing money or towers.
-- The higher paid upgrade level is retained, combined tower count appears as **MERGED xN**, and the result has greater damage, fire rate, range, height and footprint, with a violet fusion ring. Already-merged towers can combine again with matching types, including at paid level 3.
-- Merging charges no additional cash and preserves both towers' total purchase/upgrade investment for the 70% sell refund. It **consumes the same action as placing a tower**: after merging, you cannot place or merge again until the next wave. After placing, you cannot merge that wave. The freed pad can be used when a future wave grants an action.
-- A tower stops firing while its drag preview is active; it resumes from its original position after a cancelled drop. The preview does not move its physical firing location or add a new tower.
+| Inputs (same tower type) | Result | Merge fee |
+| --- | --- | --- |
+| Base Lv1 + Base Lv1 | Green Lv2, 2 tower units | $50 |
+| Green Lv2 + Green Lv2 | Purple Lv3, 4 tower units | $100 |
+| Purple Lv3 + Purple Lv3 | Red Lv4, 8 tower units | $200 |
+
+Red is the final merge tier. Unequal merge levels, mixed Pulse/Siege types, self-merges, and unaffordable merges consume nothing. **Buy and merge repeatedly in the same wave** when you can pay. Merges consume the source, retain the destination pad and higher paid upgrade level, and include the fee in combined investment for selling. Paid upgrade levels (1–3) are separate from merge levels (1–4).
+
+Each tier increases damage, height, fire rate, range and width. Rings, capacitors and muzzle lights show green, purple or red. A red tower requires eight purchased base towers and seven paid merges: total $1,200 for Pulse or $1,480 for Siege before paid upgrades. That investment competes with board coverage and paid upgrades.
 
 ![Merged Pulse tower — focused mechanic demonstration](MERGE_PREVIEW.png)
 

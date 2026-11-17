@@ -19,13 +19,13 @@ public class DefenseHUD : MonoBehaviour
     private bool tutorialStartsGame,tutorialPausedByUs;
     public bool TutorialOpen => tutorial!=null && tutorial.activeSelf;
     public int TutorialPage => tutorialPage;
-    private static readonly string[] TutorialTitles={"CHOOSE YOUR TOWER","PLACE ON A CYAN PAD","KILLS EARN MONEY","UPGRADE YOUR DEFENSE","MERGE OR BUILD"};
+    private static readonly string[] TutorialTitles={"CHOOSE YOUR TOWER","PLACE ON A CYAN PAD","KILLS EARN MONEY","UPGRADE YOUR DEFENSE","THREE MERGE TIERS"};
     private static readonly string[] TutorialBodies={
         "You start with $110.\n\nPULSE — $75: rapid fire, useful against Scouts and motorcycles.\nSIEGE — $110: 12-damage shells, one shot every 1.67 seconds.\n\nClick a tower card at the bottom, or press 1 for Pulse / 2 for Siege.\nFor your first tower, try a Pulse on the gold START HERE pad.\nWave 1 is a slower training wave; upgrades are optional.",
-        "Move the pointer over a glowing CYAN HEXAGON on the board.\nLEFT-CLICK the pad to place your selected tower.\n\nPlacing a tower uses this wave's action. Choose PLACE or MERGE — ONE shared action; you cannot do both.\nRoads, unmarked ground and occupied pads cannot take a new tower.\n\nPress SPACE or LAUNCH WAVE when your defense is ready.\nClearing the wave unlocks ONE new action for the next wave.",
+        "Move the pointer over a glowing CYAN HEXAGON on the board.\nLEFT-CLICK the pad to place your selected tower.\n\nBuild and merge as often as you can afford. There is no per-wave action limit.\nRoads, unmarked ground and occupied pads cannot take a new tower.\n\nPress SPACE or LAUNCH WAVE when your defense is ready.\nKeep enough cash for both coverage and upgrades.",
         "Every defeated enemy immediately adds cash to MONEY at the top.\nWatch for the gold +$ reward above the enemy.\n\nScout $4  /  Runner $5  /  Motorcycle $6\nArmored $8  /  Siege $30  /  Truck $40\n\nSave cash to buy your next wave's tower or improve an existing one.\nUnspent money carries over. There is no free wave-clear bonus.",
         "LEFT-CLICK a placed tower to select it and see its range and stats.\nClick UPGRADE or press U when you can afford it.\n\nLevel 2 costs $100. Level 3 costs $200.\nMerged towers multiply these costs by their combined tower count.\nEach upgrade adds damage, firing speed, range and 0.8 units of height.\n\nA $75 Pulse leaves $35. Wave 1 pays $40 —\nsave for another tower before spending on upgrades!",
-        "ONE WAVE = ONE ACTION\nPLACE a tower OR MERGE a matching pair.\nYou CANNOT do both.\n\nHOLD a tower with the left mouse button.\nDRAG onto SAME TYPE and RELEASE.\nPulse + Pulse / Siege + Siege.\nM / MERGE is a click alternative.\n\nWave 1: buy Pulse. Wave 2: buy Pulse.\nWave 3: MERGE or buy — not both.\nBad drops use nothing. Cash upgrades\nare still allowed after either action."
+        "HOLD left mouse on a tower.\nDRAG onto SAME TYPE + MERGE LEVEL\nand RELEASE. M / MERGE also works.\n\nLv1 + Lv1 → GREEN Lv2 ($50)\nLv2 + Lv2 → PURPLE Lv3 ($100)\nLv3 + Lv3 → RED Lv4 ($200)\nRED is the final merge tier.\n\nBuy AND merge in the same wave.\nYour MONEY is the limit. Bad drops\ncost nothing. Paid upgrades stay separate."
 
     };
     private readonly Color accent=new Color(.35f,.9f,1f);
@@ -66,7 +66,7 @@ public class DefenseHUD : MonoBehaviour
         BuildTutorial();
         Refresh();
     }
-    public void Message(string value) { tip.text="1 / 2 CHOOSE TOWER  ·  LEFT-CLICK A CYAN PAD TO BUILD  ·  ONE ACTION: PLACE OR MERGE  ·  H HELP\n"+value; }
+    public void Message(string value) { tip.text="1 / 2 CHOOSE TOWER  ·  LEFT-CLICK A CYAN PAD TO BUILD  ·  BUILD + MERGE WITH CASH  ·  H HELP\n"+value; }
     private void BuildTutorial()
     {
         tutorial=Panel("Quick tutorial",transform,0,0,1,1,new Color(.005f,.012f,.035f,.94f)).gameObject;
@@ -149,18 +149,20 @@ public class DefenseHUD : MonoBehaviour
 
     public void Refresh()
     {
-        stats.text="MONEY  $"+game.Credits+"     TOWERS  "+game.Towers.Count+" / "+DefenseGame.TowerLimit+"\nWAVE  "+game.PlacementWave+" / "+DefenseGame.TotalWaves+"     HOSTILES  "+(game.Enemies.Count+game.SpawnRemaining)+"\nACTION LEFT  "+game.WaveActionsRemaining+" / 1";
+        stats.text="MONEY  $"+game.Credits+"     TOWERS  "+game.Towers.Count+" / "+DefenseGame.TowerLimit+"\nWAVE  "+game.PlacementWave+" / "+DefenseGame.TotalWaves+"     HOSTILES  "+(game.Enemies.Count+game.SpawnRemaining)+"\nMERGE TIERS  GREEN → PURPLE → RED";
         pulseText.text="[ 1 ]   PULSE   /   $75\nRapid · speed 17 · height 1.4";
         siegeText.text="[ 2 ]   SIEGE   /   $110\n12 damage · 0.6 shots/s\nSpeed 23 · height 2.8";
         pulseImage.color=game.SelectedTower==null && game.SelectedKind==TowerKind.Pulse ? new Color(.04f,.25f,.34f) : new Color(.055f,.08f,.14f);
         siegeImage.color=game.SelectedTower==null && game.SelectedKind==TowerKind.Siege ? new Color(.28f,.18f,.055f) : new Color(.055f,.08f,.14f);
-        pulseButton.interactable=siegeButton.interactable=game.CanBuild && !game.Paused && game.PlacementsRemaining>0;
+        pulseButton.interactable=game.CanBuild && !game.Paused && game.Credits>=DefenseTower.Cost(TowerKind.Pulse) && game.Towers.Count<DefenseGame.TowerLimit;
+        siegeButton.interactable=game.CanBuild && !game.Paused && game.Credits>=DefenseTower.Cost(TowerKind.Siege) && game.Towers.Count<DefenseGame.TowerLimit;
         DefenseTower tower=game.SelectedTower;
-        details.text=tower==null ? "CHOOSE 1 / 2 → CLICK A CYAN PAD\nPLACE or MERGE: 1 action / wave" :
-            tower.Kind.ToString().ToUpper()+"  /  LEVEL "+tower.Level+(tower.MergedUnits>1 ? "  /  MERGED x"+tower.MergedUnits : "")+"\nDamage "+tower.Damage.ToString("0.0")+" · "+tower.FireRate.ToString("0.0")+" shots/s\nRange "+tower.Range.ToString("0.0")+" · height "+tower.Height.ToString("0.0");
+        details.text=tower==null ? "CHOOSE 1 / 2 → CLICK A CYAN PAD\nBuy + merge as your money allows" :
+            tower.Kind.ToString().ToUpper()+"  /  UPGRADE "+tower.Level+"  /  "+tower.MergeName+" Lv"+tower.MergeLevel+"\nDamage "+tower.Damage.ToString("0.0")+" · "+tower.FireRate.ToString("0.0")+" shots/s\nRange "+tower.Range.ToString("0.0")+" · height "+tower.Height.ToString("0.0");
         upgrade.interactable=game.CanBuild && !game.Paused && tower!=null && tower.Level<3 && game.Credits>=tower.UpgradeCost;
-        merge.interactable=game.CanBuild && !game.Paused && game.WaveActionsRemaining>0 && tower!=null && game.Towers.Exists(t=>t!=tower && t.Kind==tower.Kind);
-        sell.interactable=game.CanBuild && !game.Paused && tower!=null && (game.Towers.Count>1 || game.PlacementsRemaining>0);
+        merge.interactable=tower!=null && game.Towers.Exists(t=>game.Merging.CanMerge(tower,t));
+        merge.GetComponentInChildren<Text>().text=tower==null ? "M  MERGE" : tower.MergeLevel>=DefenseTower.MaxMergeLevel ? "RED MAX" : "M  MERGE / $"+tower.MergeCost;
+        sell.interactable=game.CanBuild && !game.Paused && tower!=null && (game.Towers.Count>1 || game.Credits+Mathf.FloorToInt(tower.Investment*.7f)>=DefenseTower.Cost(TowerKind.Pulse));
         upgrade.GetComponentInChildren<Text>().text=tower!=null && tower.Level<3 ? "U  UPGRADE / $"+tower.UpgradeCost : "U  UPGRADE";
         sell.GetComponentInChildren<Text>().text=tower!=null ? "X  SELL / +$"+Mathf.FloorToInt(tower.Investment*.7f) : "X  SELL";
         launch.interactable=game.State==DefenseState.Building && !game.Paused;

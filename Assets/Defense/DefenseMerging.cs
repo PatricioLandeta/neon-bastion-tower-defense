@@ -21,45 +21,42 @@ public class DefenseMerging : MonoBehaviour
     }
     public bool CanMerge(DefenseTower from,DefenseTower to)
     {
-        return game.WaveActionsRemaining>0 && game.CanBuild && !game.Paused && !game.HUD.TutorialOpen && from!=null && to!=null && from!=to
-            && from.Kind==to.Kind && game.Towers.Contains(from) && game.Towers.Contains(to);
+        return game.CanBuild && !game.Paused && !game.HUD.TutorialOpen && from!=null && to!=null && from!=to
+            && from.Kind==to.Kind && from.MergeLevel==to.MergeLevel && from.MergeLevel<DefenseTower.MaxMergeLevel && game.Credits>=to.MergeCost && game.Towers.Contains(from) && game.Towers.Contains(to);
     }
     public bool TryMerge(DefenseTower from,DefenseTower to)
     {
         Cancel();
-        if(game.WaveActionsRemaining==0)
-        { game.HUD.Message("Wave action already used. Choose PLACE or MERGE in the next wave; you cannot do both.");return false; }
         if(!CanMerge(from,to))
         {
-            game.HUD.Message("Merge requires two different placed towers of the SAME TYPE: Pulse + Pulse or Siege + Siege.");
+            game.HUD.Message("Match the SAME TYPE and MERGE LEVEL, below red. You also need $50 / $100 / $200 for the merge.");
             return false;
         }
-        if(!game.TryConsumeWaveAction(WaveAction.Merge)) return false;
-        to.Absorb(from);
+        int cost=to.MergeCost;
+        if(!game.Spend(cost)) return false;
+        to.Absorb(from,cost);game.RecordMerge();
         game.Towers.Remove(from);from.gameObject.SetActive(false);Destroy(from.gameObject);
         game.SelectTower(to);
-        DefenseArt.Burst(to.transform.position+Vector3.up*to.Height,new Color(1.5f,.4f,2f),.8f);
-        game.HUD.Message("MERGED! "+to.Kind+" x"+to.MergedUnits+": bigger, taller and stronger. MERGE used this wave's action. Placing and another merge are locked until next wave.");
+        DefenseArt.Burst(to.transform.position+Vector3.up*to.Height,to.MergeColor,.8f);
+        game.HUD.Message("MERGED! "+to.Kind+" "+to.MergeName+" (merge level "+to.MergeLevel+"). Paid $"+cost+". Keep building or merging as your budget allows.");
         game.HUD.Refresh();return true;
     }
     public void BeginSelectedMerge()
     {
         DefenseTower selected=game.SelectedTower;Cancel();
-        if(game.WaveActionsRemaining==0) { game.HUD.Message("No wave action left. Placing and merging share ONE action; try next wave.");return; }
         if(!game.CanBuild || game.Paused || game.HUD.TutorialOpen || selected==null) return;
-        if(!game.Towers.Exists(t=>t!=selected && t.Kind==selected.Kind))
-        { game.HUD.Message("Buy another "+selected.Kind+" in a later wave, then merge the matching pair.");return; }
+        if(!game.Towers.Exists(t=>CanMerge(selected,t)))
+        { game.HUD.Message("Need a matching merge level and $"+selected.MergeCost+". Red is the final merge level.");return; }
         source=selected;link.enabled=true;
-        game.HUD.Message("Click another "+source.Kind+" tower to merge into it. ESC cancels. Different levels are allowed.");
+        game.HUD.Message("Click another "+source.Kind+" at merge level "+source.MergeLevel+". Cost $"+source.MergeCost+". ESC cancels.");
     }
     public bool BeginDrag(DefenseTower tower)
     {
         Cancel();
-        if(game.WaveActionsRemaining==0) { game.HUD.Message("No action left: you may PLACE or MERGE once per wave, not both.");return false; }
-        if(!game.CanBuild || game.Paused || game.HUD.TutorialOpen || tower==null || !game.Towers.Contains(tower)) return false;
+        if(!game.CanBuild || game.Paused || game.HUD.TutorialOpen || tower==null || tower.MergeLevel>=DefenseTower.MaxMergeLevel || !game.Towers.Contains(tower)) return false;
         source=tower;game.SelectTower(tower);
         ghost=DefenseArt.MergeGhost(tower,battlefield);tower.SetVisualsVisible(false);link.enabled=true;
-        game.HUD.Message("Drag onto a matching "+tower.Kind+" tower and release. Empty ground or a different type cancels the merge.");
+        game.HUD.Message("Drag onto a matching "+tower.Kind+" at merge level "+tower.MergeLevel+". Merge costs $"+tower.MergeCost+". Bad drops cost nothing.");
         return true;
     }
     public bool DropOn(DefenseTower target)
@@ -104,7 +101,7 @@ public class DefenseMerging : MonoBehaviour
         if(target!=hover)
         {
             hover=target;
-            if(target!=null) game.HUD.Message(CanMerge(source,target) ? "MATCH! Release or click to combine the two "+source.Kind+" towers." : "These towers do not match. Drop cancels; no towers or cash are lost.");
+            if(target!=null) game.HUD.Message(CanMerge(source,target) ? "MATCH! Release or click to combine the two "+source.Kind+" towers for $"+source.MergeCost+"." : "These towers do not match. Drop cancels; no towers or cash are lost.");
         }
     }
     public void HandlePointer()

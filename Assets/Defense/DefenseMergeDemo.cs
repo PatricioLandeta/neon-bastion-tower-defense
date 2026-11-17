@@ -7,14 +7,15 @@ public class DefenseMergeDemo : MonoBehaviour
 {
     private const int PreviewLayer=30;
     private GameObject world;
-    private Transform source,target,targetGimbal,cursor;
+    private Transform source,target,sourceGimbal,targetGimbal,cursor;
     private Camera previewCamera;
     private RenderTexture image;
     private Text phaseLabel,actionLabel;
     private RawImage display;
     private float elapsed;
     public bool ShowingMerged { get; private set; }
-    public int ExampleActionsRemaining => ShowingMerged ? 0 : 1;
+    public int ExampleMergeLevel { get; private set; }=1;
+    public int ExampleCash { get; private set; }
     public float AnimationTime => elapsed;
 
     public void Initialize(DefenseGame game,RawImage screen,Text phase,Text action,RectTransform pointer)
@@ -24,9 +25,9 @@ public class DefenseMergeDemo : MonoBehaviour
         world.transform.position=new Vector3(0,-1000,0);
         source=new GameObject("Example source Pulse").transform;source.SetParent(world.transform,false);
         target=new GameObject("Example destination Pulse").transform;target.SetParent(world.transform,false);
-        DefenseArt.Tower(source,TowerKind.Pulse,1.4f,out _,out _);
+        DefenseArt.Tower(source,TowerKind.Pulse,1.4f,out sourceGimbal,out _);
         DefenseArt.Tower(target,TowerKind.Pulse,1.4f,out targetGimbal,out _);
-        DefenseArt.MarkFusion(target);target.Find("Fusion ring").gameObject.SetActive(false);
+        DefenseArt.MarkFusion(target,DefenseTower.FusionColor(2));target.Find("Fusion ring").gameObject.SetActive(false);
         GameObject cameraObject=new GameObject("Tutorial preview camera",typeof(Camera));
         cameraObject.transform.SetParent(world.transform,false);
         previewCamera=cameraObject.GetComponent<Camera>();previewCamera.enabled=false;
@@ -52,18 +53,30 @@ public class DefenseMergeDemo : MonoBehaviour
     private void ApplyAnimation()
     {
         if(world==null) return;
+        int step=Mathf.FloorToInt(elapsed/8f)%3;
         float phase=elapsed%8f;
+        int inputLevel=step+1;
+        int fee=50*(1<<step);
         float drag=Mathf.SmoothStep(0,1,Mathf.InverseLerp(1.4f,3.4f,phase));
         float grow=Mathf.SmoothStep(0,1,Mathf.InverseLerp(3.4f,3.9f,phase));
         ShowingMerged=phase>=3.4f;
+        ExampleMergeLevel=inputLevel+(ShowingMerged ? 1 : 0);
+        ExampleCash=500-(ShowingMerged ? fee : 0);
         source.gameObject.SetActive(!ShowingMerged);
         source.localPosition=new Vector3(Mathf.Lerp(-2.25f,2.25f,drag),Mathf.Sin(drag*Mathf.PI)*.4f,0);
         target.localPosition=new Vector3(2.25f,0,0);
-        target.localScale=new Vector3(1+.18f*grow,1,1+.18f*grow);
-        DefenseArt.RaiseTower(target,targetGimbal,TowerKind.Pulse,1.4f+.65f*grow,1);
-        target.Find("Fusion ring").gameObject.SetActive(ShowingMerged);
-        phaseLabel.text=phase<1.4f ? "AUTO DEMO 1: HOLD LEFT MOUSE" : phase<3.4f ? "AUTO DEMO 2: DRAG ONTO MATCHING PULSE" : "AUTO DEMO 3: RELEASE → MERGED x2";
-        actionLabel.text=ShowingMerged ? "EXAMPLE ACTION 0 / 1  ·  PLACE LOCKED" : "EXAMPLE ACTION 1 / 1  ·  PLACE OR MERGE";
+        target.localScale=new Vector3(1+.18f*(step+grow),1,1+.18f*(step+grow));
+        source.localScale=new Vector3(1+.18f*step,1,1+.18f*step);
+        DefenseArt.RaiseTower(source,sourceGimbal,TowerKind.Pulse,1.4f+.65f*step,1);
+        DefenseArt.MarkFusion(source,DefenseTower.FusionColor(inputLevel));
+        source.Find("Fusion ring").gameObject.SetActive(inputLevel>1);
+        source.Find("Fusion beacon").gameObject.SetActive(inputLevel>1);
+        DefenseArt.MarkFusion(target,DefenseTower.FusionColor(ExampleMergeLevel));
+        DefenseArt.RaiseTower(target,targetGimbal,TowerKind.Pulse,1.4f+.65f*(step+grow),1);
+        target.Find("Fusion ring").gameObject.SetActive(ExampleMergeLevel>1);
+        target.Find("Fusion beacon").gameObject.SetActive(ExampleMergeLevel>1);
+        phaseLabel.text=phase<1.4f ? "AUTO DEMO 1: HOLD LEFT MOUSE" : phase<3.4f ? "AUTO DEMO 2: DRAG ONTO MATCHING PULSE" : "RELEASE → "+(ExampleMergeLevel==2 ? "GREEN" : ExampleMergeLevel==3 ? "PURPLE" : "RED MAX");
+        actionLabel.text="Lv"+inputLevel+" + Lv"+inputLevel+" · $"+fee+" · EXAMPLE CASH $"+ExampleCash;
         actionLabel.color=ShowingMerged ? new Color(1f,.7f,.4f) : new Color(.3f,.9f,1f);
         Vector3 viewport=previewCamera.WorldToViewportPoint((ShowingMerged ? target.position : source.position)+Vector3.up*2f);
         RectTransform pointer=(RectTransform)cursor;

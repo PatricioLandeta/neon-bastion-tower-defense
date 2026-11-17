@@ -6,7 +6,6 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.Rendering.Universal;
 
 public enum DefenseState { Title, Building, Combat, Won, Lost }
-public enum WaveAction { None, Place, Merge }
 
 public class DefenseGame : MonoBehaviour
 {
@@ -14,10 +13,6 @@ public class DefenseGame : MonoBehaviour
     public const int TotalWaves=10;
     public const int StartingCredits=110;
     public int TowersPlacedThisWave { get; private set; }
-    public int WaveActionsUsed { get; private set; }
-    public int WaveActionsRemaining => Mathf.Max(0,1-WaveActionsUsed);
-    public int PlacementsRemaining => WaveActionsRemaining;
-    public WaveAction LastWaveAction { get; private set; }
     public int TotalTowersPurchased { get; private set; }
     public int TotalMerges { get; private set; }
     public int PlacementWave => State==DefenseState.Building ? Mathf.Min(TotalWaves,Wave+1) : Mathf.Max(1,Wave);
@@ -69,7 +64,7 @@ public class DefenseGame : MonoBehaviour
         if(EventSystem.current==null) new GameObject("EventSystem",typeof(EventSystem),typeof(InputSystemUIInputModule));
         HUD=new GameObject("Defense interface").AddComponent<DefenseHUD>();HUD.Initialize(this);
         Merging=gameObject.AddComponent<DefenseMerging>();Merging.Initialize(this,battlefield);
-        HUD.ShowMenu("NEON BASTION","THE RELAY MUST HOLD", "Build your defense. Stop every drone before it reaches the cyan relay.\nOne escaped enemy ends the run. Survive all ten waves.\n\nONE action per wave: PLACE a tower OR MERGE a matching pair.\nEvery kill earns cash. Upgrade towers to make them stronger and taller.","ENTER SECTOR");
+        HUD.ShowMenu("NEON BASTION","THE RELAY MUST HOLD", "Build your defense. Stop every drone before it reaches the cyan relay.\nOne escaped enemy ends the run. Survive all ten waves.\n\nBuild and merge whenever you can afford it. No per-wave action limit.\nEvery kill earns cash. Upgrade towers to make them stronger and taller.","ENTER SECTOR");
     }
     private void FitCamera() { View.orthographicSize=Mathf.Max(21.5f,33f/Mathf.Max(.5f,View.aspect)); }
 
@@ -79,15 +74,15 @@ public class DefenseGame : MonoBehaviour
         foreach(DefenseEnemy enemy in Enemies.ToArray()) if(enemy!=null) { enemy.gameObject.SetActive(false);Destroy(enemy.gameObject); }
         foreach(DefenseTower tower in Towers.ToArray()) if(tower!=null) { tower.gameObject.SetActive(false);Destroy(tower.gameObject); }
         Enemies.Clear();Towers.Clear();ClearShots();
-        Credits=StartingCredits;Kills=0;KillEarnings=0;TowersPlacedThisWave=0;WaveActionsUsed=0;LastWaveAction=WaveAction.None;TotalTowersPurchased=0;TotalMerges=0;Wave=0;spawned=0;wavePlan.Clear();SelectedTower=null;SelectedKind=TowerKind.Pulse;
+        Credits=StartingCredits;Kills=0;KillEarnings=0;TowersPlacedThisWave=0;TotalTowersPurchased=0;TotalMerges=0;Wave=0;spawned=0;wavePlan.Clear();SelectedTower=null;SelectedKind=TowerKind.Pulse;
         Paused=false;Fast=false;Time.timeScale=1;State=DefenseState.Building;rangeRing.enabled=false;
-        HUD.HideMenu();HUD.Message("Wave 1: try a Pulse on the gold START HERE pad. No upgrades needed for this training wave. PLACE or MERGE: one action.");HUD.Refresh();
+        HUD.HideMenu();HUD.Message("Wave 1: try a Pulse on the gold START HERE pad. No upgrades needed for this training wave. Save kill money for towers, merges and upgrades.");HUD.Refresh();
     }
     public void Choose(TowerKind kind)
     {
         if(Merging!=null) Merging.Cancel();
         SelectedKind=kind;SelectedTower=null;rangeRing.enabled=false;
-        HUD.Message(kind==TowerKind.Pulse ? "PULSE: rapid fire · $75. Placing uses this wave's action." : "SIEGE: heavy ballistic shells · $110. Placing uses this wave's action.");HUD.Refresh();
+        HUD.Message(kind==TowerKind.Pulse ? "PULSE: rapid fire · $75. Build whenever you can afford it." : "SIEGE: heavy ballistic shells · $110. Build whenever you can afford it.");HUD.Refresh();
     }
     public bool TryPlaceAt(Vector3 point)
     {
@@ -96,16 +91,14 @@ public class DefenseGame : MonoBehaviour
         if(pad<0) { HUD.Message("Build only on marked cyan hex pads.");return false; }
         DefenseTower existing=Towers.Find(t=>t.PadIndex==pad);
         if(existing!=null) { SelectTower(existing);return false; }
-        if(WaveActionsRemaining==0) { HUD.Message("Wave action already used to "+LastWaveAction.ToString().ToUpper()+". You cannot place AND merge in the same wave.");return false; }
         if(Towers.Count>=TowerLimit) { HUD.Message("Tower limit reached (10). Upgrade or sell an existing tower.");return false; }
         int cost=DefenseTower.Cost(SelectedKind);
         if(Credits<cost) { HUD.Message("Not enough money. Kill enemies to save for this tower.");return false; }
-        if(!TryConsumeWaveAction(WaveAction.Place)) return false;
-        Spend(cost);
+        Spend(cost);TowersPlacedThisWave++;TotalTowersPurchased++;
         GameObject root=new GameObject(SelectedKind+" tower");root.transform.position=Pads[pad]+Vector3.up*.2f;
         DefenseTower tower=root.AddComponent<DefenseTower>();tower.Initialize(this,SelectedKind,pad);Towers.Add(tower);
         SelectTower(tower);DefenseArt.Burst(root.transform.position+Vector3.up,DefenseArt.Cyan,.45f);
-        HUD.Message("PLACE used this wave's action. Merging is locked until next wave; cash upgrades (U) are still allowed.");HUD.Refresh();return true;
+        HUD.Message("Tower built. Keep buying, merging or upgrading as your budget allows.");HUD.Refresh();return true;
     }
     public int NearestPad(Vector3 point)
     {
@@ -117,14 +110,7 @@ public class DefenseGame : MonoBehaviour
     {
         SelectedTower=tower;rangeRing.enabled=true;DefenseArt.SetRing(rangeRing,tower.transform.position,tower.Range);HUD.Refresh();
     }
-    public bool TryConsumeWaveAction(WaveAction action)
-    {
-        if(!CanBuild || Paused || HUD.TutorialOpen || WaveActionsRemaining==0 || (action!=WaveAction.Place && action!=WaveAction.Merge)) return false;
-        WaveActionsUsed=1;LastWaveAction=action;
-        if(action==WaveAction.Place) { TowersPlacedThisWave++;TotalTowersPurchased++; }
-        else TotalMerges++;
-        return true;
-    }
+    public void RecordMerge() { TotalMerges++; }
     public bool Spend(int amount)
     {
         if(Credits<amount) { HUD.Message("Not enough money. Each kill pays cash for towers and upgrades.");return false; }
@@ -142,10 +128,10 @@ public class DefenseGame : MonoBehaviour
     {
         if(Merging!=null) Merging.Cancel();
         if(!CanBuild || Paused || SelectedTower==null) return;
-        if(Towers.Count==1 && PlacementsRemaining==0) { HUD.Message("Keep your only tower until the next build allowance; selling it now would leave you defenseless.");return; }
+        if(Towers.Count==1 && Credits+Mathf.FloorToInt(SelectedTower.Investment*.7f)<DefenseTower.Cost(TowerKind.Pulse)) { HUD.Message("Keep your only tower until its refund and your cash can buy a replacement.");return; }
         int refund=Mathf.FloorToInt(SelectedTower.Investment*.7f);Credits+=refund;
         Towers.Remove(SelectedTower);SelectedTower.gameObject.SetActive(false);Destroy(SelectedTower.gameObject);SelectedTower=null;rangeRing.enabled=false;
-        HUD.Message("Tower sold for $"+refund+". Selling does not restore this wave's build allowance.");HUD.Refresh();
+        HUD.Message("Tower sold for $"+refund+". Spend the refund on your next defense.");HUD.Refresh();
     }
 
     public static List<EnemyKind> WavePlan(int wave)
@@ -179,7 +165,7 @@ public class DefenseGame : MonoBehaviour
         if(Merging!=null) Merging.Cancel();
         if(State!=DefenseState.Building || Paused) return;
         Wave++;State=DefenseState.Combat;wavePlan=WavePlan(Wave);spawned=0;nextSpawn=Time.time+.8f;
-        HUD.Message("WAVE "+Wave+" / "+WaveName(Wave)+". Choose PLACE or MERGE, not both. Kill money pays for upgrades.");HUD.Refresh();
+        HUD.Message("WAVE "+Wave+" / "+WaveName(Wave)+". Build, merge and upgrade using kill money.");HUD.Refresh();
     }
     public DefenseEnemy SpawnEnemy(EnemyKind kind)
     {
@@ -202,7 +188,7 @@ public class DefenseGame : MonoBehaviour
         if(State!=DefenseState.Combat || SpawnRemaining>0 || Enemies.Count>0) return;
         ClearShots();
         if(Wave>=TotalWaves) { State=DefenseState.Won;Finish("SECTOR SECURED","ALL "+TotalWaves+" WAVES DEFEATED","The relay is safe.\n"+Kills+" enemies destroyed · "+Towers.Count+" towers deployed."); }
-        else { State=DefenseState.Building;TowersPlacedThisWave=0;WaveActionsUsed=0;LastWaveAction=WaveAction.None;HUD.Message("Wave cleared! Wave "+(Wave+1)+": choose ONE action — PLACE or MERGE. You cannot do both.");HUD.Refresh(); }
+        else { State=DefenseState.Building;TowersPlacedThisWave=0;HUD.Message("Wave cleared! Wave "+(Wave+1)+": spend wisely on new towers, matching merges and upgrades.");HUD.Refresh(); }
     }
     private void Finish(string title,string subtitle,string description)
     {

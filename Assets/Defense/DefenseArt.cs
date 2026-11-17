@@ -146,11 +146,18 @@ public static class DefenseArt
         }
     }
 
-    public static void MarkFusion(Transform root)
+    public static void MarkFusion(Transform root,Color color)
     {
-        if(root.Find("Fusion ring")!=null) return;
-        Shape(root,"Fusion ring","HexPlatform",Vector3.up*.64f,new Vector3(1.03f,.16f,1.03f),
-            ColorMaterial("Fusion energy",new Color(1.5f,.4f,2f)));
+        Material material=ColorMaterial("Fusion energy "+color,color);
+        foreach(MeshRenderer part in root.GetComponentsInChildren<MeshRenderer>(true))
+            if(part.name=="Power ring" || part.name=="Capacitor" || part.name=="Muzzle light" || part.name.StartsWith("Upgrade collar")) part.sharedMaterial=material;
+        Transform ring=root.Find("Fusion ring");
+        if(ring==null) ring=Shape(root,"Fusion ring","HexPlatform",Vector3.up*.64f,new Vector3(1.03f,.16f,1.03f),material).transform;
+        ring.GetComponent<MeshRenderer>().sharedMaterial=material;
+        Transform beacon=root.Find("Fusion beacon");
+        if(beacon==null) beacon=Shape(root,"Fusion beacon","HexPlatform",Vector3.zero,new Vector3(.7f,.16f,.7f),material).transform;
+        beacon.localPosition=Vector3.up*(root.Find("Predictive gimbal")!=null ? root.Find("Predictive gimbal").localPosition.y-.4f : 1.6f);
+        beacon.GetComponent<MeshRenderer>().sharedMaterial=material;
     }
 
     public static Transform MergeGhost(DefenseTower source,Transform parent)

@@ -10,7 +10,13 @@ public class DefenseTower : MonoBehaviour
     public int PadIndex { get; private set; }
     public int Investment { get; private set; }
     public int MergedUnits { get; private set; }=1;
-    private float FusionBonus => Mathf.Log(MergedUnits,2f);
+    public const int MaxMergeLevel=4;
+    public int MergeLevel { get; private set; }=1;
+    public int MergeCost => 50*MergedUnits;
+    public string MergeName => MergeLevel==1 ? "BASE" : MergeLevel==2 ? "GREEN" : MergeLevel==3 ? "PURPLE" : "RED MAX";
+    public Color MergeColor => FusionColor(MergeLevel);
+    public static Color FusionColor(int level) => level==2 ? new Color(.2f,2f,.5f) : level==3 ? new Color(1.5f,.4f,2f) : level==4 ? new Color(2f,.15f,.12f) : DefenseArt.Cyan;
+    private float FusionBonus => MergeLevel-1;
     private MeshRenderer[] visuals;
     public Bounds SelectionBounds
     {
@@ -44,6 +50,7 @@ public class DefenseTower : MonoBehaviour
         if(Level>=3 || !Game.Spend(UpgradeCost)) return false;
         Investment+=UpgradeCost;Level++;
         DefenseArt.RaiseTower(transform,turret,Kind,Height,Level);
+        if(MergeLevel>1) DefenseArt.MarkFusion(transform,MergeColor);
         visuals=GetComponentsInChildren<MeshRenderer>();
         DefenseArt.Burst(transform.position+Vector3.up*Height,DefenseArt.Cyan,.65f);
         return true;
@@ -52,15 +59,15 @@ public class DefenseTower : MonoBehaviour
     public void SetVisualsVisible(bool visible)
     { foreach(MeshRenderer visual in visuals) visual.enabled=visible; }
 
-    internal void Absorb(DefenseTower source)
+    internal void Absorb(DefenseTower source,int mergeCost)
     {
-        Investment+=source.Investment;
+        Investment+=source.Investment+mergeCost;
         Level=Mathf.Max(Level,source.Level);
-        MergedUnits+=source.MergedUnits;
+        MergedUnits+=source.MergedUnits;MergeLevel++;
         float width=1f+.18f*FusionBonus;
         transform.localScale=new Vector3(width,1,width);
         DefenseArt.RaiseTower(transform,turret,Kind,Height,Level);
-        DefenseArt.MarkFusion(transform);
+        DefenseArt.MarkFusion(transform,MergeColor);
         visuals=GetComponentsInChildren<MeshRenderer>();
     }
 

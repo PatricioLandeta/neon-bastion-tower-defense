@@ -1,6 +1,6 @@
 # Ten-wave campaign guide
 
-Each wave grants **ONE shared action: PLACE a new tower OR MERGE one matching pair**. Never both, and never two merges. Setup and combat share it. Invalid drops and unaffordable placements do not consume it. Paid cash upgrades remain available after the action is used. Clearing a wave resets the allowance to one; unused actions never accumulate.
+Build, merge and upgrade during setup or combat as often as your budget allows. Ten pads limit the number of towers on the board. Matching type and merge level are required; base pairs make green ($50), green pairs make purple ($100), and purple pairs make red ($200). Red is the cap.
 
 | Wave | Name | Total | Scouts | Runners | Armored | Motorcycles | Trucks | Siege elites |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |

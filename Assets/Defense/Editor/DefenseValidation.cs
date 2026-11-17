@@ -289,6 +289,12 @@ public static class DefenseValidation
     private static void CheckTier(DefenseTower tower,int level,int units)
     {
         Color actual=tower.transform.Find("Fusion ring").GetComponent<MeshRenderer>().sharedMaterial.GetColor("_BaseColor");
+        float expectedHeight=1.4f+.8f*(tower.Level-1);
+        float baseRange=10.5f+.6f*(tower.Level-1);
+        Check(Mathf.Abs(tower.Height-expectedHeight)<.001f && Mathf.Abs(tower.Muzzle.parent.localPosition.y-expectedHeight)<.001f && tower.transform.localScale.y==1,
+            "Merge tier "+level+" preserves paid-upgrade height and muzzle elevation");
+        Check(Mathf.Abs(tower.Range-baseRange*Mathf.Pow(1.05f,level-1))<.001f && tower.transform.localScale.x>1 && tower.transform.localScale.z>1,
+            "Merge tier "+level+" widens the model and compounds range by 5 percent per merge");
         Check(tower.MergeLevel==level && tower.MergedUnits==units && Vector4.Distance(actual,DefenseTower.FusionColor(level))<.01f,
             "Merge level "+level+" has the correct color and "+units+" represented units");
     }
@@ -318,7 +324,7 @@ public static class DefenseValidation
         Check(game.Towers.Count==count-1 && !game.Towers.Contains(source) && target.PadIndex==1,"Merge consumes source and retains destination pad");
         Check(target.Level==2 && target.Investment==investment && game.Credits==money-50,"Green merge costs exactly $50 and retains paid upgrades and investment");
         CheckTier(target,2,2);
-        Check(target.Height>height && target.Damage>damage && target.FireRate>rate && target.Range>range && target.transform.localScale.x>1,"Merge grows real geometry and raises combat stats");
+        Check(Mathf.Abs(target.Height-height)<.001f && target.Damage>damage && target.FireRate>rate && Mathf.Abs(target.Range-range*1.05f)<.001f && target.transform.localScale.x>1 && target.transform.localScale.y==1,"Merge adds width and exactly 5 percent range without adding height");
         game.Choose(TowerKind.Pulse);Check(game.TryPlaceAt(game.Pads[3]),"Buying immediately after a merge in the same wave is allowed");
         DefenseTower third=game.SelectedTower;
         money=game.Credits;
@@ -335,7 +341,10 @@ public static class DefenseValidation
         money=game.Credits;count=game.Towers.Count;
         Check(!game.TryMergeTowers(otherRed,target) && game.Credits==money && game.Towers.Count==count,"Red plus red is rejected without spending or consuming towers");
         Check(target.UpgradeCost==1600,"Eight-unit merged tower scales the next paid upgrade cost");
-        FixtureFunds(target.UpgradeCost);game.SelectTower(target);game.UpgradeSelected();
+        FixtureFunds(target.UpgradeCost);game.SelectTower(target);
+        float beforeHeight=target.Height,beforeWidth=target.transform.localScale.x;
+        game.UpgradeSelected();
+        Check(Mathf.Abs(target.Height-beforeHeight-.8f)<.001f && target.transform.localScale.x==beforeWidth,"Paid upgrade adds height while preserving merged width");
         Check(target.Level==3 && target.MergeLevel==4,"Paid upgrades remain separate from capped merge levels");
         Ray ray=game.View.ScreenPointToRay(game.View.WorldToScreenPoint(target.transform.position+Vector3.up*target.Height));
         Check(game.Merging.PickTower(ray,target.transform.position)==target,"Tall red tower can be picked by its model");

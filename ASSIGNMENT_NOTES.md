@@ -85,11 +85,11 @@ Vehicle graphics are authored by `DefenseArt.Vehicle`. A baked 20-sided wheel me
 
 `CanMerge` requires distinct live towers, matching type and merge level, a tier below red, enough cash, and active unpaused play outside the tutorial. Paid upgrade levels may differ. Base pairs become green level 2 ($50), green pairs become purple level 3 ($100), and purple pairs become red level 4 ($200). `Absorb` doubles represented units, retains the higher paid upgrade level, includes the merge fee in investment, updates geometry and recolors the fusion rings and energy details. Red towers cannot merge further. Invalid drops spend nothing.
 
-Damage is the paid-level damage multiplied by represented units. Fusion also adds 10% fire rate per doubling of units, 0.65 units of height per doubling, 0.6 range per extra unit (capped at +3), and 18% footprint per doubling. Paid upgrades remain capped at level 3 and can still be purchased for a merged tower below that cap. Merge strength comes from consuming existing purchased towers, and charging merge fees.
+Damage is the paid-level damage multiplied by represented units. Fusion also adds 10% fire rate per doubling of units, 5% compounded range per merge tier, and 18% width/depth per tier. Fusion adds no height; only paid upgrades raise the column and muzzle. Paid upgrades remain capped at level 3 and can still be purchased for a merged tower below that cap. Merge strength comes from consuming existing purchased towers, and charging merge fees.
 
 ## Animated example and tougher traffic
 
-The last tutorial page embeds `DefenseMergeDemo`, an isolated visual scene rendered into a UI RawImage. It uses the actual tower geometry and a looping cursor/drag/growth sequence, labels the merge levels and example cash, and has a Replay button. The preview uses a dedicated camera/layer, runs on unscaled time so paused Help still animates, and contains no DefenseTower actors or economy calls. It cannot modify the player's towers or cash.
+The last tutorial page embeds `DefenseMergeDemo`, an isolated visual scene rendered into a UI RawImage. It uses the actual tower geometry and a looping cursor/drag/widening sequence, labels the merge levels and example cash, and has a Replay button. The preview uses a dedicated camera/layer, runs on unscaled time so paused Help still animates, and contains no DefenseTower actors or economy calls. It cannot modify the player's towers or cash.
 
 Traffic now totals 522 enemies, with counts and spawn rates listed in `WAVE_GUIDE.md`. The complete automated run makes eight purchases and two actual merges, ending with six actors representing eight purchased units. Its money audit includes all consumed tower investment and confirms no injected campaign funds.
 

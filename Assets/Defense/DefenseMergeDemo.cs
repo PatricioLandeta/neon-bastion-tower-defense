@@ -67,12 +67,12 @@ public class DefenseMergeDemo : MonoBehaviour
         target.localPosition=new Vector3(2.25f,0,0);
         target.localScale=new Vector3(1+.18f*(step+grow),1,1+.18f*(step+grow));
         source.localScale=new Vector3(1+.18f*step,1,1+.18f*step);
-        DefenseArt.RaiseTower(source,sourceGimbal,TowerKind.Pulse,1.4f+.65f*step,1);
+        DefenseArt.RaiseTower(source,sourceGimbal,TowerKind.Pulse,1.4f,1);
         DefenseArt.MarkFusion(source,DefenseTower.FusionColor(inputLevel));
         source.Find("Fusion ring").gameObject.SetActive(inputLevel>1);
         source.Find("Fusion beacon").gameObject.SetActive(inputLevel>1);
         DefenseArt.MarkFusion(target,DefenseTower.FusionColor(ExampleMergeLevel));
-        DefenseArt.RaiseTower(target,targetGimbal,TowerKind.Pulse,1.4f+.65f*(step+grow),1);
+        DefenseArt.RaiseTower(target,targetGimbal,TowerKind.Pulse,1.4f,1);
         target.Find("Fusion ring").gameObject.SetActive(ExampleMergeLevel>1);
         target.Find("Fusion beacon").gameObject.SetActive(ExampleMergeLevel>1);
         phaseLabel.text=phase<1.4f ? "AUTO DEMO 1: HOLD LEFT MOUSE" : phase<3.4f ? "AUTO DEMO 2: DRAG ONTO MATCHING PULSE" : "RELEASE → "+(ExampleMergeLevel==2 ? "GREEN" : ExampleMergeLevel==3 ? "PURPLE" : "RED MAX");

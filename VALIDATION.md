@@ -1,6 +1,6 @@
 # Validation
 
-The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **124 checks**, including a complete ten-wave win with all **522** enemies destroyed.
+The game was compiled and run with Unity **6000.6.0f1** on macOS. The actual-scene validator passed **131 checks**, including a complete ten-wave win with all **522** enemies destroyed.
 
 The campaign strategy begins with the normal $110, places towers on legal pads, buys additional towers and upgrades only when rewards make them affordable, and makes eight purchases and two paid merges across ten waves. It does not add credits, change enemy HP or speed, skip enemies, or apply test damage during the campaign. It accelerates the campaign with Unity time scaling; projectiles and enemies still use the normal fixed physics timestep. The focused tests run separately and intentionally create isolated test situations.
 
@@ -19,7 +19,7 @@ The campaign strategy begins with the normal $110, places towers on legal pads, 
 - Matching drag/drop charges exactly $50/$100/$200, consumes the source, retains the destination, paid upgrades and total investment, and produces the correct green/purple/red tier and color.
 - Buying after merging, merging after buying, and multiple merges in the same wave; cash regulates all purchases.
 - Rejection of unequal tiers, insufficient funds, self-merges, wrong types and any merge beyond red, with no money or tower loss.
-- Larger geometry, increased stats, eight represented units at red, scaled paid upgrade costs, click-to-merge routing and ray selection of tall red geometry.
+- Wider geometry with unchanged height/muzzle elevation, exactly 5% compounded range per merge tier, height growth only from paid upgrades, increased stats, eight represented units at red, scaled paid upgrade costs, click-to-merge routing and ray selection of tall red geometry.
 - Real projectile hits from a merged tower against a moving enemy.
 - Upgrade prices, damage/rate/range growth, actual turret and muzzle height growth, maximum level, insufficient-funds protection, selling refunds, and blocked sell-and-rebuild loopholes.
 - Distinct speed and HP values for all six enemy types, including fast motorcycles and 160-base-HP trucks.

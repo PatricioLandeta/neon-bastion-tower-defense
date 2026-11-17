@@ -1,8 +1,7 @@
-Unity 6000.6.0f1 on macOS — budget-limited building and three merge tiers
-124 campaign/regression checks passed; all 522 enemies defeated; $3,652 kill income.
-No per-wave build or merge limit. Ten-pad board capacity remains.
-Matching type and merge level: base pairs -> green ($50), green pairs -> purple ($100), purple pairs -> red ($200). Red is the cap.
-Paid upgrades remain separate and scale with represented units.
+Unity 6000.6.0f1 on macOS — merge width and percentage range
+131 campaign/regression checks passed; all 522 enemies defeated using earned money.
+Merging adds 18% width/depth per tier, compounds range by 5%, and adds no height.
+Only paid upgrades raise tower height and muzzle elevation.
 No C# compilation errors or warnings.
 
 DEFENSE PASS: Title starts with combat stopped
@@ -72,17 +71,23 @@ DEFENSE PASS: Tutorial blocks actual merging
 DEFENSE PASS: Matching drag/drop performs a paid merge
 DEFENSE PASS: Merge consumes source and retains destination pad
 DEFENSE PASS: Green merge costs exactly $50 and retains paid upgrades and investment
+DEFENSE PASS: Merge tier 2 preserves paid-upgrade height and muzzle elevation
+DEFENSE PASS: Merge tier 2 widens the model and compounds range by 5 percent per merge
 DEFENSE PASS: Merge level 2 has the correct color and 2 represented units
-DEFENSE PASS: Merge grows real geometry and raises combat stats
+DEFENSE PASS: Merge adds width and exactly 5 percent range without adding height
 DEFENSE PASS: Buying immediately after a merge in the same wave is allowed
 DEFENSE PASS: Unequal merge levels cannot combine or spend cash
 DEFENSE PASS: Merging immediately after buying in the same wave is allowed
 DEFENSE PASS: Green plus green costs exactly $100
+DEFENSE PASS: Merge tier 3 preserves paid-upgrade height and muzzle elevation
+DEFENSE PASS: Merge tier 3 widens the model and compounds range by 5 percent per merge
 DEFENSE PASS: Merge level 3 has the correct color and 4 represented units
 DEFENSE PASS: Matching fixture tier 1 merges successfully
 DEFENSE PASS: Matching fixture tier 1 merges successfully
 DEFENSE PASS: Matching fixture tier 2 merges successfully
 DEFENSE PASS: Purple plus purple costs exactly $200
+DEFENSE PASS: Merge tier 4 preserves paid-upgrade height and muzzle elevation
+DEFENSE PASS: Merge tier 4 widens the model and compounds range by 5 percent per merge
 DEFENSE PASS: Merge level 4 has the correct color and 8 represented units
 DEFENSE PASS: Red max towers cannot start another merge drag
 DEFENSE PASS: Matching fixture tier 1 merges successfully
@@ -94,6 +99,7 @@ DEFENSE PASS: Matching fixture tier 2 merges successfully
 DEFENSE PASS: Matching fixture tier 3 merges successfully
 DEFENSE PASS: Red plus red is rejected without spending or consuming towers
 DEFENSE PASS: Eight-unit merged tower scales the next paid upgrade cost
+DEFENSE PASS: Paid upgrade adds height while preserving merged width
 DEFENSE PASS: Paid upgrades remain separate from capped merge levels
 DEFENSE PASS: Tall red tower can be picked by its model
 DEFENSE PASS: MERGE button arms the click alternative when the pair is affordable
@@ -129,4 +135,4 @@ DEFENSE PASS: Winning strategy pays for eight towers and two merges
 DEFENSE PASS: Merging conserves all purchased tower units
 DEFENSE PASS: Campaign money exactly equals starting cash plus kill rewards minus purchases, merges and upgrades
 DEFENSE PASS: Victory waits for every active and scheduled enemy
-DEFENSE VALIDATION COMPLETE: 124 checks passed
+DEFENSE VALIDATION COMPLETE: 131 checks passed
